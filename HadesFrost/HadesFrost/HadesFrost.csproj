@@ -7,8 +7,8 @@
     <ProjectGuid>{CD6A58C1-E973-48C5-9BAE-9C2879E6809D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BoostCharm</RootNamespace>
-    <AssemblyName>BoostCharm</AssemblyName>
+    <RootNamespace>HadesFrost</RootNamespace>
+    <AssemblyName>HadesFrost</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -17,6 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -48,8 +49,13 @@
     <Reference Include="Assembly-CSharp-Publicized">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
+    <Reference Include="Config Manager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3175889529\Config Manager.dll</HintPath>
+    </Reference>
     <Reference Include="DeadExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\DeadExtensions.dll</HintPath>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\DeadExtensions.dll</HintPath>
     </Reference>
     <Reference Include="DeadRandom, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -151,8 +157,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoostCharm.cs" />
+    <Compile Include="HadesFrost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatusEffectApplyXOnKillTargetContext.cs" />
+    <Compile Include="StatusEffectApplyXWhenAllyOrSelfDebuffed.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
