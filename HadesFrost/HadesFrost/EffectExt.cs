@@ -3,7 +3,7 @@ using Deadpan.Enums.Engine.Components.Modding;
 
 namespace HadesFrost
 {
-    public static class Utils
+    public static class EffectExt
     {
         public static CardData.StatusEffectStacks SStack(this WildfrostMod mod, string name, int amount = 1) =>
             new CardData.StatusEffectStacks(mod.TryGet<StatusEffectData>(name), amount);
