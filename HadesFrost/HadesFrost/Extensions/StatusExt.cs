@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
 using TMPro;
@@ -70,7 +69,7 @@ namespace HadesFrost
             data.ModAdded = mod;
             //data.panelSprite = useSmallPanel ? panelSmall : panel;
             data.panelColor = new Color(0.15f, 0.15f, 0.15f, 0.90f);
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", data);
+            AddressableLoader.AddToGroup("KeywordData", data);
             return data;
         }
 
@@ -80,27 +79,6 @@ namespace HadesFrost
             if (body is Color c2) { data.bodyColour = c2; }
             if (note is Color c3) { data.noteColour = c3; }
             return data;
-        }
-
-        public static T CreateStatus<T>(string name, string desc = null, string textInsert = null, string type = "", bool boostable = false, bool stackable = true) where T : StatusEffectData
-        {
-            T status = ScriptableObject.CreateInstance<T>();
-            status.name = name;
-            status.targetConstraints = new TargetConstraint[0];
-            if (!desc.IsNullOrEmpty())
-            {
-                Collection.SetString(name + "_text", desc);
-                status.textKey = Collection.GetString(name + "_text");
-                if (!textInsert.IsNullOrEmpty())
-                {
-                    status.textInsert = textInsert;
-                }
-            }
-            status.type = type;
-            status.hiddenKeywords = new KeywordData[0];
-            status.canBeBoosted = boostable;
-            status.stackable = stackable;
-            return status;
         }
 
         public class StatusIconExt : StatusIcon

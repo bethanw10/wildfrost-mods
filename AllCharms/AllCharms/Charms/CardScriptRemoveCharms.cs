@@ -8,7 +8,7 @@ namespace AllCharms.Charms
         public override void Run(CardData target)
         {
             var deck = GameObject.Find("DeckDisplay");
-            var holder = deck.GetComponentInChildren<CardCharmHolder>();
+            var holder = deck?.GetComponentInChildren<CardCharmHolder>();
 
             // Debug.Log("bethan " + test);
             //
@@ -53,7 +53,7 @@ namespace AllCharms.Charms
 
                 holder.Create(upgrade);
 
-                References.PlayerData.inventory.upgrades.Add(upgrade);
+                References.PlayerData.inventory?.upgrades?.Add(upgrade);
                 Events.InvokeUpgradeGained(upgrade);
             }
 

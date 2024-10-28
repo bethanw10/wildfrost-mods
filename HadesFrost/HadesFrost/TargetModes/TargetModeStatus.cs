@@ -5,7 +5,6 @@ namespace HadesFrost
 {
     internal class TargetModeStatus : TargetMode
     {
-
         public string targetType;
         public bool missing = false;
         public bool failSafe = false;

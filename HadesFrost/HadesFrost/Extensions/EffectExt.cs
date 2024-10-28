@@ -34,5 +34,15 @@ namespace HadesFrost
             builder.Mod = mod;
             return builder;
         }
+
+
+        public static CardDataBuilder CardCopy(this WildfrostMod mod, string oldName, string newName)
+        {
+            var data = mod.TryGet<CardData>(oldName).InstantiateKeepName();
+            data.name = mod.GUID + "." + newName;
+            var builder = data.Edit<CardData, CardDataBuilder>();
+            builder.Mod = mod;
+            return builder;
+        }
     }
 }

@@ -17,7 +17,6 @@ namespace HadesFrost
 
         public IEnumerator Check(Entity entity, Entity[] targets)
         {
-
             var hit2 = new Hit(entity, entity, count)
             {
                 canRetaliate = false,
