@@ -24,7 +24,6 @@ namespace HadesFrost
                 .CreateUnit("Frinos", "Frinos", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Frinos.png", "FrinosBG.png")
                 .SetStats(5)
-                .AddPool("GeneralUnitPool")
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -71,7 +70,6 @@ namespace HadesFrost
                 .CreateUnit("Toula", "Toula", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Toula.png", "ToulaBG.png")
                 .SetStats(3, 5)
-                .AddPool("GeneralUnitPool")
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {

@@ -106,10 +106,10 @@ namespace HadesFrost
                         "Well, perfect timing, now let's stock up and head out.",
                         "Hello again, you ready for this hunt? Me, I've been looking forward since last time, so, let's get on with it.",
                     };
-                    data.attackEffects = new[]
-                    {
-                        mod.SStack("Demonize"),
-                    };
+                    // data.attackEffects = new[]
+                    // {
+                    //     mod.SStack("Demonize"),
+                    // };
                     data.startWithEffects = new[]
                     {
                         mod.SStack("When Enemy (Demonized) Is Killed Apply Their Demonize To RandomEnemy")
@@ -310,34 +310,103 @@ namespace HadesFrost
 
         private static void Demeter(HadesFrost mod)
         {
+            mod.StatusEffects.Add(
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectChangeTargetMode>("Hits All Snowed Enemies")
+                    .WithCanBeBoosted(true)
+                    .WithText("Hits all <keyword=snow>'d enemies")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectChangeTargetMode data)
+                    {
+                        var targetMode = ScriptableObject.CreateInstance<TargetModeStatus>();
+                        targetMode.targetType = "snow";
+                        data.targetMode = targetMode;
+                        data.targetMode = targetMode;
+                    })
+            );
+
             mod.Cards.Add(new CardDataBuilder(mod)
-                .CreateUnit("Dionysus", "Dionysus", idleAnim: "PingAnimationProfile")
-                .SetSprites("Dionysus.png", "Dionysus.png")
+                .CreateUnit("Demeter", "Demeter", idleAnim: "PingAnimationProfile")
+                .SetSprites("Demeter.png", "DemeterBG.png")
                 .SetStats(8, 2, 3)
                 .AddPool("GeneralUnitPool")
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
                     {
-                        "All right, man, I have got your back, and we have got this!",
-                        "You and me. We're getting through this, now or never, ready, yeah?",
-                        "What do you say we go all out this time, how about it, you with me, man, or what?",
-                        "This time for sure, I mean, I know you're going to make it, together with me, man!",
-                        "I got to make it to a feast in just a little bit, here, man, but quickly, let's go, yeah?"
+                        "You have your mother's strength. Take mine as well.",
+                        "So many traitors stand against us now, but soon they all shall lie in ruin and decay.",
+                        "Cold vengeance grows deep inside our hearts; let it flourish for a while.",
+                        "Death and decay to the enemies of Olympus."
                     };
                     data.startWithEffects = new[]
                     {
-                        mod.SStack("ImmuneToSnow"), // shroom? aimless?
+                        mod.SStack("ImmuneToSnow"),
+                        mod.SStack("When Hit Apply Snow To Attacker", 2),
+                        mod.SStack("Hits All Snowed Enemies")
                     };
                 }));
         }
 
         private static void Dionysus(HadesFrost mod)
         {
+            // mod.StatusEffects.Add(
+            //     mod.StatusCopy("When Shroom Damage Taken Trigger To Self", "When Shroom Damage Taken Trigger To Self 2")
+            //         .WithText("Trigger after taking damage from <keyword=shroom>")
+            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+            //         {
+            //             data.descColorHex = "F99C61";
+            //         })
+            // );
+
+            mod.StatusEffects.Add(
+                mod.StatusCopy("When Anyone Takes Shroom Damage Apply Attack To Self", "When Shroom Damage Taken Heal")
+                    .WithText("When an enemy takes <keyword=shroom> damage, restore <keyword=health> of allies in the row by <{a}>")
+                    .WithIsReaction(false)
+                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                    {
+                        var castData = (StatusEffectApplyXWhenAnyoneTakesDamage)data;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Heal (No Ping)");
+                        castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.AlliesInRow;
+                        castData.applyEqualAmount = false;
+                    })
+            );
+
+            // gain frenzy equal to shroomed enemies (hard)
+            // gain damage when shroom
+            // heal when enemy shroom damage
+            // apply shroom equal to damage
+            // give all allies wild
+            // trigger when shroom damamge taken
+            // mod.Cards.Add(new CardDataBuilder(mod)
+            //     .CreateUnit("Dionysus", "Dionysus", idleAnim: "PingAnimationProfile")
+            //     .SetSprites("Dionysus.png", "Dionysus.png")
+            //     .SetStats(8, 8, 8)
+            //     .AddPool("GeneralUnitPool")
+            //     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+            //     {
+            //         data.greetMessages = new[]
+            //         {
+            //             "All right, man, I have got your back, and we have got this!",
+            //             "You and me. We're getting through this, now or never, ready, yeah?",
+            //             "What do you say we go all out this time, how about it, you with me, man, or what?",
+            //             "This time for sure, I mean, I know you're going to make it, together with me, man!",
+            //             "I got to make it to a feast in just a little bit, here, man, but quickly, let's go, yeah?"
+            //         };
+            //         data.startWithEffects = new[]
+            //         {
+            //             mod.SStack("When Shroom Damage Taken Trigger To Self 2")
+            //         };
+            //         data.traits = new List<CardData.TraitStacks>
+            //         {
+            //             mod.TStack("Aimless")
+            //         };
+            //     }));
+
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Dionysus", "Dionysus", idleAnim: "PingAnimationProfile")
                 .SetSprites("Dionysus.png", "Dionysus.png")
-                .SetStats(8, 2, 3)
+                .SetStats(8, null, 4)
                 .AddPool("GeneralUnitPool")
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -351,7 +420,11 @@ namespace HadesFrost
                     };
                     data.startWithEffects = new[]
                     {
-                        mod.SStack("ImmuneToSnow"), // shroom? aimless?
+                        mod.SStack("When Shroom Damage Taken Heal")
+                    };
+                    data.attackEffects = new[]
+                    {
+                        mod.SStack("Shroom")
                     };
                 }));
         }

@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 /* TODO:
 Athena, Dionysus
-Rework apollo
+Rework apollo, boring boons?
 Card images
 Pets
 Items - keepsakes, ambrosia, weapons etc.

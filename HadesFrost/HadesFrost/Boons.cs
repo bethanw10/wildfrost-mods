@@ -1,6 +1,5 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
 using System.Linq;
-using UnityEngine;
 using static Console;
 
 namespace HadesFrost
@@ -67,7 +66,7 @@ namespace HadesFrost
                     }
                 case "Artemis":
                     {
-                        upgrade = mod.TryGet<CardUpgradeData>("CardUpgradeBattle"); // arrow charm?
+                        upgrade = mod.TryGet<CardUpgradeData>("CardUpgradeDemonize"); // arrow charm?
                         break;
                     }
                 case "Athena":
@@ -77,6 +76,13 @@ namespace HadesFrost
                             .SetEffects(mod.SStack("When Hit Apply Shell To Self", 2));
                         break;
                     }
+                case "Dionysus":
+                {
+                    upgrade = new CardUpgradeDataBuilder(mod)
+                        .Create("AthenaBoon")
+                        .SetEffects(mod.SStack("When Hit Apply Shell To Self", 2));
+                    break;
+                }
                 case "Demeter":
                     {
                         upgrade = mod.TryGet<CardUpgradeData>("CardUpgradeSnowball");
@@ -114,6 +120,7 @@ namespace HadesFrost
                             .Create("PoseidonBoon")
                             .ChangeHP(3)
                             .WithSetHP(false);
+                        // smackback or more gold from bling cave?
                         break;
                     }
                 case "Zeus":
