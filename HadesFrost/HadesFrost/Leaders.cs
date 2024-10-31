@@ -1,5 +1,6 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
 using System.Collections.Generic;
+using HadesFrost.Extensions;
 using UnityEngine;
 
 namespace HadesFrost
@@ -17,7 +18,7 @@ namespace HadesFrost
                 .Create("Hades")
                 .WithCanStack(false)
                 //.WithDescription("Gain a buff when an Olympian God is added to your team|Inspect a god tp see their boon")
-                .WithDescription("Receives a boon when an Olympian God is added to your team" +
+                .WithDescription("Receive a boon when an Olympian God is added to your team" +
                                  "|<sprite name=Controller ButtonSheet_24> an Olympian to see their boon")
                 .WithShowName(true)
                 .WithShowIcon(false)

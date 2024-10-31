@@ -69,12 +69,11 @@ public class StatusEffectApplyXIfStatsAreLower : StatusEffectApplyX
         {
             // // var effectCount = this.effectToApply.count;
             // //
-            // Debug.Log(
-            //     //hit.target.hp.current + " " + this.count + " " + hit.attacker.hp.current + " \n" +
-            //     hit.target.damage.current + " " + hit.target.tempDamage + " " +  this.count +  " "+ hit.attacker.damage.current);
+            Debug.Log(
+                hit.target.damage.current + " current " + hit.target.tempDamage + "temp " +  this.count +  "count  " + hit.attacker.damage.current);
 
             // hit.target.hp.current + this.count <= hit.attacker.hp.current &&
-            if ((hit.target.damage.current + hit.target.tempDamage + this.count) <= hit.attacker.damage.current)
+            if ((hit.target.damage.current + hit.target.tempDamage + this.count) <= hit.attacker.damage.current + hit.attacker.tempDamage)
             {
                 yield return (object)this.Run(this.GetTargets(hit), hit.damage + hit.damageBlocked);
             }

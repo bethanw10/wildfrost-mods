@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
+using HadesFrost.Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,13 +11,13 @@ using WildfrostHopeMod.Utils;
 using Object = UnityEngine.Object;
 
 /* TODO:
-Athena, Dionysus
-Rework apollo, boring boons?
+Rework apollo unyielding, boring boons?
 Card images
 Pets
 Items - keepsakes, ambrosia, weapons etc.
 Charms
-Hitch
+Knockback fix
+Hitch fix + icon
 Jolted anim
 Hades Child trait
 Create tribe + Tribe banner
@@ -34,7 +35,7 @@ namespace HadesFrost
 
         public override string GUID => "bethanw10.hadesfrost";
 
-        public override string[] Depends => Array.Empty<string>();
+        public override string[] Depends => Array.Empty<string>(); // todo add in battle data and config just in case
 
         public override string Title => "Hades Frost";
 
@@ -49,6 +50,8 @@ namespace HadesFrost
         public List<TraitDataBuilder> Traits { get; } = new List<TraitDataBuilder>();
 
         public List<KeywordDataBuilder> Keywords { get; } = new List<KeywordDataBuilder>();
+
+        public List<ClassDataBuilder> Classes { get; } = new List<ClassDataBuilder>();
 
         private bool preLoaded;
 
@@ -66,7 +69,7 @@ namespace HadesFrost
 
         private static IEnumerator CardsPhoto2()
         {
-            var everyGeneration = new string[] { "Apollo", "Artemis", "Ares", "Demeter", "Hera", "Hermes", "Hestia", "Poseidon", "Zeus" };
+            var everyGeneration = new string[] { "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", "Dionysus" , "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus" };
             // string[] everyGeneration = new string[] { "Frinos", "Toula" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
@@ -84,6 +87,11 @@ namespace HadesFrost
             Items.Setup(this);
             StatusTypes.Setup(this);
             Boons.Setup(this);
+
+            Classes.Add(this.TribeCopy("Basic", "Hades") //Snowdweller = "Basic", Shadmancer = "Magic"
+                .WithFlag("Images/DrawFlag.png") //Loads your DrawFlag.png in your Images subfolder of your mod folder
+                .WithSelectSfxEvent(FMODUnity.RuntimeManager.PathToEventReference("event:/sfx/card/draw_multi"))
+            );
 
             SpriteAssetsFix();
 
@@ -109,10 +117,13 @@ namespace HadesFrost
                 CreateModAssets();
             }
 
-            // Events.OnSceneChanged += CardsPhoto;
+            Events.OnSceneChanged += CardsPhoto;
             Events.OnEntityChosen += EntityChosen;
 
             base.Load();
+
+            var gameMode = this.TryGet<GameMode>("GameModeNormal"); //GameModeNormal is the standard game mode. 
+            gameMode.classes = gameMode.classes.Append(this.TryGet<ClassData>("Hades")).ToArray();
         }
 
         private void EntityChosen(Entity entity)
@@ -125,6 +136,10 @@ namespace HadesFrost
             preLoaded = false;
             // TODO
             Events.OnEntityChosen -= EntityChosen;
+
+            var gameMode = this.TryGet<GameMode>("GameModeNormal");
+            gameMode.classes = RemoveNulls(gameMode.classes); //Without this, a non-restarted game would crash on tribe selection
+            UnloadFromClasses();                               //This tutorial doesn't need it, but it doesn't hurt to clean the pools
 
             base.Unload();
         }
@@ -144,9 +159,34 @@ namespace HadesFrost
                     return Traits.Cast<T>().ToList();
                 case nameof(KeywordData):
                     return Keywords.Cast<T>().ToList();
+                case nameof(ClassData):
+                    return Classes.Cast<T>().ToList();
                 default:
                     return null;
             }
+        }
+
+        public void UnloadFromClasses()
+        {
+            var tribes = AddressableLoader.GetGroup<ClassData>("ClassData");
+            foreach (var tribe in tribes)
+            {
+                if (tribe == null || tribe.rewardPools == null) { continue; } //This isn't even a tribe; skip it.
+
+                foreach (var pool in tribe.rewardPools)
+                {
+                    if (pool == null) { continue; }; //This isn't even a reward pool; skip it.
+
+                    pool.list.RemoveAllWhere((item) => item == null || item.ModAdded == this); //Find and remove everything that needs to be removed.
+                }
+            }
+        }
+
+        internal T[] RemoveNulls<T>(T[] data) where T : DataFile
+        {
+            var list = data.ToList();
+            list.RemoveAll(x => x == null || x.ModAdded == this);
+            return list.ToArray();
         }
     }
 }

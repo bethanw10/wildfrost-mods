@@ -172,6 +172,9 @@
     <Compile Include="Charms.cs" />
     <Compile Include="Leaders.cs" />
     <Compile Include="Boons.cs" />
+    <Compile Include="Statuses\StatusEffectIncreaseAttackWhileNotDamaged.cs" />
+    <Compile Include="Statuses\StatusEffectCharge.cs" />
+    <Compile Include="Statuses\StatusEffectNothing.cs" />
     <Compile Include="StatusTypes.cs" />
     <Compile Include="Pets.cs" />
     <Compile Include="Companions.cs" />
@@ -183,7 +186,7 @@
     <Compile Include="Statuses\StatusEffectJolted.cs" />
     <Compile Include="TargetModes\TargetModeStatus.cs" />
     <Compile Include="Extensions\StatusExt.cs" />
-    <Compile Include="Extensions\EffectExt.cs" />
+    <Compile Include="Extensions\StackExt.cs" />
     <Compile Include="HadesFrost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

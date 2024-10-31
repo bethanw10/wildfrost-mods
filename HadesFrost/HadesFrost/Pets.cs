@@ -1,4 +1,5 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
+using HadesFrost.Extensions;
 
 namespace HadesFrost
 {
@@ -69,7 +70,7 @@ namespace HadesFrost
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Toula", "Toula", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Toula.png", "ToulaBG.png")
-                .SetStats(3, 5)
+                .SetStats(3, 6)
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {

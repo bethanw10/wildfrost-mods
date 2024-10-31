@@ -1,5 +1,7 @@
-﻿using Deadpan.Enums.Engine.Components.Modding;
-using System.Linq;
+﻿using System;
+using Deadpan.Enums.Engine.Components.Modding;
+using HadesFrost.Extensions;
+using UnityEngine;
 using static Console;
 
 namespace HadesFrost
@@ -18,22 +20,38 @@ namespace HadesFrost
                     data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
                 })
             );
+
+            mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
+                .Create<StatusEffectIncreaseAttackWhileNotDamaged>("Increase Attack While Undamaged")
+                .WithCanBeBoosted(true)
+                .WithText("While undamaged, <keyword=attack> is increased by <{a}>")
+                .FreeModify(delegate (StatusEffectIncreaseAttackWhileNotDamaged data)
+                {
+                    data.effectToGain = mod.TryGet<StatusEffectData>("Ongoing Increase Attack");
+                })
+            );
         }
 
         public static void GiveBoons(HadesFrost mod, Entity entity)
         {
-            if (entity == null)
+            CardData leader;
+            try
+            {
+                // No leader data when picking pet
+                leader = References.LeaderData;
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            
+            if (entity == null || leader == null)
             {
                 return;
             }
 
-            var hadesCards = References.PlayerData?.inventory?.deck?.Where(d =>
-                d.traits?.Any(t => t.data.name == $"{mod.GUID}.Hades") ?? false);
-
-            if (hadesCards == null)
-            {
-                return;
-            }
+            // var hadesCards = References.PlayerData?.inventory?.deck?.Where(d =>
+            //     d.traits?.Any(t => t.data.name == $"{mod.GUID}.Hades") ?? false);
 
             var cardName = entity.name.Replace($"{mod.GUID}.", "");
             
@@ -49,12 +67,20 @@ namespace HadesFrost
                 case "Apollo":
                     {
                         // Or burst damage
+                        // more damage when undamaged
+                        // upgrade = new CardUpgradeDataBuilder(mod)
+                        //     .Create("AresBoon")
+                        //     .WithText("When deployed, reduce <keyword=counter> by <{a}>")
+                        //     .SubscribeToAfterAllBuildEvent(data =>
+                        //     {
+                        //         data.effects = new[] { mod.SStack("Reduce Counter When Deployed", 2) };
+                        //     });
+
                         upgrade = new CardUpgradeDataBuilder(mod)
-                            .Create("AresBoon")
-                            .SubscribeToAfterAllBuildEvent(data =>
-                            {
-                                data.effects = new[] { mod.SStack("Reduce Counter When Deployed", 2) };
-                            });
+                            .Create("ApolloBoon")
+                            .SetEffects(mod.SStack("Increase Attack While Undamaged", 2));
+
+                        Debug.Log(upgrade);
                         break;
                     }
                 case "Ares":
@@ -66,23 +92,23 @@ namespace HadesFrost
                     }
                 case "Artemis":
                     {
-                        upgrade = mod.TryGet<CardUpgradeData>("CardUpgradeDemonize"); // arrow charm?
+                        upgrade = mod.TryGet<CardUpgradeData>("CardUpgradeDemonize"); // gain arrow charm?
                         break;
                     }
                 case "Athena":
                     {
                         upgrade = new CardUpgradeDataBuilder(mod)
                             .Create("AthenaBoon")
-                            .SetEffects(mod.SStack("When Hit Apply Shell To Self", 2));
+                            .SetEffects(mod.SStack("On Turn Apply Shell To Self", 2));
                         break;
                     }
                 case "Dionysus":
-                {
-                    upgrade = new CardUpgradeDataBuilder(mod)
-                        .Create("AthenaBoon")
-                        .SetEffects(mod.SStack("When Hit Apply Shell To Self", 2));
-                    break;
-                }
+                    {
+                        var nectar = mod.TryGet<CardData>("Nectar");
+                        nectar.traits.Add(mod.TStack("Noomlin"));
+                        References.Player.data.inventory.deck.Add(nectar);
+                        break;
+                    }
                 case "Demeter":
                     {
                         upgrade = mod.TryGet<CardUpgradeData>("CardUpgradeSnowball");
@@ -104,7 +130,7 @@ namespace HadesFrost
                     }
                 case "Hermes":
                     {
-                        new CommandGainGold().Run("50");
+                        new CommandGainGold().Run("75");
                         break;
                     }
                 case "Hestia":
@@ -121,6 +147,7 @@ namespace HadesFrost
                             .ChangeHP(3)
                             .WithSetHP(false);
                         // smackback or more gold from bling cave?
+                        // deal more damage to enemies with debuff
                         break;
                     }
                 case "Zeus":
@@ -140,11 +167,8 @@ namespace HadesFrost
             }
 
             // a tad hacky
-            foreach (var hadesCard in hadesCards)
-            {
-                upgrade.GainEffects(hadesCard);
-            }
+            Debug.Log("applying to leader");
+            upgrade.GainEffects(leader);
         }
-
     }
 }

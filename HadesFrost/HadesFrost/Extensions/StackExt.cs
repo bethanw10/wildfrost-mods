@@ -1,10 +1,19 @@
 ﻿using System;
 using Deadpan.Enums.Engine.Components.Modding;
 
-namespace HadesFrost
+namespace HadesFrost.Extensions
 {
-    public static class EffectExt
+    public static class StackExt
     {
+        public static ClassDataBuilder TribeCopy(this WildfrostMod mod, string oldName, string newName)
+        {
+            var data = mod.TryGet<ClassData>(oldName).InstantiateKeepName();
+            data.name = mod.GUID + "." + newName;
+            var builder = data.Edit<ClassData, ClassDataBuilder>();
+            builder.Mod = mod;
+            return builder;
+        }
+
         public static CardData.StatusEffectStacks SStack(this WildfrostMod mod, string name, int amount = 1) =>
             new CardData.StatusEffectStacks(mod.TryGet<StatusEffectData>(name), amount);
 
@@ -21,7 +30,7 @@ namespace HadesFrost
 
             if (data == null)
                 throw new Exception(
-                    $"TryGet Error: Could not find a [{typeof(T).Name}] with the name [{name}] or [{Extensions.PrefixGUID(name, mod)}]");
+                    $"TryGet Error: Could not find a [{typeof(T).Name}] with the name [{name}] or [{Deadpan.Enums.Engine.Components.Modding.Extensions.PrefixGUID(name, mod)}]");
 
             return data;
         }
@@ -34,7 +43,6 @@ namespace HadesFrost
             builder.Mod = mod;
             return builder;
         }
-
 
         public static CardDataBuilder CardCopy(this WildfrostMod mod, string oldName, string newName)
         {
