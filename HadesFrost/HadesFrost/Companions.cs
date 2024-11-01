@@ -573,14 +573,15 @@ namespace HadesFrost
                 .WithTitle("Knockback");
 
             var damageBehind = new StatusEffectDataBuilder(mod)
-                .Create<StatusEffectApplyXAndHitBehind>("Damage Behind And Push")
+                .Create<StatusEffectKnockback>("Damage Behind And Push")
                 .WithCanBeBoosted(false)
-                .FreeModify(delegate (StatusEffectApplyXAndHitBehind data)
+                .FreeModify(delegate (StatusEffectKnockback data)
                 {
                     data.effectToApply = mod.TryGet<StatusEffectData>("Push");
                     data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
                     data.doPing = false;
                     data.makesOffensive = true;
+                    data.postHit = true;
                 });
 
             mod.Keywords.Add(knockback);

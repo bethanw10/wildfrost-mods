@@ -21,14 +21,14 @@ namespace HadesFrost
                 .CreateUnit("Melinoe", "Melinoë", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Piri.png", "PiriBG.png")
                 .WithCardType("Leader")
-                .SetStats(10, 5, 4)
+                .SetStats(8, 4, 4)
                 .FreeModify(data =>
                 {
                     data.createScripts = new[]  
                     {
                         mod.GiveUpgrade(),
-                        mod.AddRandomHealth(0,0),
-                        mod.AddRandomDamage(0,0),
+                        mod.AddRandomHealth(-1,1),
+                        mod.AddRandomDamage(-1, 1),
                         mod.AddRandomCounter(0, 0)
                     };
                 })

@@ -112,36 +112,6 @@ namespace HadesFrost
                     }));
         }
 
-        private static void PomOfPower(HadesFrost mod)
-        {
-            mod.Cards.Add(
-                new CardDataBuilder(mod)
-                    .CreateItem("Pom of Power", "Pom of Power")
-                    .SetSprites("PomOfPower.png", "AresBG.png")
-                    .WithText("Boost the target's effects by 1")
-                    .WithIdleAnimationProfile("PingAnimationProfile")
-                    .NeedsTarget()
-                    .WithValue(40)
-                    .SubscribeToAfterAllBuildEvent(delegate(CardData data)
-                    {
-                        data.traits = new List<CardData.TraitStacks>
-                        {
-                            mod.TStack("Barrage"), mod.TStack("Consume"),
-                        };
-                        data.startWithEffects = new[]
-                        {
-                            mod.SStack("Instant Ongoing Increase Effects"),
-                        };
-
-                        var crown = mod.TryGet<CardUpgradeData>("Crown");
-                        crown.canBeRemoved = false;
-                        data.upgrades = new List<CardUpgradeData>
-                        {
-                            crown
-                        };
-                    }));
-        }
-
         private static void ThunderSignet(HadesFrost mod)
         {
             mod.Cards.Add(
@@ -218,10 +188,12 @@ namespace HadesFrost
         {
             mod.Cards.Add(
                 new CardDataBuilder(mod)
-                    .CreateItem("Skelly", "Skelly")
-                    .SetSprites("Skelly.png", "AresBG.png")
+                    .CreateUnit("Skelly", "Skelly")
+                    .SetSprites("Skelly.png", "SkellyBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
-                    .WithValue(40)
+                    .WithCardType("Clunker")
+                    .SetStats(null, null, 0)
+                    .WithFlavour("Give me everything you got!!")
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                     {
                         data.startWithEffects = new[]

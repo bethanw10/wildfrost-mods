@@ -17,7 +17,7 @@ namespace HadesFrost
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectBlockBarrage>("Block Barrage")
-                    .WithCanBeBoosted(true)
+                    .WithCanBeBoosted(false)
                     .WithText("Block <keyword=barrage> attacks from hitting allies behind")
                     .WithType("")
             );
@@ -42,7 +42,7 @@ namespace HadesFrost
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectTriggerWhenAllyBehindAttacks>("Trigger When Ally Behind Attacks")
-                    .WithCanBeBoosted(true)
+                    .WithCanBeBoosted(false)
                     .WithText("Trigger when ally behind attacks")
                     .WithType("")
                     .WithIsReaction(true)

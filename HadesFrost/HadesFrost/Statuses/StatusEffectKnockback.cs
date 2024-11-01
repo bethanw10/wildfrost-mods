@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace HadesFrost.Statuses
 {
-    public class StatusEffectApplyXAndHitBehind : StatusEffectApplyX
+    public class StatusEffectKnockback : StatusEffectApplyX
     {
         [SerializeField]
         public bool postHit;
@@ -23,22 +23,28 @@ namespace HadesFrost.Statuses
         public float multiplyDamageFactor = 1f;
         public readonly List<Hit> storedHit = new List<Hit>();
 
+        public Entity entityBehind;
+
         public override void Init()
         {
             if (this.postHit)
-                this.PostHit += new StatusEffectData.EffectHitEventHandler(this.CheckHit);
+            {
+                this.PostHit += this.CheckHit;
+            }
             else
-                this.OnHit += new StatusEffectData.EffectHitEventHandler(this.CheckHit);
+            {
+                this.OnHit += this.CheckHit;
+            }
         }
 
         public override bool RunPreAttackEvent(Hit hit)
         {
-            if ((Object)hit.attacker == (Object)this.target && this.target.alive && this.target.enabled && (bool)(Object)hit.target)
+            if (hit.attacker == target && this.target.alive && this.target.enabled && (bool)hit.target)
             {
-                if (this.addDamageFactor != 0 || (double)this.multiplyDamageFactor != 1.0)
+                if (this.addDamageFactor != 0 || multiplyDamageFactor != 1.0)
                 {
-                    bool flag = true;
-                    foreach (TargetConstraint applyConstraint in this.applyConstraints)
+                    var flag = true;
+                    foreach (var applyConstraint in this.applyConstraints)
                     {
                         if (!applyConstraint.Check(hit.target) && (!(applyConstraint is TargetConstraintHasStatus constraintHasStatus) || !constraintHasStatus.CheckWillApply(hit)))
                         {
@@ -48,15 +54,23 @@ namespace HadesFrost.Statuses
                     }
                     if (flag)
                     {
-                        int amount = this.GetAmount();
+                        var amount = this.GetAmount();
                         if (this.addDamageFactor != 0)
+                        {
                             hit.damage += amount * this.addDamageFactor;
-                        if ((double)this.multiplyDamageFactor != 1.0)
-                            hit.damage = Mathf.RoundToInt((float)hit.damage * this.multiplyDamageFactor);
+                        }
+
+                        if (multiplyDamageFactor != 1.0)
+                        {
+                            hit.damage = Mathf.RoundToInt(hit.damage * this.multiplyDamageFactor);
+                        }
                     }
                 }
-                if (!hit.Offensive && (hit.damage > 0 || (bool)(Object)this.effectToApply && this.effectToApply.offensive))
+                if (!hit.Offensive && (hit.damage > 0 || (bool)effectToApply && this.effectToApply.offensive))
+                {
                     hit.FlagAsOffensive();
+                }
+
                 this.storedHit.Add(hit);
             }
             return false;
@@ -68,25 +82,27 @@ namespace HadesFrost.Statuses
 
         public IEnumerator CheckHit(Hit hit)
         {
-            var entityBehind = GetEntityBehind(hit.target);
+            var behind = GetEntityBehind(hit.target);
 
-            if (entityBehind == null)
+            if (behind == null)
             {
                 yield break;
             }
 
+            this.entityBehind = behind;
+
             var damage = hit.damage == 0 ? 0 : (int)Math.Ceiling(hit.damage/2.0);
-            var hit2 = new Hit(hit.target, entityBehind, damage)
+            var hit2 = new Hit(hit.target, behind, damage)
             {
                 canRetaliate = false
             };
 
-            if ((bool)(Object)this.effectToApply)
-            {
-                yield return (object)this.Run(this.GetTargets(hit), hit.damage + hit.damageBlocked);
-            }
-
             yield return hit2.Process();
+
+            if ((bool)effectToApply)
+            {
+                yield return this.Run(this.GetTargets(hit), hit.damage + hit.damageBlocked);
+            }
 
             this.storedHit.Remove(hit);
         }

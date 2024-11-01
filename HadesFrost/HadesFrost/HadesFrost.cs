@@ -72,7 +72,7 @@ namespace HadesFrost
 
         private static IEnumerator CardsPhoto2()
         {
-            var everyGeneration = new string[] { "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", "Dionysus" , "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus" };
+            var everyGeneration = new[] { "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", "Dionysus" , "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus" };
             // string[] everyGeneration = new string[] { "Frinos", "Toula" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
@@ -92,53 +92,51 @@ namespace HadesFrost
             Boons.Setup(this);
 
             Classes.Add(this.TribeCopy("Basic", "Hades") //Snowdweller = "Basic", Shadmancer = "Magic"
-                .WithFlag("Images/DrawFlag.png") //Loads your DrawFlag.png in your Images subfolder of your mod folder
+                .WithFlag("Images/DrawFlag.png")
                 .WithSelectSfxEvent(FMODUnity.RuntimeManager.PathToEventReference("event:/sfx/card/draw_multi"))
-                .SubscribeToAfterAllBuildEvent( (data) =>   
+                .SubscribeToAfterAllBuildEvent(data => {
+                    var gameObject = data.characterPrefab.gameObject.InstantiateKeepName();
+                    Object.DontDestroyOnLoad(gameObject);                             
+                    gameObject.name = "Player (Hades)";                                   
+                    data.characterPrefab = gameObject.GetComponent<Character>();
+                    data.leaders = this.DataList<CardData>("Melinoe");
+
+                    var inventory = ScriptableObject.CreateInstance<Inventory>();
+                    inventory.deck.list = this.DataList<CardData>(
+                        "SnowGlobe", "Sword", "Sword", "Coronacht", "Pom Slice", "Sword", "Skelly", "Nectar").ToList();
+                    data.startingInventory = inventory;
+
+                    DataFile[] units = this.DataList<CardData>(
+                        "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", "Dionysus", 
+                        "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus",
+                        "Flash" /*vesta*/, "Zoog" /*shen*/, "Zula", "Wort", "Shelly", "Chompom", "Yuki", "Wallop", "Kernel");
+
+                    var unitPool = CreateRewardPool("DrawUnitPool", "Units", units);
+
+                    var itemPool = CreateRewardPool("DrawItemPool", "Items", this.DataList<CardData>(
+                         "FlashWhip", "HongosHammer", "NutshellCake", "ScrapPile", "ShellShield", "Shellbo",
+                         "IridescentFan", "ThunderSignet", "Ambrosia", "SporePack"
+                    ));
+
+                    var charmPool = CreateRewardPool("DrawCharmPool", "Charms", this.DataList<CardUpgradeData>(
+                        "CardUpgradeOverload", "CardUpgradeConsumeOverload", "CardUpgradeShellBecomesSpice", "CardUpgradeShroomReduceHealth", 
+                        "CardUpgradeShellOnKill", "CardUpgradeShroom", "CardUpgradeAcorn", 
+                        "CardUpgradeBlackShawl", "CardUpgradeBoneHourglass"));
+
+                    data.rewardPools = new[]
                     {
-                        var gameObject = data.characterPrefab.gameObject.InstantiateKeepName();
-                        Object.DontDestroyOnLoad(gameObject);                             
-                        gameObject.name = "Player (Hades)";                                   
-                        data.characterPrefab = gameObject.GetComponent<Character>();
-                        data.leaders = this.DataList<CardData>("Melinoe");
-
-                        var inventory = ScriptableObject.CreateInstance<Inventory>();
-                        inventory.deck.list = this.DataList<CardData>(
-                            "SnowGlobe", "Sword", "Sword", "Coronacht", "Pom Slice", "Sword", "Skelly", "Nectar").ToList(); //Some odds and ends
-                        inventory.upgrades.Add(this.TryGet<CardUpgradeData>("CardUpgradeCritical"));
-                        data.startingInventory = inventory;
-
-                        DataFile[] units = this.DataList<CardData>(
-                            "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", "Dionysus", 
-                            "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus",
-                            "Flash" /*vesta*/, "Zoog" /*shen*/, "Zula", "Wort", "Shelly", "Chompom", "Yuki", "Wallop", "Kernel");
-
-                        var unitPool = CreateRewardPool("DrawUnitPool", "Units", units);
-
-                        var itemPool = CreateRewardPool("DrawItemPool", "Items", this.DataList<CardData>(
-                             "FlashWhip", "HongosHammer", "NutshellCake", "ScrapPile", "ShellShield", "Shellbo",
-                             "IridescentFan", "ThunderSignet", "Ambrosia", "SporePack"
-                        ));
-
-                        var charmPool = CreateRewardPool("DrawCharmPool", "Charms", this.DataList<CardUpgradeData>(
-                            "CardUpgradeOverload", "CardUpgradeConsumeOverload", "CardUpgradeShellBecomesSpice", "CardUpgradeShroomReduceHealth", 
-                            "CardUpgradeShellOnKill", "CardUpgradeShroom", "CardUpgradeAcorn", 
-                            "CardUpgradeBlackShawl", "CardUpgradeBoneHourglass"));
-
-                        data.rewardPools = new RewardPool[]
-                        {
-                            unitPool,
-                            itemPool,
-                            charmPool,
-                            Extensions.GetRewardPool("GeneralUnitPool"),
-                            Extensions.GetRewardPool("GeneralItemPool"),
-                            Extensions.GetRewardPool("GeneralCharmPool"),
-                            Extensions.GetRewardPool("GeneralModifierPool"),
-                            Extensions.GetRewardPool("SnowUnitPool"),        
-                            Extensions.GetRewardPool("SnowItemPool"),
-                            Extensions.GetRewardPool("SnowCharmPool"),       
-                        };
-                    })
+                        unitPool,
+                        itemPool,
+                        charmPool,
+                        Extensions.GetRewardPool("GeneralUnitPool"),
+                        Extensions.GetRewardPool("GeneralItemPool"),
+                        Extensions.GetRewardPool("GeneralCharmPool"),
+                        Extensions.GetRewardPool("GeneralModifierPool"),
+                        Extensions.GetRewardPool("SnowUnitPool"),        
+                        Extensions.GetRewardPool("SnowItemPool"),
+                        Extensions.GetRewardPool("SnowCharmPool"),       
+                    };
+                })
             );
 
             SpriteAssetsFix();

@@ -178,7 +178,7 @@
     <Compile Include="StatusTypes.cs" />
     <Compile Include="Pets.cs" />
     <Compile Include="Companions.cs" />
-    <Compile Include="Statuses\StatusEffectApplyXAndHitBehind.cs" />
+    <Compile Include="Statuses\StatusEffectKnockback.cs" />
     <Compile Include="Statuses\StatusEffectApplyXIfStatsAreLower.cs" />
     <Compile Include="Statuses\StatusEffectTriggerWhenAllyBehindAttacks.cs" />
     <Compile Include="Statuses\StatusEffectBlockBarrage.cs" />
