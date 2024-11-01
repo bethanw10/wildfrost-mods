@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Extensions;
+using HadesFrost.Statuses;
+using HadesFrost.TargetModes;
+using HadesFrost.Utils;
 using UnityEngine;
 
 namespace HadesFrost
@@ -30,7 +32,7 @@ namespace HadesFrost
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectApplyXOnKillWithContext>("When Enemy Is Killed Gain Fury Equal To Attack")
-                    .WithCanBeBoosted(true)
+                    .WithCanBeBoosted(false)
                     .WithText("On kill, gain <keyword=fury> equal to target's <keyword=attack>")
                     .WithType("")
                     .FreeModify(delegate (StatusEffectApplyXOnKillWithContext data)
@@ -48,7 +50,7 @@ namespace HadesFrost
                 .CreateUnit("Ares", "Ares", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Ares.png", "AresBG.png")
                 .SetStats(2, 2, 3)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -97,7 +99,7 @@ namespace HadesFrost
                 .CreateUnit("Artemis", "Artemis", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Artemis.png", "ArtemisBG.png")
                 .SetStats(4, 4, 4)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -146,7 +148,7 @@ namespace HadesFrost
                 .CreateUnit("Athena", "Athena")
                 .SetSprites("Athena.png", "AthenaBG.png")
                 .SetStats(5, 2, 3)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -193,7 +195,7 @@ namespace HadesFrost
                 .CreateUnit("Aphrodite", "Aphrodite", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Aphrodite.png", "AphroditeBG.png")
                 .SetStats(3, 0, 5)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -259,7 +261,7 @@ namespace HadesFrost
                 .CreateUnit("Apollo", "Apollo", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Apollo.png", "ApolloBG.png")
                 .SetStats(4, 4, 5)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -311,7 +313,6 @@ namespace HadesFrost
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectChangeTargetMode>("Hits All Snowed Enemies")
-                    .WithCanBeBoosted(true)
                     .WithText("Hits all <keyword=snow>'d enemies")
                     .WithType("")
                     .FreeModify(delegate (StatusEffectChangeTargetMode data)
@@ -329,7 +330,7 @@ namespace HadesFrost
                 .CreateUnit("Demeter", "Demeter", idleAnim: "PingAnimationProfile")
                 .SetSprites("Demeter.png", "DemeterBG.png")
                 .SetStats(8, 2, 3)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -354,7 +355,6 @@ namespace HadesFrost
             mod.StatusEffects.Add(
                 mod.StatusCopy("When Anyone Takes Shroom Damage Apply Attack To Self", "When Shroom Damage Taken Heal")
                     .WithText("When an enemy takes <keyword=shroom> damage, restore <keyword=health> of allies in the row by <{a}>")
-                    .WithIsReaction(false)
                     .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
                     {
                         var castData = (StatusEffectApplyXWhenAnyoneTakesDamage)data;
@@ -370,7 +370,6 @@ namespace HadesFrost
                 .CreateUnit("Dionysus", "Dionysus", idleAnim: "PingAnimationProfile")
                 .SetSprites("Dionysus.png", "DionysusBG.png")
                 .SetStats(8, null, 4)
-                .AddPool("GeneralUnitPool")
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -395,13 +394,12 @@ namespace HadesFrost
 
         private static void Hera(HadesFrost mod)
         {
-            var boonStatus = SetupBoonStatus(mod, "Hera", "Boon:\nSworn Strike", "Leader gains 'Apply <1><keyword=hitch>");
+            var boonStatus = SetupBoonStatus(mod, "Hera", "Boon:\nSworn Strike", "Leader gains 'Apply <1><keyword=hitch>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hera", "Hera")
                 .SetSprites("Hera.png", "HeraBG.png")
                 .SetStats(5, 1, 3)
-                .AddPool("GeneralUnitPool")
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -450,7 +448,6 @@ namespace HadesFrost
                 .CreateUnit("Hermes", "Hermes")
                 .SetSprites("Hermes.png", "HermesBG.png")
                 .SetStats(3, 0, 2)
-                .AddPool("GeneralUnitPool")
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -496,7 +493,7 @@ namespace HadesFrost
                 .CreateUnit("Hestia", "Hestia", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Hestia.png", "HestiaBG.png")
                 .SetStats(5)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -524,7 +521,7 @@ namespace HadesFrost
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectApplyXOnTurn>("On Turn Add Damage to Items In Hand")
                     .WithCanBeBoosted(true)
-                    .WithText("Apply +<{a}><keyword=attack> to items in hand")
+                    .WithText("Apply <+{a}><keyword=attack> to items in hand")
                     .WithType("")
                     .FreeModify(delegate (StatusEffectApplyXOnTurn data)
                     {
@@ -545,7 +542,7 @@ namespace HadesFrost
                 .CreateUnit("Hephaestus", "Hephaestus", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Hephaestus.png", "HephaestusBG.png")
                 .SetStats(7, 3, 4)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -607,13 +604,13 @@ namespace HadesFrost
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Poseidon", "Boon:\nWater Fitness", "Leader gains <+3> <keyword=health>");
+            var boonStatus = SetupBoonStatus(mod, "Poseidon", "Boon:\nWater Fitness", "Leader gains <+3><keyword=health>");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Poseidon", "Poseidon")
                 .SetSprites("Poseidon.png", "PoseidonBG.png")
                 .SetStats(5, 2, 4)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -648,7 +645,7 @@ namespace HadesFrost
                 .CreateUnit("Zeus", "Zeus")
                 .SetSprites("Zeus.png", "ZeusBG.png")
                 .SetStats(6, null, 4)
-                .AddPool("GeneralUnitPool")
+                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]

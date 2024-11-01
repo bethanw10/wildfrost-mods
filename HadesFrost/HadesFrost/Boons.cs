@@ -1,6 +1,7 @@
 ﻿using System;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Extensions;
+using HadesFrost.Statuses;
+using HadesFrost.Utils;
 using UnityEngine;
 using static Console;
 

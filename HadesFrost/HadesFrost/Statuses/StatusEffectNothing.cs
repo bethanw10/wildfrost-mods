@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-
-namespace HadesFrost
+﻿namespace HadesFrost.Statuses
 {
     public class StatusEffectNothing : StatusEffectData
     {

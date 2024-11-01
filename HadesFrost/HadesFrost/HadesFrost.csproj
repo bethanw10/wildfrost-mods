@@ -185,8 +185,8 @@
     <Compile Include="Statuses\StatusEffectApplyXOnKillWithContext.cs" />
     <Compile Include="Statuses\StatusEffectJolted.cs" />
     <Compile Include="TargetModes\TargetModeStatus.cs" />
-    <Compile Include="Extensions\StatusExt.cs" />
-    <Compile Include="Extensions\StackExt.cs" />
+    <Compile Include="Utils\StatusExt.cs" />
+    <Compile Include="Utils\HelperExt.cs" />
     <Compile Include="HadesFrost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

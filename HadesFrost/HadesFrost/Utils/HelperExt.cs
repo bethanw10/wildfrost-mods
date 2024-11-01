@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
 
-namespace HadesFrost.Extensions
+namespace HadesFrost.Utils
 {
-    public static class StackExt
+    public static class HelperExt
     {
+
+        public static T[] DataList<T>(this WildfrostMod mod, params string[] names) where T : DataFile => 
+            names.Select(mod.TryGet<T>).ToArray();
+
         public static ClassDataBuilder TribeCopy(this WildfrostMod mod, string oldName, string newName)
         {
             var data = mod.TryGet<ClassData>(oldName).InstantiateKeepName();

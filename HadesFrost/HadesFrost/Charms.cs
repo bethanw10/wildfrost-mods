@@ -1,5 +1,5 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Extensions;
+using HadesFrost.Utils;
 using UnityEngine;
 
 namespace HadesFrost

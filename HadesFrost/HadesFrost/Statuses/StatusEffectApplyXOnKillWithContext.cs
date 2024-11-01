@@ -7,25 +7,28 @@
 using System.Collections;
 using UnityEngine;
 
-public class StatusEffectApplyXOnKillWithContext : StatusEffectApplyX
+namespace HadesFrost.Statuses
 {
-    public override void Init() => this.OnEntityDestroyed += this.Check;
-
-    public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
+    public class StatusEffectApplyXOnKillWithContext : StatusEffectApplyX
     {
-        return entity.lastHit != null && entity.lastHit.attacker == this.target;
-    }
+        public override void Init() => this.OnEntityDestroyed += this.Check;
 
-    public IEnumerator Check(Entity entity, DeathType deathType)
-    {
-        StatusEffectApplyXOnKillWithContext xwhenUnitIsKilled = this;
-        if ((bool)xwhenUnitIsKilled.contextEqualAmount)
+        public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
         {
-            int amount = xwhenUnitIsKilled.contextEqualAmount.Get(entity);
-            Debug.Log("[hades] amoutn" + amount);
-            yield return xwhenUnitIsKilled.Run(xwhenUnitIsKilled.GetTargets(entity.lastHit), amount);
+            return entity.lastHit != null && entity.lastHit.attacker == this.target;
         }
-        else
-            yield return xwhenUnitIsKilled.Run(xwhenUnitIsKilled.GetTargets(entity.lastHit));
+
+        public IEnumerator Check(Entity entity, DeathType deathType)
+        {
+            StatusEffectApplyXOnKillWithContext xwhenUnitIsKilled = this;
+            if ((bool)xwhenUnitIsKilled.contextEqualAmount)
+            {
+                int amount = xwhenUnitIsKilled.contextEqualAmount.Get(entity);
+                Debug.Log("[hades] amoutn" + amount);
+                yield return xwhenUnitIsKilled.Run(xwhenUnitIsKilled.GetTargets(entity.lastHit), amount);
+            }
+            else
+                yield return xwhenUnitIsKilled.Run(xwhenUnitIsKilled.GetTargets(entity.lastHit));
+        }
     }
 }

@@ -8,84 +8,87 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(menuName = "Status Effects/Specific/Apply X On Turn", fileName = "Apply X On Turn")]
-public class StatusEffectCharge : StatusEffectApplyX
+namespace HadesFrost.Statuses
 {
-    public bool DrawnTurn;
-
-    public override void Init()
+    [CreateAssetMenu(menuName = "Status Effects/Specific/Apply X On Turn", fileName = "Apply X On Turn")]
+    public class StatusEffectCharge : StatusEffectApplyX
     {
-        //this.OnEnable += new StatusEffectData.EffectEntityEventHandler(this.PreventEffectOnDrawTurn);
-        //Events.OnCardDraw += new UnityAction<int>(PreventEffectOnDrawTurn);
-        this.OnTurnStart += this.Activate;
-        this.OnCardPlayed += this.Deactivate;
-        Events.OnActionQueued += new UnityAction<PlayAction>(this.ActionQueued);
-    }
+        public bool DrawnTurn;
 
-    public void ActionQueued(PlayAction playAction)
-    {
-        if ((playAction is ActionReveal actionReveal) && (bool)(Object)this.target.owner && (Object)actionReveal.entity == (Object)this.target)
+        public override void Init()
         {
-            ActionQueue.Add(new ActionSequence(this.PreventEffectOnDrawTurn(actionReveal.entity)));
+            //this.OnEnable += new StatusEffectData.EffectEntityEventHandler(this.PreventEffectOnDrawTurn);
+            //Events.OnCardDraw += new UnityAction<int>(PreventEffectOnDrawTurn);
+            this.OnTurnStart += this.Activate;
+            this.OnCardPlayed += this.Deactivate;
+            Events.OnActionQueued += new UnityAction<PlayAction>(this.ActionQueued);
         }
 
-        if (playAction is ActionMove actionMove && (Object)actionMove.entity == (Object)this.target && (bool)(Object)this.target.owner && actionMove.toContainers.Contains<CardContainer>(this.target.owner.discardContainer))
+        public void ActionQueued(PlayAction playAction)
         {
-            ActionQueue.Add(new ActionSequence(this.Deactivate(null, null)));
-        }
-    }
-
-    public override bool RunTurnStartEvent(Entity entity) => 
-       (Object)entity == (Object)this.target;
-
-
-    public IEnumerator Activate(Entity entity)
-    {
-        if (this.DrawnTurn)
-        {
-            // Debug.Log("drawn true, setting to false");
-        
-            this.DrawnTurn = false;
-        }
-        else
-        {
-            // Debug.Log("ACTIVATE");
-
-            yield return this.Run(this.GetTargets());
-        }
-    }
-
-    public IEnumerator Deactivate(Entity entity, Entity[] targets)
-    {
-        // Debug.Log("deactivating?");
-        var attackWhileDamaged = this;
-        for (var index = attackWhileDamaged.target.statusEffects.Count - 1; index >= 0; --index)
-        {
-            var statusEffect = attackWhileDamaged.target.statusEffects[index];
-            Debug.Log(statusEffect.name);
-
-            if ((bool)(Object)statusEffect && statusEffect.name == attackWhileDamaged.effectToApply.name)
+            if ((playAction is ActionReveal actionReveal) && (bool)(Object)this.target.owner && (Object)actionReveal.entity == (Object)this.target)
             {
-                // Debug.Log("remove?");
+                ActionQueue.Add(new ActionSequence(this.PreventEffectOnDrawTurn(actionReveal.entity)));
+            }
 
-                yield return statusEffect.RemoveStacks(statusEffect.count, true);
-                break;
+            if (playAction is ActionMove actionMove && (Object)actionMove.entity == (Object)this.target && (bool)(Object)this.target.owner && actionMove.toContainers.Contains<CardContainer>(this.target.owner.discardContainer))
+            {
+                ActionQueue.Add(new ActionSequence(this.Deactivate(null, null)));
             }
         }
-    }
 
-    public override bool RunCardPlayedEvent(Entity entity, Entity[] targets) => (Object)entity == (Object)this.target;
+        public override bool RunTurnStartEvent(Entity entity) => 
+            (Object)entity == (Object)this.target;
 
-    public override bool RunEnableEvent(Entity entity) => (Object)entity == (Object)this.target && this.target.InHand();
 
-    public IEnumerator PreventEffectOnDrawTurn(Entity entity)
-    {
-        // Debug.Log("[hades] enabled");
-        // Debug.Log("turns " + References.Battle?.turnCount);
-
-        if (References.Battle?.turnCount != 0) // allow for initial draw
+        public IEnumerator Activate(Entity entity)
         {
-            yield return this.DrawnTurn = true;
+            if (this.DrawnTurn)
+            {
+                // Debug.Log("drawn true, setting to false");
+        
+                this.DrawnTurn = false;
+            }
+            else
+            {
+                // Debug.Log("ACTIVATE");
+
+                yield return this.Run(this.GetTargets());
+            }
+        }
+
+        public IEnumerator Deactivate(Entity entity, Entity[] targets)
+        {
+            // Debug.Log("deactivating?");
+            var attackWhileDamaged = this;
+            for (var index = attackWhileDamaged.target.statusEffects.Count - 1; index >= 0; --index)
+            {
+                var statusEffect = attackWhileDamaged.target.statusEffects[index];
+                Debug.Log(statusEffect.name);
+
+                if ((bool)(Object)statusEffect && statusEffect.name == attackWhileDamaged.effectToApply.name)
+                {
+                    // Debug.Log("remove?");
+
+                    yield return statusEffect.RemoveStacks(statusEffect.count, true);
+                    break;
+                }
+            }
+        }
+
+        public override bool RunCardPlayedEvent(Entity entity, Entity[] targets) => (Object)entity == (Object)this.target;
+
+        public override bool RunEnableEvent(Entity entity) => (Object)entity == (Object)this.target && this.target.InHand();
+
+        public IEnumerator PreventEffectOnDrawTurn(Entity entity)
+        {
+            // Debug.Log("[hades] enabled");
+            // Debug.Log("turns " + References.Battle?.turnCount);
+
+            if (References.Battle?.turnCount != 0) // allow for initial draw
+            {
+                yield return this.DrawnTurn = true;
+            }
         }
     }
 }

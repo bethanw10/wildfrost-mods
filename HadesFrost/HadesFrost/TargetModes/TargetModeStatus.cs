@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace HadesFrost
+namespace HadesFrost.TargetModes
 {
     internal class TargetModeStatus : TargetMode
     {

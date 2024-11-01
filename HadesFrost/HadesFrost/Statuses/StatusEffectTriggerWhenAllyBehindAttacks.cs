@@ -8,69 +8,72 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class StatusEffectTriggerWhenAllyBehindAttacks : StatusEffectReaction
+namespace HadesFrost.Statuses
 {
-    [SerializeField]
-    public bool againstTarget;
-    public readonly HashSet<Entity> prime = new HashSet<Entity>();
-
-    public override bool RunHitEvent(Hit hit)
+    public class StatusEffectTriggerWhenAllyBehindAttacks : StatusEffectReaction
     {
-        if (this.target.enabled && Battle.IsOnBoard(this.target) && hit.countsAsHit && hit.Offensive && (bool)(Object)hit.target && this.CheckEntity(hit.attacker))
-            this.prime.Add(hit.attacker);
-        return false;
-    }
+        [SerializeField]
+        public bool againstTarget;
+        public readonly HashSet<Entity> prime = new HashSet<Entity>();
 
-    public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
-    {
-        if (this.prime.Count > 0 && this.prime.Contains(entity) && targets != null && targets.Length > 0)
+        public override bool RunHitEvent(Hit hit)
         {
-            this.prime.Remove(entity);
-            if (Battle.IsOnBoard(this.target) && this.CanTrigger())
-                this.Run(entity, targets);
+            if (this.target.enabled && Battle.IsOnBoard(this.target) && hit.countsAsHit && hit.Offensive && (bool)(Object)hit.target && this.CheckEntity(hit.attacker))
+                this.prime.Add(hit.attacker);
+            return false;
         }
-        return false;
-    }
 
-    public void Run(Entity attacker, Entity[] targets)
-    {
-        if (this.againstTarget)
+        public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
         {
-            foreach (Entity target in targets)
-                ActionQueue.Stack(new ActionTriggerAgainst(this.target, attacker, target, null), true);
-        }
-        else
-            ActionQueue.Stack(new ActionTrigger(this.target, attacker), true);
-    }
-
-    public bool CheckEntity(Entity entity) => (bool)(Object)entity && entity.owner.team == this.target.owner.team && entity != this.target && this.CheckBehind(entity) && Battle.IsOnBoard(entity) && this.CheckDuplicate(entity) && this.CheckDuplicate(entity.triggeredBy);
-
-    public bool CheckBehind(Entity entity)
-    {
-        foreach (var cardContainer in this.target.actualContainers.ToArray())
-        {
-            if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
+            if (this.prime.Count > 0 && this.prime.Contains(entity) && targets != null && targets.Length > 0)
             {
-                continue;
+                this.prime.Remove(entity);
+                if (Battle.IsOnBoard(this.target) && this.CanTrigger())
+                    this.Run(entity, targets);
             }
+            return false;
+        }
 
-            for (var index = group.slots.IndexOf(cardSlot) + 1; index < group.slots.Count; ++index)
+        public void Run(Entity attacker, Entity[] targets)
+        {
+            if (this.againstTarget)
             {
-                var rowEntity = group.slots[index].GetTop();
+                foreach (Entity target in targets)
+                    ActionQueue.Stack(new ActionTriggerAgainst(this.target, attacker, target, null), true);
+            }
+            else
+                ActionQueue.Stack(new ActionTrigger(this.target, attacker), true);
+        }
 
-                if ((bool)rowEntity)
+        public bool CheckEntity(Entity entity) => (bool)(Object)entity && entity.owner.team == this.target.owner.team && entity != this.target && this.CheckBehind(entity) && Battle.IsOnBoard(entity) && this.CheckDuplicate(entity) && this.CheckDuplicate(entity.triggeredBy);
+
+        public bool CheckBehind(Entity entity)
+        {
+            foreach (var cardContainer in this.target.actualContainers.ToArray())
+            {
+                if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
                 {
-                    return entity == rowEntity;
+                    continue;
+                }
+
+                for (var index = group.slots.IndexOf(cardSlot) + 1; index < group.slots.Count; ++index)
+                {
+                    var rowEntity = group.slots[index].GetTop();
+
+                    if ((bool)rowEntity)
+                    {
+                        return entity == rowEntity;
+                    }
                 }
             }
+
+            return false;
         }
 
-        return false;
-    }
-
-    public bool CheckDuplicate(Entity entity)
-    {
-        return !entity.IsAliveAndExists() || 
-               entity.statusEffects.All(statusEffect => statusEffect.name != this.name);
+        public bool CheckDuplicate(Entity entity)
+        {
+            return !entity.IsAliveAndExists() || 
+                   entity.statusEffects.All(statusEffect => statusEffect.name != this.name);
+        }
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Localization.Tables;
 using UnityEngine.UI;
 
-namespace HadesFrost
+namespace HadesFrost.Utils
 {
     public static class StatusExt
     {

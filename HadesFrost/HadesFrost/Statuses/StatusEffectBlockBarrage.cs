@@ -8,55 +8,58 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class StatusEffectBlockBarrage : StatusEffectData
+namespace HadesFrost.Statuses
 {
-    public override void Init() => this.OnHit += new StatusEffectData.EffectHitEventHandler(this.Check);
-
-    public override bool RunHitEvent(Hit hit)
+    public class StatusEffectBlockBarrage : StatusEffectData
     {
-        var allyIsBehind = IsEntityBehind(hit?.target);
+        public override void Init() => this.OnHit += new StatusEffectData.EffectHitEventHandler(this.Check);
 
-        return allyIsBehind && 
-               hit.target?.owner == this.target?.owner &&
-               (hit.attacker?.traits?.Any(t => t.data.name == "Barrage") ?? false) && 
-               hit.Offensive && 
-               hit.canBeNullified;
-    }
-
-    private bool IsEntityBehind(Entity hitEntity)
-    {
-        foreach (var cardContainer in this.target.actualContainers.ToArray())
+        public override bool RunHitEvent(Hit hit)
         {
-            if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
-            {
-                continue;
-            }
+            var allyIsBehind = IsEntityBehind(hit?.target);
 
-            for (var index = group.slots.IndexOf(cardSlot) + 1; index < group.slots.Count; ++index)
+            return allyIsBehind && 
+                   hit.target?.owner == this.target?.owner &&
+                   (hit.attacker?.traits?.Any(t => t.data.name == "Barrage") ?? false) && 
+                   hit.Offensive && 
+                   hit.canBeNullified;
+        }
+
+        private bool IsEntityBehind(Entity hitEntity)
+        {
+            foreach (var cardContainer in this.target.actualContainers.ToArray())
             {
-                var entity = group.slots[index].GetTop();
-                if (!(bool)entity)
+                if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
                 {
                     continue;
                 }
 
-                if ((bool)entity && entity == hitEntity)
+                for (var index = group.slots.IndexOf(cardSlot) + 1; index < group.slots.Count; ++index)
                 {
-                    return true;
+                    var entity = group.slots[index].GetTop();
+                    if (!(bool)entity)
+                    {
+                        continue;
+                    }
+
+                    if ((bool)entity && entity == hitEntity)
+                    {
+                        return true;
+                    }
                 }
             }
+
+            return false;
         }
 
-        return false;
-    }
-
-    public IEnumerator Check(Hit hit)
-    {
-        hit.nullified = true;
-        hit.statusEffects = new List<CardData.StatusEffectStacks>();
-        hit.damageBlocked = hit.damage;
-        hit.damage = 0;
-        hit.countsAsHit = false;
-        yield break;
+        public IEnumerator Check(Hit hit)
+        {
+            hit.nullified = true;
+            hit.statusEffects = new List<CardData.StatusEffectStacks>();
+            hit.damageBlocked = hit.damage;
+            hit.damage = 0;
+            hit.countsAsHit = false;
+            yield break;
+        }
     }
 }

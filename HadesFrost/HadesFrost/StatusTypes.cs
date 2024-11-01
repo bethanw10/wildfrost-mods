@@ -1,5 +1,6 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Extensions;
+using HadesFrost.Statuses;
+using HadesFrost.Utils;
 using UnityEngine;
 
 namespace HadesFrost
@@ -78,7 +79,7 @@ namespace HadesFrost
                         var castData = (StatusEffectApplyXWhenHit)data;
                         castData.removeOnDiscard = true;
                         castData.applyFormatKey = mod.TryGet<StatusEffectData>("Shroom").applyFormatKey;
-                        castData.eventPriority = -2;
+                        castData.eventPriority = 2;
                         castData.targetConstraints = new TargetConstraint[]
                         {
                             ScriptableObject.CreateInstance<TargetConstraintIsUnit>()

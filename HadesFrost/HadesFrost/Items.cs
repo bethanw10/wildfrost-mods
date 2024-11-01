@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Extensions;
+using HadesFrost.Statuses;
+using HadesFrost.Utils;
 
 namespace HadesFrost
 {
@@ -8,7 +9,7 @@ namespace HadesFrost
     {
         public static void Setup(HadesFrost mod)
         {
-            PomOfPower(mod);
+            // PomOfPower(mod);
 
             PomSlice(mod);
 
@@ -19,6 +20,8 @@ namespace HadesFrost
             IridescentFan(mod);
 
             Coronacht(mod);
+
+            Skelly(mod);
         }
 
         private static void NectarAndAmbrosia(HadesFrost mod)
@@ -94,6 +97,7 @@ namespace HadesFrost
                     .SetSprites("PomOfPower.png", "AresBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .AddPool("GeneralItemPool")
+                    .NeedsTarget(false)
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(delegate(CardData data)
                     {
@@ -145,7 +149,6 @@ namespace HadesFrost
                     .CreateItem("ThunderSignet", "Thunder Signet")
                     .SetSprites("ThunderSignet.png", "AresBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
-                    .AddPool("GeneralItemPool")
                     .SetDamage(0)
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
@@ -161,10 +164,9 @@ namespace HadesFrost
         {
             mod.Cards.Add(
                 new CardDataBuilder(mod)
-                    .CreateItem("Iridescent Fan", "Iridescent Fan")
+                    .CreateItem("IridescentFan", "Iridescent Fan")
                     .SetSprites("IridescentFan.png", "AresBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
-                    .AddPool("GeneralItemPool")
                     .SetDamage(0)
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
@@ -187,7 +189,7 @@ namespace HadesFrost
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectCharge>("Gain Attack While In Hand")
                     .WithCanBeBoosted(true)
-                    .WithText("<+1><keyword=attack> each turn spent in hand, resets on discard")
+                    .WithText("<+1><keyword=attack> each turn spent in hand, resets <keyword=attack> discard")
                     .WithType("")
                     .FreeModify(delegate (StatusEffectCharge data)
                     {
@@ -201,7 +203,6 @@ namespace HadesFrost
                     .CreateItem("Coronacht", "Coronacht")
                     .SetSprites("Coronacht.png", "AresBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
-                    .AddPool("GeneralItemPool")
                     .SetDamage(1)
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
@@ -209,6 +210,24 @@ namespace HadesFrost
                         data.startWithEffects = new[]
                         {
                             mod.SStack("Gain Attack While In Hand")
+                        };
+                    }));
+        }
+
+        private static void Skelly(HadesFrost mod)
+        {
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("Skelly", "Skelly")
+                    .SetSprites("Skelly.png", "AresBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .WithValue(40)
+                    .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+                    {
+                        data.startWithEffects = new[]
+                        {
+                            mod.SStack("Teeth"),
+                            mod.SStack("Scrap", 3),
                         };
                     }));
         }

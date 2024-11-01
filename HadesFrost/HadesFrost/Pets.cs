@@ -1,5 +1,6 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Extensions;
+using HadesFrost.Statuses;
+using HadesFrost.Utils;
 
 namespace HadesFrost
 {
@@ -70,14 +71,14 @@ namespace HadesFrost
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Toula", "Toula", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Toula.png", "ToulaBG.png")
-                .SetStats(3, 6)
+                .SetStats(3, 2)
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.startWithEffects = new[]
                     {
                         mod.SStack("Trigger When Ally Behind Attacks"),
-                        mod.SStack("Snow Self", 2),
+                        //mod.SStack("Snow Self", 2),
                     };
                 }));
         }
