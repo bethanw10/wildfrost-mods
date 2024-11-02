@@ -509,8 +509,8 @@ namespace HadesFrost
                     };
                     data.startWithEffects = new[]
                     {
-                        mod.SStack(boonStatus, 2),
-                        mod.SStack("When Enemy Is Hit By Item Apply Overburn To Them", 2)
+                        mod.SStack(boonStatus),
+                        mod.SStack("When Enemy Is Hit By Item Apply Overburn To Them")
                     };
                 }));
         }

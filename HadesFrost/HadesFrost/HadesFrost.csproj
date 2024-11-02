@@ -151,6 +151,7 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\Unity.InternalAPIEngineBridge.013.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Localization, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Unity.Services.Analytics">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\Unity.Services.Analytics.dll</HintPath>
     </Reference>
@@ -168,6 +169,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CampaignNodeTypeSelene.cs" />
+    <Compile Include="Tribe.cs" />
     <Compile Include="Items.cs" />
     <Compile Include="Charms.cs" />
     <Compile Include="Leaders.cs" />

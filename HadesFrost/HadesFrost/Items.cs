@@ -9,22 +9,26 @@ namespace HadesFrost
     {
         public static void Setup(HadesFrost mod)
         {
-            // PomOfPower(mod);
-
             PomSlice(mod);
 
-            NectarAndAmbrosia(mod);
+            Nectar(mod);
+
+            Ambrosia(mod);
 
             ThunderSignet(mod);
 
             IridescentFan(mod);
 
-            Coronacht(mod);
+            WitchsStaff(mod);
+
+            MoonstoneAxe(mod);
+
+            FrostbittenHorn(mod);
 
             Skelly(mod);
         }
 
-        private static void NectarAndAmbrosia(HadesFrost mod)
+        private static void Nectar(HadesFrost mod)
         {
             // restore equal to num allies, barrage?
             // heal to max, haze? eh
@@ -67,6 +71,11 @@ namespace HadesFrost
                         };
                     }));
 
+            
+        }
+
+        private static void Ambrosia(HadesFrost mod)
+        {
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("Ambrosia", "Ambrosia")
@@ -153,13 +162,44 @@ namespace HadesFrost
                     }));
         }
 
-        private static void Coronacht(HadesFrost mod)
+        private static void FrostbittenHorn(HadesFrost mod)
+        {
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("FrostbittenHorn", "Frostbitten Horn")
+                    .SetSprites("FrostbittenHorn.png", "FrostbittenHornBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .WithValue(40)
+                    .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+                    {
+                        data.attackEffects = new[]
+                        {
+                            mod.SStack("Snow", 2),
+                            mod.SStack("Frost")
+                        };
+                    }));
+        }
+
+        private static void WitchsStaff(HadesFrost mod)
+        {
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("WitchsStaff", "Witch's Staff")
+                    .SetSprites("WitchsStaff.png", "WitchsStaffBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .SetDamage(1)
+                    .WithValue(40)
+                    .SetTraits(mod.TStack("Barrage"))
+                );
+        }
+
+        private static void MoonstoneAxe(HadesFrost mod)
         {
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectCharge>("Gain Attack While In Hand")
                     .WithCanBeBoosted(true)
-                    .WithText("<+1><keyword=attack> each turn spent in hand, resets <keyword=attack> discard")
+                    .WithText("<+1><keyword=attack> each turn spent in hand, resets <keyword=attack> when played or discarded")
                     .WithType("")
                     .FreeModify(delegate (StatusEffectCharge data)
                     {
@@ -170,8 +210,8 @@ namespace HadesFrost
 
             mod.Cards.Add(
                 new CardDataBuilder(mod)
-                    .CreateItem("Coronacht", "Coronacht")
-                    .SetSprites("Coronacht.png", "AresBG.png")
+                    .CreateItem("MoonstoneAxe", "Moonstone Axe")
+                    .SetSprites("MoonstoneAxe.png", "MoonstoneAxeBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .SetDamage(1)
                     .WithValue(40)
@@ -184,6 +224,7 @@ namespace HadesFrost
                     }));
         }
 
+
         private static void Skelly(HadesFrost mod)
         {
             mod.Cards.Add(
@@ -192,7 +233,7 @@ namespace HadesFrost
                     .SetSprites("Skelly.png", "SkellyBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .WithCardType("Clunker")
-                    .SetStats(null, null, 0)
+                    .SetStats()
                     .WithFlavour("Give me everything you got!!")
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                     {
