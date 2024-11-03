@@ -1,9 +1,9 @@
-﻿using Deadpan.Enums.Engine.Components.Modding;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.Utils;
 using UnityEngine;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class Leaders
     {

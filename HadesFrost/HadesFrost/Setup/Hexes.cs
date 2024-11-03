@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Statuses;
+using HadesFrost.ButtonStatuses;
 using HadesFrost.Utils;
-using HarmonyLib;
 using UnityEngine;
-using static Console;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class Hexes
     {
@@ -41,12 +38,12 @@ namespace HadesFrost
                 new[] { focusEnergy.Build() });
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusTokenApplyX>("Frenzy Rightmost Button")
+                .Create<StatusHexApplyX>("Frenzy Rightmost Button")
                 .WithType("focusEnergy")
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusTokenApplyX)data;
+                    var castData = (StatusHexApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.RightCardInHand;
                     castData.visible = true;
                     castData.isStatus = true;

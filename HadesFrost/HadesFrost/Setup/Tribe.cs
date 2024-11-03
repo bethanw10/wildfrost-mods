@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Statuses;
+﻿using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.Utils;
 using HarmonyLib;
 using UnityEngine;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class Tribe
     {

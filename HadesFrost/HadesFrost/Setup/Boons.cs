@@ -5,7 +5,7 @@ using HadesFrost.Utils;
 using UnityEngine;
 using static Console;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class Boons
     {

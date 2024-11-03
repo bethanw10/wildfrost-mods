@@ -2,7 +2,7 @@
 using HadesFrost.Statuses;
 using HadesFrost.Utils;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class Pets
     {

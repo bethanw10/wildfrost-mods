@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace HadesFrost.Utils
 {
-    public static class Common
+    public static class Utils
     {
         public static void Log(string message)
         {

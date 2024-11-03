@@ -5,7 +5,7 @@ using HadesFrost.TargetModes;
 using HadesFrost.Utils;
 using UnityEngine;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class Companions
     {

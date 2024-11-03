@@ -169,20 +169,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CampaignNodeTypeSelene.cs" />
-    <Compile Include="MapNodes.cs" />
-    <Compile Include="Hexes.cs" />
-    <Compile Include="Tribe.cs" />
-    <Compile Include="Items.cs" />
-    <Compile Include="Charms.cs" />
-    <Compile Include="Leaders.cs" />
-    <Compile Include="Boons.cs" />
+    <Compile Include="CampaignNodes\CampaignNodeTypeSelene.cs" />
+    <Compile Include="Setup\MapNodes.cs" />
+    <Compile Include="Setup\Hexes.cs" />
+    <Compile Include="Setup\Tribe.cs" />
+    <Compile Include="Setup\Items.cs" />
+    <Compile Include="Setup\Charms.cs" />
+    <Compile Include="Setup\Leaders.cs" />
+    <Compile Include="Setup\Boons.cs" />
     <Compile Include="Statuses\StatusEffectIncreaseAttackWhileNotDamaged.cs" />
     <Compile Include="Statuses\StatusEffectCharge.cs" />
     <Compile Include="Statuses\StatusEffectNothing.cs" />
-    <Compile Include="StatusTypes.cs" />
-    <Compile Include="Pets.cs" />
-    <Compile Include="Companions.cs" />
+    <Compile Include="Setup\StatusTypes.cs" />
+    <Compile Include="Setup\Pets.cs" />
+    <Compile Include="Setup\Companions.cs" />
     <Compile Include="Statuses\StatusEffectKnockback.cs" />
     <Compile Include="Statuses\StatusEffectApplyXIfStatsAreLower.cs" />
     <Compile Include="Statuses\StatusEffectTriggerWhenAllyBehindAttacks.cs" />
@@ -190,9 +190,13 @@
     <Compile Include="Statuses\StatusEffectApplyXOnKillWithContext.cs" />
     <Compile Include="Statuses\StatusEffectJolted.cs" />
     <Compile Include="TargetModes\TargetModeStatus.cs" />
-    <Compile Include="Utils\Tokens.cs" />
+    <Compile Include="ButtonStatuses\HexButton.cs" />
+    <Compile Include="ButtonStatuses\StatusHexApplyX.cs" />
+    <Compile Include="ButtonStatuses\StatusHexApplyXListener.cs" />
+    <Compile Include="ButtonStatuses\IStatusHex.cs" />
+    <Compile Include="ButtonStatuses\HexStatusIcon.cs" />
     <Compile Include="Utils\StatusIcons.cs" />
-    <Compile Include="Utils\Common.cs" />
+    <Compile Include="Utils\Utils.cs" />
     <Compile Include="HadesFrost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

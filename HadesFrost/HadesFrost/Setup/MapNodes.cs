@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Statuses;
+using HadesFrost.CampaignNodes;
 using HadesFrost.Utils;
-using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Localization.Components;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class MapNodes
     {

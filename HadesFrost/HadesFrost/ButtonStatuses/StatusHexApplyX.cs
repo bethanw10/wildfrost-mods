@@ -6,9 +6,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Tables;
 
-namespace HadesFrost.Utils
+namespace HadesFrost.ButtonStatuses
 {
-    public class StatusTokenApplyX : StatusEffectApplyX, StatusIcons.IStatusToken
+    public class StatusHexApplyX : StatusEffectApplyX, IStatusHex
     {
         [Flags]
         public enum PlayFromFlags
@@ -61,27 +61,27 @@ namespace HadesFrost.Utils
 
         public virtual void RunButtonClicked()
         {
-            Common.Log("here!!");
+            Utils.Utils.Log("here!!");
             if (References.Battle == null)
             {
                 return;
             }
 
-            Common.Log("here!! 2");
+            Utils.Utils.Log("here!! 2");
             if (target.IsSnowed)
             {
                 PopupText(Key_Snowed);
                 return;
             }
 
-            Common.Log("here!! 3");
+            Utils.Utils.Log("here!! 3");
             if (target.silenced)
             {
                 PopupText(Key_Inked);
                 return;
             }
 
-            Common.Log("here!! 4");
+            Utils.Utils.Log("here!! 4");
             foreach (var constraint in clickConstraints)
             {
                 if (!constraint.Check(target))
@@ -91,7 +91,7 @@ namespace HadesFrost.Utils
                 }
             }
 
-            Common.Log("here!!5");
+            Utils.Utils.Log("here!!5");
             if (References.Battle.phase == Battle.Phase.Play
                 && CorrectPlace()
                 && !target.IsSnowed
@@ -145,7 +145,7 @@ namespace HadesFrost.Utils
 
         public IEnumerator ButtonClicked()
         {
-            Common.Log("here!! alt");
+            Utils.Utils.Log("here!! alt");
             if (hitDamage != 0)
             {
                 List<Entity> enemies = GetTargets();
@@ -163,8 +163,8 @@ namespace HadesFrost.Utils
 
             }
             yield return Run(GetTargets(), fixedAmount);
-            List<StatusTokenApplyXListener> listeners = FindListeners();
-            foreach (StatusTokenApplyXListener listener in listeners)
+            List<StatusHexApplyXListener> listeners = FindListeners();
+            foreach (StatusHexApplyXListener listener in listeners)
             {
                 yield return listener.Run();
             }
@@ -172,12 +172,12 @@ namespace HadesFrost.Utils
             yield return PostClick();
         }
 
-        public List<StatusTokenApplyXListener> FindListeners()
+        public List<StatusHexApplyXListener> FindListeners()
         {
-            List<StatusTokenApplyXListener> listeners = new List<StatusTokenApplyXListener>();
+            List<StatusHexApplyXListener> listeners = new List<StatusHexApplyXListener>();
             foreach (StatusEffectData status in target.statusEffects)
             {
-                if (status is StatusTokenApplyXListener status2)
+                if (status is StatusHexApplyXListener status2)
                 {
                     if (status2.type == type + "_listener")
                     {
@@ -206,17 +206,9 @@ namespace HadesFrost.Utils
             }
         }
 
-        public void ButtonCreate(StatusIcons.HadesStatusIcon icon)
+        public void ButtonCreate(HexStatusIcon icon)
         {
             return;
-        }
-    }
-
-    public class StatusTokenApplyXListener : StatusEffectApplyX
-    {
-        public IEnumerator Run()
-        {
-            yield return Run(GetTargets());
         }
     }
 }

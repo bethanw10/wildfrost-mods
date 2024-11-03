@@ -3,7 +3,7 @@ using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.Statuses;
 using HadesFrost.Utils;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class Items
     {

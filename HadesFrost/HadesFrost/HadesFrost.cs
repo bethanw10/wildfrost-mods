@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
+using HadesFrost.ButtonStatuses;
+using HadesFrost.Setup;
 using HadesFrost.Utils;
 using HarmonyLib;
 using TMPro;
@@ -25,7 +27,7 @@ Knockback fix
 Hitch fix + icon
 Jolted anim
 Hades Child trait
-Create tribe + Tribe banner
+ + Tribe banner
 Selene event ? 
 Boon colors - custom panel?
 Custom battles
@@ -117,7 +119,7 @@ namespace HadesFrost
             Events.OnEntityChosen += EntityChosen;
             Events.OnSceneLoaded += InsertSeleneViaSpecialEvent;
             Events.OnCampaignLoadPreset += InsertSeleneViaPreset;
-            Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
+            Events.OnCheckEntityDrag += HexButton.DisableDrag;
             // Events.OnSceneChanged += CardsPhoto;
 
             base.Load();
@@ -136,7 +138,7 @@ namespace HadesFrost
             Events.OnEntityCreated -= LeaderImagesFix;
             Events.OnSceneLoaded -= InsertSeleneViaSpecialEvent;
             Events.OnCampaignLoadPreset -= InsertSeleneViaPreset;
-            Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
+            Events.OnCheckEntityDrag -= HexButton.DisableDrag;
 
             // todo move to Tribes.cs
             var gameMode = this.TryGet<GameMode>("GameModeNormal");

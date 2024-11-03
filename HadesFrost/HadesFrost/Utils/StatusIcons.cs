@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
+using HadesFrost.ButtonStatuses;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Localization.Tables;
 using UnityEngine.UI;
 
@@ -12,14 +11,15 @@ namespace HadesFrost.Utils
     public static class StatusIcons
     {
         public static StringTable Collection => LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
-        public static StringTable KeyCollection => LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
 
-        public static GameObject CreateIcon(this WildfrostMod mod, string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys, int posX = 1)
+        private static StringTable KeyCollection => LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+
+        public static GameObject CreateIcon(string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys, int posX = 1)
         {
             var gameObject = new GameObject(name);
-            UnityEngine.Object.DontDestroyOnLoad(gameObject);
+            Object.DontDestroyOnLoad(gameObject);
             gameObject.SetActive(false);
-            StatusIcon icon = gameObject.AddComponent<HadesStatusIcon>();
+            StatusIcon icon = gameObject.AddComponent<HexStatusIcon>();
             var cardIcons = CardManager.cardIcons;
             if (!copyTextFrom.IsNullOrEmpty())
             {
@@ -35,7 +35,7 @@ namespace HadesFrost.Utils
             icon.onValueDown = new UnityEventStatStat();
             icon.onValueUp = new UnityEventStatStat();
             icon.afterUpdate = new UnityEngine.Events.UnityEvent();
-            var image = gameObject.AddComponent<UnityEngine.UI.Image>();
+            var image = gameObject.AddComponent<Image>();
             image.sprite = sprite;
             var cardHover = gameObject.AddComponent<CardHover>();
             cardHover.enabled = false;
@@ -61,15 +61,15 @@ namespace HadesFrost.Utils
 
             var pokefrostUI = new GameObject("HadesUI");
             pokefrostUI.SetActive(false);
-            GameObject.DontDestroyOnLoad(pokefrostUI);
+            Object.DontDestroyOnLoad(pokefrostUI);
 
             gameObject.transform.SetParent(pokefrostUI.transform);
             gameObject.SetActive(false);
-            var icon = gameObject.AddComponent<HadesStatusIcon>();
+            var icon = gameObject.AddComponent<HexStatusIcon>();
             var cardIcons = CardManager.cardIcons;
-            icon.animator = gameObject.AddComponent<ButtonAnimator>();
-            icon.button = gameObject.AddComponent<ButtonExt>();
-            icon.animator.button = icon.button;
+            icon.Animator = gameObject.AddComponent<ButtonAnimator>();
+            icon.HexButton = gameObject.AddComponent<HexButton>();
+            icon.Animator.button = icon.HexButton;
             if (!copyTextFrom.IsNullOrEmpty())
             {
                 var text = cardIcons[copyTextFrom].GetComponentInChildren<TextMeshProUGUI>().gameObject.InstantiateKeepName();
@@ -128,87 +128,6 @@ namespace HadesFrost.Utils
             if (body is Color c2) { data.bodyColour = c2; }
             if (note is Color c3) { data.noteColour = c3; }
             return data;
-        }
-
-        public class HadesStatusIcon : StatusIcon
-        {
-            public ButtonAnimator animator;
-            public ButtonExt button;
-            private IStatusToken effectToken;
-
-            public override void Assign(Entity entity)
-            {
-                Common.Log("assign");
-
-                base.Assign(entity);
-                SetText();
-                onValueDown.AddListener(delegate { Ping(); });
-                onValueUp.AddListener(delegate { Ping(); });
-                afterUpdate.AddListener(SetText);
-                onValueDown.AddListener(CheckDestroy);
-
-                var effect = entity.FindStatus(type);
-                Common.Log("is token?");
-
-                if (effect is IStatusToken effect2)
-                {
-                    Common.Log("adding listener");
-                    effectToken = effect2;
-                    effect2.ButtonCreate(this);
-                    button.onClick.AddListener(effectToken.RunButtonClicked);
-                    onDestroy.AddListener(DisableDragBlocker);
-                }
-            }
-
-            public void DisableDragBlocker()
-            {
-                button.DisableDragBlocking();
-            }
-        }
-
-        public class ButtonExt : Button
-        {
-            internal HadesStatusIcon Icon => GetComponent<HadesStatusIcon>();
-
-            internal static ButtonExt dragBlocker = null;
-
-            internal Entity Entity => Icon?.target;
-
-            public override void OnPointerEnter(PointerEventData eventData)
-            {
-                dragBlocker = this;
-            }
-
-            public override void OnPointerExit(PointerEventData eventData)
-            {
-                DisableDragBlocking();
-            }
-
-            public void DisableDragBlocking()
-            {
-                if (dragBlocker == this)
-                {
-                    dragBlocker = null;
-                }
-            }
-
-            public static void DisableDrag(ref Entity arg0, ref bool arg1)
-            {
-                if (dragBlocker == null || arg0 != dragBlocker.Entity)
-                {
-                    return;
-                }
-                arg1 = false;
-            }
-        }
-
-        public interface IStatusToken
-        {
-            void ButtonCreate(HadesStatusIcon icon);
-
-            void RunButtonClicked();
-
-            IEnumerator ButtonClicked();
         }
     }
 }

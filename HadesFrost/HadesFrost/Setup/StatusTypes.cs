@@ -3,7 +3,7 @@ using HadesFrost.Statuses;
 using HadesFrost.Utils;
 using UnityEngine;
 
-namespace HadesFrost
+namespace HadesFrost.Setup
 {
     public static class StatusTypes
     {
@@ -18,7 +18,7 @@ namespace HadesFrost
             mod.CreateIconKeyword("jolted", "Jolted", "Take damage after triggering | Does not count down!", "joltedicon")
                 .ChangeColor(note: new Color(0.98f, 0.89f, 0.61f));
 
-            mod.CreateIcon(
+            StatusIcons.CreateIcon(
                 "joltedicon",
                 mod.ImagePath("joltedicon.png").ToSprite(),
                 "jolted",
@@ -53,7 +53,7 @@ namespace HadesFrost
             mod.CreateIconKeyword("hitch", "Hitch", "Damages other Hitched allies when hit | Does not count down!", "hitchicon")
                 .ChangeColor(note: new Color(0.98f, 0.89f, 0.61f));
 
-            mod.CreateIcon(
+            StatusIcons.CreateIcon(
                 "hitchicon",
                 mod.ImagePath("hitchicon.png").ToSprite(),
                 "hitch",
