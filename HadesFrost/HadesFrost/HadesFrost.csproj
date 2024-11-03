@@ -170,6 +170,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CampaignNodeTypeSelene.cs" />
+    <Compile Include="MapNodes.cs" />
+    <Compile Include="Hexes.cs" />
     <Compile Include="Tribe.cs" />
     <Compile Include="Items.cs" />
     <Compile Include="Charms.cs" />
@@ -188,8 +190,9 @@
     <Compile Include="Statuses\StatusEffectApplyXOnKillWithContext.cs" />
     <Compile Include="Statuses\StatusEffectJolted.cs" />
     <Compile Include="TargetModes\TargetModeStatus.cs" />
-    <Compile Include="Utils\StatusExt.cs" />
-    <Compile Include="Utils\HelperExt.cs" />
+    <Compile Include="Utils\Tokens.cs" />
+    <Compile Include="Utils\StatusIcons.cs" />
+    <Compile Include="Utils\Common.cs" />
     <Compile Include="HadesFrost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

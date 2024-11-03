@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
+using UnityEngine;
 
 namespace HadesFrost.Utils
 {
-    public static class HelperExt
+    public static class Common
     {
+        public static void Log(string message)
+        {
+            Debug.Log("[hades]" + message);
+        }
 
         public static T[] DataList<T>(this WildfrostMod mod, params string[] names) where T : DataFile => 
             names.Select(mod.TryGet<T>).ToArray();

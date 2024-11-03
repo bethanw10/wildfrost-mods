@@ -70,8 +70,6 @@ namespace HadesFrost
                             mod.SStack("On Card Played Increase Attack Effect 1 To Self"),
                         };
                     }));
-
-            
         }
 
         private static void Ambrosia(HadesFrost mod)
@@ -223,7 +221,6 @@ namespace HadesFrost
                         };
                     }));
         }
-
 
         private static void Skelly(HadesFrost mod)
         {

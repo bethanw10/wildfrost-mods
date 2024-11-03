@@ -15,18 +15,16 @@ public class CampaignNodeTypeSelene : CampaignNodeTypeItem
     
     [SerializeField]
     public List<CardData> force;
-    
-    public CampaignNodeTypeEvent itemNode;
-    
-    
-    public AssetReferenceGameObject prefab;
-    
-    
+
+    [SerializeField]
+    public List<CardData> pool;
+
     public override IEnumerator SetUp(CampaignNode node)
     {
         yield return (object)null;
+
         CharacterRewards component = References.Player.GetComponent<CharacterRewards>();
-        List<CardData> cardDataList = this.force.Clone<CardData>();
+        List<CardData> cardDataList = this.pool.Clone<CardData>();
         if (cardDataList.Count > 0)
         {
             component.PullOut("Items", cardDataList);

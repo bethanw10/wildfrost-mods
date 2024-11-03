@@ -11,6 +11,7 @@ using UnityEngine.Localization.Components;
 using UnityEngine.Localization.Tables;
 using UnityEngine.SceneManagement;
 using WildfrostHopeMod.Utils;
+using static HadesFrost.Utils.StatusIcons;
 using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 using Object = UnityEngine.Object;
 
@@ -28,6 +29,7 @@ Create tribe + Tribe banner
 Selene event ? 
 Boon colors - custom panel?
 Custom battles
+Remove logs
 */
 
 namespace HadesFrost
@@ -60,8 +62,6 @@ namespace HadesFrost
 
         public List<CampaignNodeTypeBuilder> CampaignNodes { get; } = new List<CampaignNodeTypeBuilder>();
 
-        public static GameObject PrefabHolder;
-
         private bool preLoaded;
 
         private TMP_SpriteAsset hadesSprites;
@@ -78,54 +78,12 @@ namespace HadesFrost
             StatusTypes.Setup(this);
             Boons.Setup(this);
             Tribe.Setup(this);
+            Hexes.Setup(this);
+            MapNodes.Setup(this);
 
-
-            Selene();
             SpriteAssetsFix();
 
             preLoaded = true;
-        }
-
-        private void Selene()
-        {
-            CampaignNodes.Add(new CampaignNodeTypeBuilder(this)
-                .Create<CampaignNodeTypeSelene>("PortalNode")
-                .WithZoneName("Portal") //The name of the CampaignNode associated to the map node. Used for special event replacement.
-                .WithCanEnter(true)     //Needs to be true to be interactable
-                .WithInteractable(true) //Needs to be true to be interactable
-                .WithCanSkip(true)      //If you want this node unskippable, replace this line with .WithMustClear(true)
-                .WithCanLink(true)      //See below.
-                .WithLetter("p")        //See below.
-                .SubscribeToAfterAllBuildEvent(
-                    (data) =>
-                    {
-                        var castData = (CampaignNodeTypeSelene)data;
-                       // castData.itemNode = this.TryGet<CampaignNodeTypeEvent>("CampaignNodeTypeItem");
-                        var item = this.TryGet<CampaignNodeType>("CampaignNodeItem"); //.routinePrefabRef;
-                        castData.routinePrefabRef = ((CampaignNodeTypeItem)item).routinePrefabRef;
-                        // castData.prefab = item;
-
-                        //Inside the SubscribeToAfterAllBuildEvent
-                        //Some MapNode stuff
-                        var mapNode = this.TryGet<CampaignNodeType>("CampaignNodeGold").mapNodePrefab.InstantiateKeepName(); //There's a lot of things in one of these prefabs
-                        mapNode.name = GUID + ".Portal";               //Changing the name                                                   
-                        data.mapNodePrefab = mapNode;                  //And assign it to our node type before we forget.
-
-                        var uiText = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
-                        var key = mapNode.name + "Ribbon";
-                        uiText.SetString(key, "Mysterious Portal");    //Define the Localized string for our ribbon title.
-                        mapNode.label.GetComponentInChildren<LocalizeStringEvent>().StringReference = uiText.GetString(key);
-                        //Find the LocalizeStringEvent and set it to our own.
-
-                        //The game will randomly pick between the options available. They will also pick the same index for both sprites and cleared sprites, if possible.
-                        mapNode.spriteOptions = new Sprite[2] { ScaledSprite("portalClosed.png", 200), ScaledSprite("portalClosed.png", 200) };
-                        mapNode.clearedSpriteOptions = new Sprite[2] { ScaledSprite("portal.png", 200), ScaledSprite("portal.png", 200) };
-                        //I am using 360x274px images, but setting pixelsPerUnit to 200 scales it down to 180x137px.
-
-                        var nodeObject = mapNode.gameObject;             //MapNode is a MonoBehaviour, so there is an underlying GameObject.
-                        nodeObject.transform.SetParent(PrefabHolder.transform); //Ensures your reference doesn't poof out of existence.
-                    })
-            );
         }
 
         private void SpriteAssetsFix()
@@ -157,17 +115,12 @@ namespace HadesFrost
 
             Events.OnEntityCreated += LeaderImagesFix;
             Events.OnEntityChosen += EntityChosen;
-            Events.OnSceneLoaded += InsertPortalViaSpecialEvent;
-            Events.OnCampaignLoadPreset += InsertPortalViaPreset;
+            Events.OnSceneLoaded += InsertSeleneViaSpecialEvent;
+            Events.OnCampaignLoadPreset += InsertSeleneViaPreset;
+            Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             // Events.OnSceneChanged += CardsPhoto;
 
-            PrefabHolder = new GameObject(GUID);   
-            Object.DontDestroyOnLoad(PrefabHolder);
-            PrefabHolder.SetActive(false);
-
             base.Load();
-
-
 
             // AddToPopulator();
 
@@ -178,18 +131,20 @@ namespace HadesFrost
         public override void Unload()
         {
             preLoaded = false;
-            // TODO
-            Events.OnEntityChosen -= EntityChosen;
+            // TODO remove from pools
+            Events.OnEntityChosen -= EntityChosen; // TODO move to boons
             Events.OnEntityCreated -= LeaderImagesFix;
-            Events.OnSceneLoaded -= InsertPortalViaSpecialEvent;
-            Events.OnCampaignLoadPreset -= InsertPortalViaPreset;
+            Events.OnSceneLoaded -= InsertSeleneViaSpecialEvent;
+            Events.OnCampaignLoadPreset -= InsertSeleneViaPreset;
+            Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
 
+            // todo move to Tribes.cs
             var gameMode = this.TryGet<GameMode>("GameModeNormal");
-            gameMode.classes = RemoveNulls(gameMode.classes);  //Without this, a non-restarted game would crash on tribe selection
-            UnloadFromClasses();                               //This tutorial doesn't need it, but it doesn't hurt to clean the pools
+            gameMode.classes = RemoveNulls(gameMode.classes); 
+            UnloadFromClasses();                
 
             // RemoveFromPopulator();
-            PrefabHolder.Destroy();
+            MapNodes.Teardown();
 
             base.Unload();
         }
@@ -197,6 +152,7 @@ namespace HadesFrost
         private void EntityChosen(Entity entity)
         {
             Boons.GiveBoons(this, entity);
+            Hexes.GiveHex(this, entity);
         }
 
         public override List<T> AddAssets<T, TY>()
@@ -263,15 +219,8 @@ namespace HadesFrost
             titleObject.text = "New Cards!";
             yield return sequence.StartCoroutine("CreateCards", everyGeneration.Select((string s) => ("bethanw10.hadesfrost") + "." + s).ToArray());
         }
-
-        internal Sprite ScaledSprite(string fileName, int pixelsPerUnit = 100)
-        {
-            var tex = ImagePath(fileName).ToTex();
-            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, (20f * pixelsPerUnit) / (tex.height * 100f)), pixelsPerUnit);
-        }
-
-        //Be sure to hook and unhook to Events.OnCampaignLoadPreset in the Load and Unload methods respectively
-        private static void InsertPortalViaPreset(ref string[] preset)
+        
+        private static void InsertSeleneViaPreset(ref string[] preset)
         {
             // todo hades only?
             //See References for the two possible presets.
@@ -288,40 +237,36 @@ namespace HadesFrost
                     targetAmount--;
                     if (targetAmount == 0)
                     {
-                        preset[0] = preset[0].Insert(i + 1, "p");//"p" for portal
+                        preset[0] = preset[0].Insert(i + 1, MapNodes.SeleneEventLetter);
                         for (var j = 1; j < preset.Length; j++)
                         {
                             preset[j] = preset[j].Insert(i + 1, preset[j][i].ToString()); //Whatever the ref node used
                         }
-                        break; //Once the portal is placed, no need for other portals.
+                        break; //Once the Selene is placed, no need for other Selenes.
                     }
                 }
             }
         }
 
-
-        //Floating class fields. Place them inside the main mod class but outside of any methods.
         public int[] addToTiers = new int[] { 0, 1, 2, 3, 4 };//First two Acts
         public int amountToAdd = 2;
 
-        //Load should call this method. If you did the preset manipulation already, feel free to comment out the event hook for that.
         public void AddToPopulator()
         {
-            CampaignPopulator populator = this.TryGet<GameMode>("GameModeNormal").populator; //Find the populator
-            foreach (int i in addToTiers)                                 //Iterate through the desired tiers
+            CampaignPopulator populator = this.TryGet<GameMode>("GameModeNormal").populator;
+            foreach (int i in addToTiers)
             {
                 CampaignTier tier = populator.tiers[i];
-                List<CampaignNodeType> list = tier.rewardPool.ToList();  //Convert the array to a list to easier adding
+                List<CampaignNodeType> list = tier.rewardPool.ToList();
                 for (int j = 0; j < amountToAdd; j++)
                 {
-                    list.Add(this.TryGet<CampaignNodeType>("PortalNode"));    //Add as much times as desired             
+                    list.Add(this.TryGet<CampaignNodeType>("SeleneNode"));          
                 }
 
-                tier.rewardPool = list.ToArray();                        //Replace the old array 
+                tier.rewardPool = list.ToArray();
             }
         }
 
-        //Unoad should call this method. If you did the preset manipulation already, feel free to comment out the event unhook for that.
         public void RemoveFromPopulator()
         {
             CampaignPopulator populator = this.TryGet<GameMode>("GameModeNormal").populator; //Find the populator
@@ -334,9 +279,7 @@ namespace HadesFrost
             }
         }
 
-        //Hook this method onto Events.OnSceneLoaded somewhere in your Load method. Also, remember to unhook in Unload.
-        //Remember to comment out the other two approaches.
-        public void InsertPortalViaSpecialEvent(Scene scene)//The Scene class is from the UnityEngine.SceneManagement namespace
+        public void InsertSeleneViaSpecialEvent(Scene scene)//The Scene class is from the UnityEngine.SceneManagement namespace
         {
             if (scene.name == "Campaign")
             {
@@ -344,11 +287,11 @@ namespace HadesFrost
                 SpecialEventsSystem.Event eve = new SpecialEventsSystem.Event()
                 {
                     requiresUnlock = null,                                    //Unnecessary as this is default, but really just showing that it exists
-                    nodeType = this.TryGet<CampaignNodeType>("PortalNode"),        //Our portal
+                    nodeType = this.TryGet<CampaignNodeType>("SeleneNode"),        //Our Selene
                     replaceNodeTypes = new string[] { "CampaignNodeReward" }, //If you spell this string wrong, the game will loop endlessly
                     minTier = 3,                                              //After the first boss
                     perTier = new Vector2Int(0, 1),                            //Maximum of 2 per tier
-                    perRun = new Vector2Int(1, 1)                              //Between 2 and 4 portals per run
+                    perRun = new Vector2Int(1, 1)                              //Between 2 and 4 Selenes per run
                 };
                 specialEvents.events = specialEvents.events.AddItem(eve).ToArray();
             }
