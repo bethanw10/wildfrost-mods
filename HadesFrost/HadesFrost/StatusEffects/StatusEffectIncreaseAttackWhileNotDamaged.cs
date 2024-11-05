@@ -7,7 +7,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace HadesFrost.Statuses
+namespace HadesFrost.StatusEffects
 {
     [CreateAssetMenu(menuName = "Status Effects/Specific/Increase Attack While Damaged", fileName = "Increase Attack While Damaged")]
     public class StatusEffectIncreaseAttackWhileNotDamaged : StatusEffectData

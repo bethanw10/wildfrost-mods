@@ -23,7 +23,6 @@ Card images
 Pets
 Items - keepsakes, ambrosia, weapons etc.
 Charms
-Knockback fix
 Hitch fix + icon
 Jolted anim
 Hades Child trait
@@ -32,6 +31,8 @@ Selene event ?
 Boon colors - custom panel?
 Custom battles
 Remove logs
+Card animations
+Slene only for hades tribe
 */
 
 namespace HadesFrost
@@ -81,7 +82,7 @@ namespace HadesFrost
             Boons.Setup(this);
             Tribe.Setup(this);
             Hexes.Setup(this);
-            MapNodes.Setup(this);
+            Setup.CampaignNodes.Setup(this);
 
             SpriteAssetsFix();
 
@@ -123,9 +124,9 @@ namespace HadesFrost
             // Events.OnSceneChanged += CardsPhoto;
 
             base.Load();
-
             // AddToPopulator();
 
+            // todo move to tribe
             var gameMode = this.TryGet<GameMode>("GameModeNormal");
             gameMode.classes = gameMode.classes.Append(this.TryGet<ClassData>("Hades")).ToArray();
         }
@@ -143,10 +144,10 @@ namespace HadesFrost
             // todo move to Tribes.cs
             var gameMode = this.TryGet<GameMode>("GameModeNormal");
             gameMode.classes = RemoveNulls(gameMode.classes); 
-            UnloadFromClasses();                
+            UnloadFromClasses();
 
             // RemoveFromPopulator();
-            MapNodes.Teardown();
+            Setup.CampaignNodes.Teardown();
 
             base.Unload();
         }
@@ -229,6 +230,7 @@ namespace HadesFrost
             //Lines 0 + 1: Node types
             //Line 2: Battle Tier (fight 1, fight 2, etc)
             //Line 3: Zone (Snow Tundra, Ice Caves, Frostlands)
+            //const char letter = 'B'; //S is for Snowdwell, b is for non-boss, B is for boss.
             const char letter = 'S'; //S is for Snowdwell, b is for non-boss, B is for boss.
             var targetAmount = 1; //Stop after the 1st S.
 
@@ -239,45 +241,14 @@ namespace HadesFrost
                     targetAmount--;
                     if (targetAmount == 0)
                     {
-                        preset[0] = preset[0].Insert(i + 1, MapNodes.SeleneEventLetter);
+                        preset[0] = preset[0].Insert(i + 1, Setup.CampaignNodes.SeleneEventLetter);
                         for (var j = 1; j < preset.Length; j++)
                         {
-                            preset[j] = preset[j].Insert(i + 1, preset[j][i].ToString()); //Whatever the ref node used
+                            preset[j] = preset[j].Insert(i + 1, preset[j][i].ToString());
                         }
-                        break; //Once the Selene is placed, no need for other Selenes.
+                        break;
                     }
                 }
-            }
-        }
-
-        public int[] addToTiers = new int[] { 0, 1, 2, 3, 4 };//First two Acts
-        public int amountToAdd = 2;
-
-        public void AddToPopulator()
-        {
-            CampaignPopulator populator = this.TryGet<GameMode>("GameModeNormal").populator;
-            foreach (int i in addToTiers)
-            {
-                CampaignTier tier = populator.tiers[i];
-                List<CampaignNodeType> list = tier.rewardPool.ToList();
-                for (int j = 0; j < amountToAdd; j++)
-                {
-                    list.Add(this.TryGet<CampaignNodeType>("SeleneNode"));          
-                }
-
-                tier.rewardPool = list.ToArray();
-            }
-        }
-
-        public void RemoveFromPopulator()
-        {
-            CampaignPopulator populator = this.TryGet<GameMode>("GameModeNormal").populator; //Find the populator
-            foreach (int i in addToTiers)                                 //Iterate through the desired tiers
-            {
-                CampaignTier tier = populator.tiers[i];
-                List<CampaignNodeType> list = tier.rewardPool.ToList();
-                list.RemoveAll(x => x == null || x.ModAdded == this);     //Remove everything that needs to be removed
-                tier.rewardPool = list.ToArray();
             }
         }
 
@@ -291,7 +262,7 @@ namespace HadesFrost
                     requiresUnlock = null,                                    //Unnecessary as this is default, but really just showing that it exists
                     nodeType = this.TryGet<CampaignNodeType>("SeleneNode"),        //Our Selene
                     replaceNodeTypes = new string[] { "CampaignNodeReward" }, //If you spell this string wrong, the game will loop endlessly
-                    minTier = 3,                                              //After the first boss
+                    minTier = 3,                                         //After the first boss
                     perTier = new Vector2Int(0, 1),                            //Maximum of 2 per tier
                     perRun = new Vector2Int(1, 1)                              //Between 2 and 4 Selenes per run
                 };

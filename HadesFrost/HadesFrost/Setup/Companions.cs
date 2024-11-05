@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Statuses;
+using HadesFrost.StatusEffects;
 using HadesFrost.TargetModes;
 using HadesFrost.Utils;
 using UnityEngine;
@@ -354,7 +354,7 @@ namespace HadesFrost.Setup
         {
             mod.StatusEffects.Add(
                 mod.StatusCopy("When Anyone Takes Shroom Damage Apply Attack To Self", "When Shroom Damage Taken Heal")
-                    .WithText("When an enemy takes <keyword=shroom> damage, restore <keyword=health> of allies in the row by <{a}>")
+                    .WithText("When anyone takes <keyword=shroom> damage, restore <keyword=health> of allies in the row by <{a}>")
                     .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
                     {
                         var castData = (StatusEffectApplyXWhenAnyoneTakesDamage)data;
@@ -610,7 +610,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Poseidon", "Poseidon")
                 .SetSprites("Poseidon.png", "PoseidonBG.png")
-                .SetStats(5, 2, 4)
+                .SetStats(5, 3, 4)
                 
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -690,6 +690,7 @@ namespace HadesFrost.Setup
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectNothing>($"{cardName} Boon")
+                    .WithOrder(-1)
                     .SubscribeToAfterAllBuildEvent(data =>
                     {
                         data.hiddenKeywords = new[] { mod.TryGet<KeywordData>($"{cardName.ToLower()}boon") };

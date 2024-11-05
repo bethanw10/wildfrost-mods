@@ -7,13 +7,13 @@ namespace HadesFrost.ButtonStatuses
     {
         private HexStatusIcon Icon => GetComponent<HexStatusIcon>();
 
-        private static HexButton DragBlocker;
+        private static HexButton dragBlocker;
 
         private Entity Entity => Icon?.target;
 
         public override void OnPointerEnter(PointerEventData eventData)
         {
-            DragBlocker = this;
+            dragBlocker = this;
         }
 
         public override void OnPointerExit(PointerEventData eventData)
@@ -23,15 +23,15 @@ namespace HadesFrost.ButtonStatuses
 
         public void DisableDragBlocking()
         {
-            if (DragBlocker == this)
+            if (dragBlocker == this)
             {
-                DragBlocker = null;
+                dragBlocker = null;
             }
         }
 
         public static void DisableDrag(ref Entity entity, ref bool shouldDrag)
         {
-            if (DragBlocker == null || entity != DragBlocker.Entity)
+            if (dragBlocker == null || entity != dragBlocker.Entity)
             {
                 return;
             }

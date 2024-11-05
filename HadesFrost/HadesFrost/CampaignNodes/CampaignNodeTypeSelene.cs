@@ -7,37 +7,40 @@ namespace HadesFrost.CampaignNodes
 {
     public class CampaignNodeTypeSelene : CampaignNodeTypeItem
     {
-        [SerializeField]
-        public int choices = 3;
+        // [SerializeField] 
+        // private int choices = 3;
     
-        [SerializeField]
-        public List<CardData> force;
+        // [SerializeField]
+        // public List<CardData> force;
 
         [SerializeField]
-        public List<CardData> pool;
+        public List<CardData> Pool;
 
         public override IEnumerator SetUp(CampaignNode node)
         {
-            yield return (object)null;
+            yield return null;
 
-            CharacterRewards component = References.Player.GetComponent<CharacterRewards>();
-            List<CardData> cardDataList = this.pool.Clone<CardData>();
+            var component = References.Player.GetComponent<CharacterRewards>();
+
+            var randomChoices = Pool.RandomItems(choices);
+
+            var cardDataList = randomChoices.ToList().Clone();
             if (cardDataList.Count > 0)
             {
                 component.PullOut("Items", cardDataList);
             }
     
-            int itemCount = this.choices - cardDataList.Count;
-            cardDataList.AddRange(component.Pull<CardData>((object)node, "Items", itemCount));
-            node.data = new Dictionary<string, object>()
+            // var itemCount = choices - cardDataList.Count;
+            // cardDataList.AddRange(component.Pull<CardData>(node, "Items", itemCount));
+            node.data = new Dictionary<string, object>
             {
                 {
                     "open",
-                    (object) false
+                    false
                 },
                 {
                     "cards",
-                    (object) cardDataList.ToSaveCollectionOfNames<CardData>()
+                    cardDataList.ToSaveCollectionOfNames()
                 }
             };
         }
@@ -46,12 +49,12 @@ namespace HadesFrost.CampaignNodes
     
         public override IEnumerator Populate(CampaignNode node)
         {
-            Debug.Log("[hades]" + node);
+            //Debug.Log("[hades]" + node);
             var objectOfType = FindObjectOfType<ItemEventRoutine>();
-            Debug.Log("[hades]" + objectOfType);
+            //Debug.Log("[hades]" + objectOfType);
 
             objectOfType.node = node;
-            yield return (object)objectOfType.Populate();
+            yield return objectOfType.Populate();
         }
     
         // public override IEnumerator Run(CampaignNode node)

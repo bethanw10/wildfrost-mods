@@ -7,7 +7,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace HadesFrost.Statuses
+namespace HadesFrost.StatusEffects
 {
     public class StatusEffectApplyXOnKillWithContext : StatusEffectApplyX
     {

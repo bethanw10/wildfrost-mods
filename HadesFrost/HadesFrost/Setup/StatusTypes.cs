@@ -1,5 +1,5 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Statuses;
+using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
 using UnityEngine;
 
@@ -24,6 +24,7 @@ namespace HadesFrost.Setup
                 "jolted",
                 "counter",
                 Color.black,
+                Color.clear,
                 new[] { mod.TryGet<KeywordData>("jolted") }, -1);
 
             mod.StatusEffects.Add(
@@ -59,7 +60,9 @@ namespace HadesFrost.Setup
                 "hitch",
                 "counter",
                 Color.black,
-                new[] { mod.TryGet<KeywordData>("hitch") }, -1);
+                Color.clear,
+                new[] { mod.TryGet<KeywordData>("hitch") }, 
+                -1);
 
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)

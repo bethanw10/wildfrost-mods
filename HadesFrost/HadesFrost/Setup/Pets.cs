@@ -1,5 +1,5 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Statuses;
+using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
 
 namespace HadesFrost.Setup
@@ -25,7 +25,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Frinos", "Frinos", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Frinos.png", "FrinosBG.png")
-                .SetStats(5)
+                .SetStats(4)
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {

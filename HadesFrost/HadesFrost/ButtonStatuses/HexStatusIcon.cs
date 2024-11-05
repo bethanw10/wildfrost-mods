@@ -9,7 +9,7 @@
 
         public override void Assign(Entity entity)
         {
-            Utils.Utils.Log("assign");
+            Utils.Common.Log("assign");
 
             base.Assign(entity);
             SetText();
@@ -19,11 +19,11 @@
             onValueDown.AddListener(CheckDestroy);
 
             var effect = entity.FindStatus(type);
-            Utils.Utils.Log("is token?");
+            Utils.Common.Log("is token?");
 
             if (effect is IStatusHex hexEffect)
             {
-                Utils.Utils.Log("adding listener");
+                Utils.Common.Log("adding listener");
                 this.hexStatusEffect = hexEffect;
                 hexEffect.ButtonCreate(this);
                 HexButton.onClick.AddListener(this.hexStatusEffect.RunButtonClicked);

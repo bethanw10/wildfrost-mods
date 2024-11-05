@@ -22,8 +22,8 @@ namespace HadesFrost.Setup
 
                     var inventory = ScriptableObject.CreateInstance<Inventory>();
                     inventory.deck.list = mod.DataList<CardData>(
-                        "WitchsStaff", "WitchsStaff", "WitchsStaff", "MoonstoneAxe", "FrostbittenHorn", "Pom Slice", "Skelly",
-                        "Nectar").ToList();
+                        "WitchsStaff", "WitchsStaff", "SisterBlades", "MoonstoneAxe", "FrostbittenHorn", "Pom Slice", "Skelly", "Nectar")
+                        .ToList();
                     data.startingInventory = inventory;
 
                     DataFile[] units = mod.DataList<CardData>(

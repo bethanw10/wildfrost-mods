@@ -8,9 +8,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace HadesFrost.Statuses
+namespace HadesFrost.StatusEffects
 {
     public class StatusEffectKnockback : StatusEffectApplyX
     {
@@ -96,7 +95,7 @@ namespace HadesFrost.Statuses
             {
                 canRetaliate = false
             };
-
+            yield return new WaitForSeconds(0.25f);
             yield return hit2.Process();
 
             if ((bool)effectToApply)

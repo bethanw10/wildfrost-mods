@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace HadesFrost.Statuses
+namespace HadesFrost.StatusEffects
 {
     public class StatusEffectApplyXIfStatsAreLower : StatusEffectApplyX
     {

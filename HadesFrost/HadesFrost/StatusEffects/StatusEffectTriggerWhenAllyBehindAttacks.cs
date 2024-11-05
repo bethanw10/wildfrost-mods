@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace HadesFrost.Statuses
+namespace HadesFrost.StatusEffects
 {
     public class StatusEffectTriggerWhenAllyBehindAttacks : StatusEffectReaction
     {

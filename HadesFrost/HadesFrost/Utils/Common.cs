@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace HadesFrost.Utils
 {
-    public static class Utils
+    public static class Common
     {
-        public static void Log(string message)
+        public static void Log(object message)
         {
             Debug.Log("[hades]" + message);
         }
@@ -43,6 +43,15 @@ namespace HadesFrost.Utils
                     $"TryGet Error: Could not find a [{typeof(T).Name}] with the name [{name}] or [{Deadpan.Enums.Engine.Components.Modding.Extensions.PrefixGUID(name, mod)}]");
 
             return data;
+        }
+
+        public static CardUpgradeDataBuilder UpgradeCopy(this WildfrostMod mod, string oldName, string newName)
+        {
+            var data = mod.TryGet<CardUpgradeData>(oldName).InstantiateKeepName();
+            data.name = mod.GUID + "." + newName;
+            var builder = data.Edit<CardUpgradeData, CardUpgradeDataBuilder>();
+            builder.Mod = mod;
+            return builder;
         }
 
         public static StatusEffectDataBuilder StatusCopy(this WildfrostMod mod, string oldName, string newName)

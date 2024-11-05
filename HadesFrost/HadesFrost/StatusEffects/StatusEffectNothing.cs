@@ -1,4 +1,4 @@
-﻿namespace HadesFrost.Statuses
+﻿namespace HadesFrost.StatusEffects
 {
     public class StatusEffectNothing : StatusEffectData
     {

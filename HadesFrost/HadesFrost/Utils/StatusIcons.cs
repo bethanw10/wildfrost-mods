@@ -14,7 +14,15 @@ namespace HadesFrost.Utils
 
         private static StringTable KeyCollection => LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
 
-        public static GameObject CreateIcon(string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys, int posX = 1)
+        public static GameObject CreateIcon(
+            string name,
+            Sprite sprite, 
+            string type, 
+            string copyTextFrom,
+            Color textColor, 
+            Color shadowColor, 
+            KeywordData[] keys, 
+            int posX = 1)
         {
             var gameObject = new GameObject(name);
             Object.DontDestroyOnLoad(gameObject);
@@ -29,6 +37,7 @@ namespace HadesFrost.Utils
                 icon.textColour = textColor;
                 icon.textColourAboveMax = textColor;
                 icon.textColourBelowMax = textColor;
+                icon.textElement.fontMaterial.SetColor("_UnderlayColor", shadowColor);
             }
             icon.onCreate = new UnityEngine.Events.UnityEvent();
             icon.onDestroy = new UnityEngine.Events.UnityEvent();
@@ -59,11 +68,11 @@ namespace HadesFrost.Utils
         {
             var gameObject = new GameObject(name);
 
-            var pokefrostUI = new GameObject("HadesUI");
-            pokefrostUI.SetActive(false);
-            Object.DontDestroyOnLoad(pokefrostUI);
+            var hadesUi = new GameObject("HadesUI");
+            hadesUi.SetActive(false);
+            Object.DontDestroyOnLoad(hadesUi);
 
-            gameObject.transform.SetParent(pokefrostUI.transform);
+            gameObject.transform.SetParent(hadesUi.transform);
             gameObject.SetActive(false);
             var icon = gameObject.AddComponent<HexStatusIcon>();
             var cardIcons = CardManager.cardIcons;

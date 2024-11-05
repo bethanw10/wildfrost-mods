@@ -1,6 +1,6 @@
 ﻿using System;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Statuses;
+using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
 using UnityEngine;
 using static Console;
@@ -107,6 +107,7 @@ namespace HadesFrost.Setup
                     {
                         var nectar = mod.TryGet<CardData>("Nectar");
                         nectar.traits.Add(mod.TStack("Noomlin"));
+                        nectar.original = nectar.Clone();
                         References.Player.data.inventory.deck.Add(nectar);
                         break;
                     }
@@ -143,11 +144,13 @@ namespace HadesFrost.Setup
                     }
                 case "Poseidon":
                     {
-                        upgrade = new CardUpgradeDataBuilder(mod)
-                            .Create("PoseidonBoon")
-                            .ChangeHP(3)
-                            .WithSetHP(false);
-                        // smackback or more gold from bling cave?
+                        // upgrade = mod.UpgradeCopy("CardUpgradeHeart", "PoseidonBoon")
+                        //     .FreeModify(data =>
+                        //     {
+                        //         data.hp = 3;
+                        //     });
+                        leader.hp += 3;
+                        // knockback or more gold from bling cave?
                         // deal more damage to enemies with debuff
                         break;
                     }
@@ -168,7 +171,6 @@ namespace HadesFrost.Setup
             }
 
             // a tad hacky
-            Debug.Log("applying to leader");
             upgrade.GainEffects(leader);
         }
     }

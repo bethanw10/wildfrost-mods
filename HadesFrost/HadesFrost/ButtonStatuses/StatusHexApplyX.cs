@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
-using TMPro;
+using HadesFrost.Utils;
 using UnityEngine;
-using UnityEngine.Localization.Tables;
+using Object = UnityEngine.Object;
 
 namespace HadesFrost.ButtonStatuses
 {
@@ -25,30 +26,30 @@ namespace HadesFrost.ButtonStatuses
         public static readonly string Key_Generic = "websiteofsites.wildfrost.pokefrost.buttonGeneric";
         public static readonly string Key_Autotomize = "websiteofsites.wildfrost.pokefrost.buttonAutotomize";
 
-        public string genericPopup;
+        public string GenericPopup;
+
+        public int FixedAmount = 0;
+        public int HitDamage = 0;
 
         //[PokeLocalizer]
         public static void DefineStrings()
         {
-            StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+            var tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
             tooltips.SetString(Key_Snowed, "Snowed!");
             tooltips.SetString(Key_Inked, "Inked!");
             tooltips.SetString(Key_Generic, "Not yet!");
             tooltips.SetString(Key_Autotomize, "Please recycle!");
         }
 
-        public PlayFromFlags playFrom = PlayFromFlags.Board;
-        public bool finiteUses = false;
-        public bool oncePerTurn = false;
-        protected bool unusedThisTurn = true;
-        public bool endTurn = false;
-        public float timing = 0.2f;
-        public TargetConstraint[] clickConstraints = Array.Empty<TargetConstraint>();
+        public bool OncePerTurn = false;
+        public int MagickCost = 0;
 
-        public override void Init()
-        {
-            base.Init();
-        }
+        private readonly PlayFromFlags playFrom = PlayFromFlags.Board;
+        private readonly bool finiteUses = false;
+        private bool unusedThisTurn = true;
+        private readonly bool endTurn = false;
+        private readonly float timing = 0.2f;
+        private readonly TargetConstraint[] clickConstraints = Array.Empty<TargetConstraint>();
 
         public override bool RunTurnStartEvent(Entity entity)
         {
@@ -61,64 +62,81 @@ namespace HadesFrost.ButtonStatuses
 
         public virtual void RunButtonClicked()
         {
-            Utils.Utils.Log("here!!");
             if (References.Battle == null)
             {
                 return;
             }
 
-            Utils.Utils.Log("here!! 2");
-            if (target.IsSnowed)
+            var magick = target.statusEffects.SingleOrDefault(s => s.name == "bethanw10.hadesfrost.Magick");
+            var magickCount = magick?.count ?? 0;
+
+            if (magickCount < MagickCost)
             {
-                PopupText(Key_Snowed);
+                PopupText("Not enough<sprite name=magickicon>!");
                 return;
             }
 
-            Utils.Utils.Log("here!! 3");
-            if (target.silenced)
+            var targets = GetTargets();
+            if (targets.Count == 0)
             {
-                PopupText(Key_Inked);
+                PopupText("No targets available!");
                 return;
             }
 
-            Utils.Utils.Log("here!! 4");
             foreach (var constraint in clickConstraints)
             {
                 if (!constraint.Check(target))
                 {
-                    PopupText(genericPopup ?? Key_Generic);
+                    PopupText(GenericPopup ?? Key_Generic);
                     return;
                 }
             }
 
-            Utils.Utils.Log("here!!5");
             if (References.Battle.phase == Battle.Phase.Play
                 && CorrectPlace()
-                && !target.IsSnowed
                 && target.owner == References.Player
-                && !target.silenced
-                && (!oncePerTurn || unusedThisTurn))
+                && (!OncePerTurn || unusedThisTurn))
             {
                 target.StartCoroutine(ButtonClicked());
                 unusedThisTurn = false;
+
+                // if (magick != null)
+                // {
+                //     magick.count -= MagickCost;
+                //     this.target.PromptUpdate();
+                // }
+
+                target.StartCoroutine(magick?.RemoveStacks(this.MagickCost, false));
+                //magick?.RemoveStacks(this.MagickCost, false);
             }
         }
 
-        public virtual void PopupText(string s)
+        protected virtual void PopupText(string s)
         {
-            NoTargetTextSystem noText = GameSystem.FindObjectOfType<NoTargetTextSystem>();
+            var noText = FindObjectOfType<NoTargetTextSystem>();
             if (noText != null)
             {
-                TMP_Text textElement = noText.textElement;
-                StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
-                textElement.text = tooltips.GetString(s).GetLocalizedString();
+                var textElement = noText.textElement;
+                textElement.text = s;
                 noText.PopText(target.transform.position);
             }
         }
 
-        public bool CheckFlag(PlayFromFlags flag) => (playFrom & flag) != 0;
+        // protected virtual void PopupText(string s)
+        // {
+        //     var noText = FindObjectOfType<NoTargetTextSystem>();
+        //     if (noText != null)
+        //     {
+        //         var textElement = noText.textElement;
+        //         var tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+        //         textElement.text = tooltips.GetString(s).GetLocalizedString();
+        //         noText.PopText(target.transform.position);
+        //     }
+        // }
 
-        public virtual bool CorrectPlace()
+        private bool CheckFlag(PlayFromFlags flag) => (playFrom & flag) != 0;
+
+        protected virtual bool CorrectPlace()
         {
             if (CheckFlag(PlayFromFlags.Board) && Battle.IsOnBoard(target))
             {
@@ -139,32 +157,29 @@ namespace HadesFrost.ButtonStatuses
             return false;
         }
 
-        //Main Code
-        public int fixedAmount = 0;
-        public int hitDamage = 0;
-
         public IEnumerator ButtonClicked()
         {
-            Utils.Utils.Log("here!! alt");
-            if (hitDamage != 0)
+            if (HitDamage != 0)
             {
-                List<Entity> enemies = GetTargets();
-                int trueAmount = (hitDamage == -1) ? count : hitDamage;
-                foreach (Entity enemy in enemies)
+                var enemies = GetTargets();
+                var trueAmount = (HitDamage == -1) ? count : HitDamage;
+                foreach (var enemy in enemies)
                 {
                     if (enemy.IsAliveAndExists())
                     {
-                        Hit hit = new Hit(target, enemy, trueAmount);
-                        hit.canRetaliate = false;
+                        var hit = new Hit(target, enemy, trueAmount)
+                        {
+                            canRetaliate = false
+                        };
                         yield return hit.Process();
                     }
 
                 }
 
             }
-            yield return Run(GetTargets(), fixedAmount);
-            List<StatusHexApplyXListener> listeners = FindListeners();
-            foreach (StatusHexApplyXListener listener in listeners)
+            yield return Run(GetTargets(), FixedAmount);
+            var listeners = FindListeners();
+            foreach (var listener in listeners)
             {
                 yield return listener.Run();
             }
@@ -174,8 +189,8 @@ namespace HadesFrost.ButtonStatuses
 
         public List<StatusHexApplyXListener> FindListeners()
         {
-            List<StatusHexApplyXListener> listeners = new List<StatusHexApplyXListener>();
-            foreach (StatusEffectData status in target.statusEffects)
+            var listeners = new List<StatusHexApplyXListener>();
+            foreach (var status in target.statusEffects)
             {
                 if (status is StatusHexApplyXListener status2)
                 {
@@ -208,7 +223,6 @@ namespace HadesFrost.ButtonStatuses
 
         public void ButtonCreate(HexStatusIcon icon)
         {
-            return;
         }
     }
 }

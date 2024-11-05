@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Statuses;
+using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
+using UnityEngine;
 
 namespace HadesFrost.Setup
 {
@@ -10,22 +11,19 @@ namespace HadesFrost.Setup
         public static void Setup(HadesFrost mod)
         {
             PomSlice(mod);
-
+            Skelly(mod);
             Nectar(mod);
-
             Ambrosia(mod);
 
+            FrostbittenHorn(mod);
             ThunderSignet(mod);
-
             IridescentFan(mod);
 
             WitchsStaff(mod);
-
             MoonstoneAxe(mod);
-
-            FrostbittenHorn(mod);
-
-            Skelly(mod);
+            SisterBlades(mod);
+            UmbralFlames(mod);
+            ArgentSkull(mod);
         }
 
         private static void Nectar(HadesFrost mod)
@@ -36,10 +34,6 @@ namespace HadesFrost.Setup
             //  nectar restore 3 and cleanse
             // critical
             // increase by 1 on use ??
-
-            mod.StatusEffects.Add(
-                mod.StatusCopy("Cleanse", "Cleanse With Text")
-                    .WithText("<keyword=cleanse>"));
 
             mod.StatusEffects.Add(
                 mod.StatusCopy("On Card Played Reduce Attack Effect 1 To Self", "On Card Played Increase Attack Effect 1 To Self")
@@ -63,7 +57,7 @@ namespace HadesFrost.Setup
                     {
                         data.attackEffects = new[]
                         {
-                            mod.SStack("Heal", 3)
+                            mod.SStack("Increase Max Health", 2) // increase? 2 
                         };
                         data.startWithEffects = new[]
                         {
@@ -74,6 +68,10 @@ namespace HadesFrost.Setup
 
         private static void Ambrosia(HadesFrost mod)
         {
+            mod.StatusEffects.Add(
+                mod.StatusCopy("Cleanse", "Cleanse With Text")
+                    .WithText("<keyword=cleanse>"));
+
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("Ambrosia", "Ambrosia")
@@ -86,7 +84,7 @@ namespace HadesFrost.Setup
                     {
                         data.attackEffects = new[]
                         {
-                            mod.SStack("Heal", 10), // or just all?
+                            mod.SStack("Increase Max Health", 8), // change to increase 8
                             mod.SStack("Cleanse With Text")
                         };
                         data.traits = new List<CardData.TraitStacks>
@@ -168,12 +166,13 @@ namespace HadesFrost.Setup
                     .SetSprites("FrostbittenHorn.png", "FrostbittenHornBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .WithValue(40)
+                    .SetDamage(0)
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                     {
                         data.attackEffects = new[]
                         {
                             mod.SStack("Snow", 2),
-                            mod.SStack("Frost")
+                            mod.SStack("Frost", 2)
                         };
                     }));
         }
@@ -188,22 +187,82 @@ namespace HadesFrost.Setup
                     .SetDamage(1)
                     .WithValue(40)
                     .SetTraits(mod.TStack("Barrage"))
+                    .SetStartWithEffect(mod.SStack("On Card Played Apply Attack To Self"))
                 );
+        }
+
+        private static void SisterBlades(HadesFrost mod)
+        {
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("SisterBlades", "Sister Blades")
+                    .SetSprites("SisterBlades.png", "SisterBladesBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .SetDamage(1)
+                    .WithValue(40)
+                    .SetStartWithEffect(mod.SStack("MultiHit"))
+            );
+        }
+
+        private static void ArgentSkull(HadesFrost mod)
+        {
+            mod.StatusEffects.Add(
+                mod.StatusCopy("Summon Fallow", "Summon ArgentSkullShell")
+                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                    {
+                        ((StatusEffectSummon)data).summonCard = mod.TryGet<CardData>("ArgentSkullShell");
+                    })
+            );
+
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("ArgentSkull", "Argent Skull")
+                    .SetSprites("ArgentSkull.png", "ArgentSkullBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .WithValue(40)
+            );
+
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("ArgentSkullShell", "Argent Skull Shell")
+                    .SetSprites("ArgentSkull.png", "ArgentSkullBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .WithValue(40)
+                    .SetTraits(mod.TStack("Explode", 2))
+            );
         }
 
         private static void MoonstoneAxe(HadesFrost mod)
         {
-            mod.StatusEffects.Add(
+            var chargeEffect =
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectCharge>("Gain Attack While In Hand")
                     .WithCanBeBoosted(true)
-                    .WithText("<+1><keyword=attack> each turn spent in hand, resets <keyword=attack> when played or discarded")
+                    .WithText("")
                     .WithType("")
-                    .FreeModify(delegate (StatusEffectCharge data)
+                    .FreeModify(delegate(StatusEffectCharge data)
                     {
                         data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
-                        data.effectToApply = mod.TryGet<StatusEffectData>("Ongoing Increase Attack").InstantiateKeepName();
-                    })
+                        data.effectToApply = mod.TryGet<StatusEffectData>("Ongoing Increase Attack")
+                            .InstantiateKeepName();
+                    });
+
+            var chargeKeyword = new KeywordDataBuilder(mod)
+                .Create("Charge")
+                .WithCanStack(false)
+                .WithDescription("<+1><keyword=attack> each turn spent in hand\nReset <keyword=attack> when played or discarded")
+                .WithShowName(true)
+                .WithShowIcon(false)
+                .WithTitle("Charge");
+
+            mod.Keywords.Add(chargeKeyword);
+            mod.StatusEffects.Add(chargeEffect);
+
+            mod.Traits.Add(new TraitDataBuilder(mod)
+                .Create("Charge")
+                .WithOverrides(mod.TryGet<TraitData>("Pull"), mod.TryGet<TraitData>("Barrage"))
+                .WithKeyword(chargeKeyword.Build())
+                .WithEffects(chargeEffect.Build())
             );
 
             mod.Cards.Add(
@@ -215,9 +274,38 @@ namespace HadesFrost.Setup
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                     {
-                        data.startWithEffects = new[]
+                        // data.startWithEffects = new[]
+                        // {
+                        //     mod.SStack("Gain Attack While In Hand")
+                        // };
+                        data.traits = new List<CardData.TraitStacks>
                         {
-                            mod.SStack("Gain Attack While In Hand")
+                            mod.TStack("Charge")
+                        };
+                    }));
+        }
+        private static void UmbralFlames(HadesFrost mod)
+        {
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("UmbralFlames", "Umbral Flames")
+                    .SetSprites("UmbralFlames.png", "UmbralFlamesBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .SetDamage(0)
+                    .WithValue(40)
+                    .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+                    {
+                        data.attackEffects = new[]
+                        {
+                            mod.SStack("Overload", 3)
+                        };
+                        // data.startWithEffects = new[]
+                        // {
+                        //     mod.SStack("MultiHit")
+                        // };
+                        data.traits = new List<CardData.TraitStacks>
+                        {
+                            mod.TStack("Combo")
                         };
                     }));
         }

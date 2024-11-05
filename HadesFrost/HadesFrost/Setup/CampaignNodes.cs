@@ -7,7 +7,7 @@ using UnityEngine.Localization.Components;
 
 namespace HadesFrost.Setup
 {
-    public static class MapNodes
+    public static class CampaignNodes
     {
         private static GameObject PrefabHolder;
 
@@ -34,18 +34,22 @@ namespace HadesFrost.Setup
                         var item = mod.TryGet<CampaignNodeType>("CampaignNodeItem");
                         castData.routinePrefabRef = ((CampaignNodeTypeItem)item).routinePrefabRef;
 
-                        castData.pool = new List<CardData>
+                        castData.Pool = new List<CardData>
                         {
-                            mod.TryGet<CardData>("Nectar"),
-                            mod.TryGet<CardData>("Ambrosia"),
-                            mod.TryGet<CardData>("LunarRay")
+                            mod.TryGet<CardData>("LunarRay"),
+                            mod.TryGet<CardData>("PhaseShift"),
+                            mod.TryGet<CardData>("MoonWater"),
+                            mod.TryGet<CardData>("WolfHowl"),
+                            mod.TryGet<CardData>("DarkSide"),
+                            mod.TryGet<CardData>("TwilightCurse"),
+                            mod.TryGet<CardData>("NightBloom"),
+                            mod.TryGet<CardData>("TotalEclipse"),
+                            mod.TryGet<CardData>("SkyFall"),
                         };
 
-                        //Inside the SubscribeToAfterAllBuildEvent
-                        //Some MapNode stuff
-                        var mapNode = mod.TryGet<CampaignNodeType>("CampaignNodeGold").mapNodePrefab.InstantiateKeepName(); //There's a lot of things in one of these prefabs
-                        mapNode.name = mod.GUID + ".Selene";               //Changing the name                                                   
-                        data.mapNodePrefab = mapNode;                  //And assign it to our node type before we forget.
+                        var mapNode = mod.TryGet<CampaignNodeType>("CampaignNodeGold").mapNodePrefab.InstantiateKeepName();
+                        mapNode.name = mod.GUID + ".Selene";                                    
+                        data.mapNodePrefab = mapNode;
 
                         var uiText = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
                         var key = mapNode.name + "Ribbon";
@@ -58,8 +62,8 @@ namespace HadesFrost.Setup
                         mapNode.clearedSpriteOptions = new[] { ScaledSprite(mod, "portal.png", 200), ScaledSprite(mod, "portal.png", 200) };
                         //I am using 360x274px images, but setting pixelsPerUnit to 200 scales it down to 180x137px.
 
-                        var nodeObject = mapNode.gameObject;             //MapNode is a MonoBehaviour, so there is an underlying GameObject.
-                        nodeObject.transform.SetParent(PrefabHolder.transform); //Ensures your reference doesn't poof out of existence.
+                        var nodeObject = mapNode.gameObject;
+                        nodeObject.transform.SetParent(PrefabHolder.transform);
                     })
             );
         }
@@ -69,7 +73,7 @@ namespace HadesFrost.Setup
             PrefabHolder.Destroy();
         }
 
-        private static Sprite ScaledSprite(HadesFrost mod, string fileName, int pixelsPerUnit = 100)
+        private static Sprite ScaledSprite(WildfrostMod mod, string fileName, int pixelsPerUnit = 100)
         {
             var tex = mod.ImagePath(fileName).ToTex();
             return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, (20f * pixelsPerUnit) / (tex.height * 100f)), pixelsPerUnit);

@@ -8,38 +8,50 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace HadesFrost.Statuses
+namespace HadesFrost.StatusEffects
 {
     [CreateAssetMenu(menuName = "Status Effects/Specific/Apply X On Turn", fileName = "Apply X On Turn")]
     public class StatusEffectCharge : StatusEffectApplyX
     {
         public bool DrawnTurn;
+        
+        /* If the bell is rung when not charged, we don't want that turn to count as a turn in hand. If the bell is rung when charged,
+         * We do want the next turn to count.
+         *  Set DrawnTurn to true when bell is rung, then don't increase attack until the next turn.
+         *  Set DrawnTurn to false if another card is played (in case the bell was charged).
+         **/
 
         public override void Init()
         {
             //this.OnEnable += new StatusEffectData.EffectEntityEventHandler(this.PreventEffectOnDrawTurn);
             //Events.OnCardDraw += new UnityAction<int>(PreventEffectOnDrawTurn);
+            Events.OnRedrawBellHit += PreventEffectOnDrawTurn;
             this.OnTurnStart += this.Activate;
-            this.OnCardPlayed += this.Deactivate;
-            Events.OnActionQueued += new UnityAction<PlayAction>(this.ActionQueued);
+            this.OnCardPlayed += this.CardPlayedDeactivate;
+            Events.OnActionQueued += this.ActionQueued;
+        }
+
+        private void PreventEffectOnDrawTurn(RedrawBellSystem bellSystem)
+        {
+            this.DrawnTurn = true;
         }
 
         public void ActionQueued(PlayAction playAction)
         {
+            // Drawn
             if ((playAction is ActionReveal actionReveal) && (bool)(Object)this.target.owner && (Object)actionReveal.entity == (Object)this.target)
             {
-                ActionQueue.Add(new ActionSequence(this.PreventEffectOnDrawTurn(actionReveal.entity)));
+                // ActionQueue.Add(new ActionSequence(this.PreventEffectOnDrawTurn(actionReveal.entity)));
             }
 
+            // Discarded
             if (playAction is ActionMove actionMove && (Object)actionMove.entity == (Object)this.target && (bool)(Object)this.target.owner && actionMove.toContainers.Contains<CardContainer>(this.target.owner.discardContainer))
             {
                 ActionQueue.Add(new ActionSequence(this.Deactivate(null, null)));
             }
         }
 
-        public override bool RunTurnStartEvent(Entity entity) => 
-            (Object)entity == (Object)this.target;
-
+        public override bool RunTurnStartEvent(Entity entity) => (Object)entity == (Object)this.target;
 
         public IEnumerator Activate(Entity entity)
         {
@@ -57,6 +69,17 @@ namespace HadesFrost.Statuses
             }
         }
 
+        public IEnumerator CardPlayedDeactivate(Entity entity, Entity[] targets)
+        {
+            if (entity != this.target)
+            {
+                this.DrawnTurn = false;
+                yield break;
+            }
+
+            yield return Deactivate(entity, targets);
+        }
+
         public IEnumerator Deactivate(Entity entity, Entity[] targets)
         {
             // Debug.Log("deactivating?");
@@ -64,7 +87,7 @@ namespace HadesFrost.Statuses
             for (var index = attackWhileDamaged.target.statusEffects.Count - 1; index >= 0; --index)
             {
                 var statusEffect = attackWhileDamaged.target.statusEffects[index];
-                Debug.Log(statusEffect.name);
+               // Debug.Log(statusEffect.name);
 
                 if ((bool)(Object)statusEffect && statusEffect.name == attackWhileDamaged.effectToApply.name)
                 {
@@ -76,7 +99,7 @@ namespace HadesFrost.Statuses
             }
         }
 
-        public override bool RunCardPlayedEvent(Entity entity, Entity[] targets) => (Object)entity == (Object)this.target;
+        public override bool RunCardPlayedEvent(Entity entity, Entity[] targets) => true;
 
         public override bool RunEnableEvent(Entity entity) => (Object)entity == (Object)this.target && this.target.InHand();
 
