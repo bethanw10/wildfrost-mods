@@ -23,24 +23,29 @@ public class StatusEffectApplyXOnTeamHit : StatusEffectApplyX
 
     public override void Init()
     {
-        if (this.postHit)
-            this.PostHit += new StatusEffectData.EffectHitEventHandler(this.CheckHit);
+        if (postHit)
+        {
+            PostHit += CheckHit;
+        }
         else
-            this.OnHit += new StatusEffectData.EffectHitEventHandler(this.CheckHit);
+        {
+            OnHit += CheckHit;
+        }
     }
 
     public override bool RunPreAttackEvent(Hit hit)
     {
-        Common.Log( "!!" + hit.attacker.owner);
-        Common.Log( "!!" + target.owner);
-        if (hit.attacker?.owner == this.target.owner &&
-            this.target.alive && 
-            this.target.enabled && (bool)(Object)hit.target)
+        Common.Log("Melinoe");
+        if (hit.target?.owner != References.Player &&
+            target.alive && 
+            target.enabled && (bool)hit.target)
         {
-            if (this.addDamageFactor != 0 || (double)this.multiplyDamageFactor != 1.0)
+        Common.Log("Melinoe");
+
+            if (addDamageFactor != 0 || multiplyDamageFactor != 1.0)
             {
-                bool flag = true;
-                foreach (TargetConstraint applyConstraint in this.applyConstraints)
+                var flag = true;
+                foreach (var applyConstraint in applyConstraints)
                 {
                     if (!applyConstraint.Check(hit.target) && (!(applyConstraint is TargetConstraintHasStatus constraintHasStatus) || !constraintHasStatus.CheckWillApply(hit)))
                     {
@@ -50,28 +55,39 @@ public class StatusEffectApplyXOnTeamHit : StatusEffectApplyX
                 }
                 if (flag)
                 {
-                    int amount = this.GetAmount();
-                    if (this.addDamageFactor != 0)
-                        hit.damage += amount * this.addDamageFactor;
-                    if ((double)this.multiplyDamageFactor != 1.0)
-                        hit.damage = Mathf.RoundToInt((float)hit.damage * this.multiplyDamageFactor);
+                    var amount = GetAmount();
+                    if (addDamageFactor != 0)
+                    {
+                        hit.damage += amount * addDamageFactor;
+                    }
+
+                    if (multiplyDamageFactor != 1.0)
+                    {
+                        hit.damage = Mathf.RoundToInt(hit.damage * multiplyDamageFactor);
+                    }
                 }
             }
-            if (!hit.Offensive && (hit.damage > 0 || (bool)(Object)this.effectToApply && this.effectToApply.offensive))
+            if (!hit.Offensive && (hit.damage > 0 || (bool)(Object)effectToApply && effectToApply.offensive))
+            {
                 hit.FlagAsOffensive();
-            this.storedHit.Add(hit);
+            }
+
+            storedHit.Add(hit);
         }
         return false;
     }
 
-    public override bool RunPostHitEvent(Hit hit) => this.storedHit.Contains(hit) && hit.Offensive;
+    public override bool RunPostHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
 
-    public override bool RunHitEvent(Hit hit) => this.storedHit.Contains(hit) && hit.Offensive;
+    public override bool RunHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
 
     public IEnumerator CheckHit(Hit hit)
     {
-        if ((bool)(Object)this.effectToApply)
-            yield return (object)this.Run(this.GetTargets(hit), hit.damage + hit.damageBlocked);
-        this.storedHit.Remove(hit);
+        if ((bool)(Object)effectToApply)
+        {
+            yield return Run(GetTargets(hit), hit.damage + hit.damageBlocked);
+        }
+
+        storedHit.Remove(hit);
     }
 }

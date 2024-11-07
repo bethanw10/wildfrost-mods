@@ -18,6 +18,7 @@ namespace HadesFrost.Setup
             FrostbittenHorn(mod);
             ThunderSignet(mod);
             IridescentFan(mod);
+            AdamantShard(mod);
 
             WitchsStaff(mod);
             MoonstoneAxe(mod);
@@ -84,7 +85,7 @@ namespace HadesFrost.Setup
                     {
                         data.attackEffects = new[]
                         {
-                            mod.SStack("Increase Max Health", 8), // change to increase 8
+                            mod.SStack("Increase Max Health", 8), // change to increase 8?
                             mod.SStack("Cleanse With Text")
                         };
                         data.traits = new List<CardData.TraitStacks>
@@ -158,6 +159,41 @@ namespace HadesFrost.Setup
                     }));
         }
 
+        private static void AdamantShard(HadesFrost mod)
+        {
+            mod.StatusEffects.Add(
+                mod.StatusCopy("Instant Apply Frenzy (To Card In Hand)", "Instant Damage (To Card In Hand)")
+                    .WithText("Add <+{a}><keyword=attack> to a card in your hand")
+                    .FreeModify(data =>
+                    {
+                        var castData = (StatusEffectApplyXInstant)data;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Increase Attack").InstantiateKeepName();
+                        
+                        var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesAttack>();
+                        var constraintItem = ScriptableObject.CreateInstance<TargetConstraintIsItem>();
+
+                        castData.targetConstraints = new TargetConstraint[] { constraintItem, constraintAttack };
+                    }));
+
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("AdamantShard", "Adamant Shard")
+                    .SetSprites("AdamantShard.png", "AdamantShardBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .WithValue(40)
+                    .SetTraits(mod.TStack("Noomlin"), mod.TStack("Consume"))
+                    .CanPlayOnHand()
+                    .CanPlayOnBoard(false)
+                    .NeedsTarget()
+                    .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+                    {
+                        data.attackEffects = new[]
+                        {
+                            mod.SStack("Instant Damage (To Card In Hand)", 3),
+                        };
+                    }));
+        }
+
         private static void FrostbittenHorn(HadesFrost mod)
         {
             mod.Cards.Add(
@@ -208,6 +244,7 @@ namespace HadesFrost.Setup
         {
             mod.StatusEffects.Add(
                 mod.StatusCopy("Summon Fallow", "Summon ArgentSkullShell")
+                    .WithText($"Summon <card={Extensions.PrefixGUID("ArgentSkullShell", mod)}>")
                     .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
                     {
                         ((StatusEffectSummon)data).summonCard = mod.TryGet<CardData>("ArgentSkullShell");
@@ -219,16 +256,33 @@ namespace HadesFrost.Setup
                     .CreateItem("ArgentSkull", "Argent Skull")
                     .SetSprites("ArgentSkull.png", "ArgentSkullBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
+                    .CanPlayOnBoard()
+                    .CanPlayOnFriendly()
+                    .CanShoveToOtherRow()
+                    .NeedsTarget()
+                    .WithPlayType(Card.PlayType.Play)
+                    .FreeModify(data =>
+                    {
+                        data.playOnSlot = true;
+                    })
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.startWithEffects = new[]
+                        {
+                            mod.SStack("Summon ArgentSkullShell"),
+                            // mod.SStack("MultiHit", 2)
+                        };
+                    })
                     .WithValue(40)
             );
 
             mod.Cards.Add(
                 new CardDataBuilder(mod)
-                    .CreateItem("ArgentSkullShell", "Argent Skull Shell")
+                    .CreateUnit("ArgentSkullShell", "Argent Skull Shell")
                     .SetSprites("ArgentSkull.png", "ArgentSkullBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
-                    .WithValue(40)
-                    .SetTraits(mod.TStack("Explode", 2))
+                    .SetStats(1)
+                    .SetTraits(mod.TStack("Explode", 3))
             );
         }
 

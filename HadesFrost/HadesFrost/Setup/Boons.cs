@@ -107,6 +107,7 @@ namespace HadesFrost.Setup
                     {
                         var nectar = mod.TryGet<CardData>("Nectar");
                         nectar.traits.Add(mod.TStack("Noomlin"));
+                        // nectar.traits.Add(mod.TStack("Combo"));
                         nectar.original = nectar.Clone();
                         References.Player.data.inventory.deck.Add(nectar);
                         break;

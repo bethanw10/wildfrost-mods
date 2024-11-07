@@ -201,10 +201,10 @@ internal class StatusEffectInstantCombineCard : StatusEffectInstant
 
         public CombineAction(bool keepUpgrades, List<CardUpgradeData> extraUpgrades, bool spawnOnBoard, CardContainer row)
         {
-            this.KeepUpgrades = keepUpgrades;
-            this.ExtraUpgrades = extraUpgrades;
-            this.SpawnOnBoard = spawnOnBoard;
-            this.Row = row;
+            KeepUpgrades = keepUpgrades;
+            ExtraUpgrades = extraUpgrades;
+            SpawnOnBoard = spawnOnBoard;
+            Row = row;
         }
 
         public override IEnumerator Run()

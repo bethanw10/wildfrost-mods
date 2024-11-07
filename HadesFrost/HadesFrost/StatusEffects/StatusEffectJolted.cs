@@ -7,7 +7,7 @@ namespace HadesFrost.StatusEffects
     {
         public override void Init()
         {
-            base.OnCardPlayed += Check;
+            OnCardPlayed += Check;
         }
 
         public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)

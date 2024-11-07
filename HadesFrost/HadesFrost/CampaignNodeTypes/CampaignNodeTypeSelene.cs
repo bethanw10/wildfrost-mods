@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using Deadpan.Enums.Engine.Components.Modding;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
+using UnityEngine.Localization;
+using static Mono.Security.X509.X520;
+using UnityEngine.Localization.Tables;
 
-namespace HadesFrost.CampaignNodes
+namespace HadesFrost.CampaignNodeTypes
 {
     public class CampaignNodeTypeSelene : CampaignNodeTypeItem
     {
@@ -49,11 +52,15 @@ namespace HadesFrost.CampaignNodes
     
         public override IEnumerator Populate(CampaignNode node)
         {
-            //Debug.Log("[hades]" + node);
+            var prompts = new[] { "Please make your choice.", "The choice is yours.", "Which suits you?", "Your choice?", "Behold my light" };
+
             var objectOfType = FindObjectOfType<ItemEventRoutine>();
-            //Debug.Log("[hades]" + objectOfType);
 
             objectOfType.node = node;
+            var collection = LocalizationHelper.GetCollection("Card Text", new LocaleIdentifier(SystemLanguage.English));
+            collection.SetString("Selene_text", prompts.RandomItem());
+            objectOfType.chooseKey = collection.GetString("Selene_text");
+
             yield return objectOfType.Populate();
         }
     

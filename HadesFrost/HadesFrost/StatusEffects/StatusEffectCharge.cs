@@ -26,54 +26,54 @@ namespace HadesFrost.StatusEffects
             //this.OnEnable += new StatusEffectData.EffectEntityEventHandler(this.PreventEffectOnDrawTurn);
             //Events.OnCardDraw += new UnityAction<int>(PreventEffectOnDrawTurn);
             Events.OnRedrawBellHit += PreventEffectOnDrawTurn;
-            this.OnTurnStart += this.Activate;
-            this.OnCardPlayed += this.CardPlayedDeactivate;
-            Events.OnActionQueued += this.ActionQueued;
+            OnTurnStart += Activate;
+            OnCardPlayed += CardPlayedDeactivate;
+            Events.OnActionQueued += ActionQueued;
         }
 
         private void PreventEffectOnDrawTurn(RedrawBellSystem bellSystem)
         {
-            this.DrawnTurn = true;
+            DrawnTurn = true;
         }
 
         public void ActionQueued(PlayAction playAction)
         {
             // Drawn
-            if ((playAction is ActionReveal actionReveal) && (bool)(Object)this.target.owner && (Object)actionReveal.entity == (Object)this.target)
+            if ((playAction is ActionReveal actionReveal) && (bool)(Object)target.owner && (Object)actionReveal.entity == (Object)target)
             {
                 // ActionQueue.Add(new ActionSequence(this.PreventEffectOnDrawTurn(actionReveal.entity)));
             }
 
             // Discarded
-            if (playAction is ActionMove actionMove && (Object)actionMove.entity == (Object)this.target && (bool)(Object)this.target.owner && actionMove.toContainers.Contains<CardContainer>(this.target.owner.discardContainer))
+            if (playAction is ActionMove actionMove && (Object)actionMove.entity == (Object)target && (bool)(Object)target.owner && actionMove.toContainers.Contains<CardContainer>(target.owner.discardContainer))
             {
-                ActionQueue.Add(new ActionSequence(this.Deactivate(null, null)));
+                ActionQueue.Add(new ActionSequence(Deactivate(null, null)));
             }
         }
 
-        public override bool RunTurnStartEvent(Entity entity) => (Object)entity == (Object)this.target;
+        public override bool RunTurnStartEvent(Entity entity) => (Object)entity == (Object)target;
 
         public IEnumerator Activate(Entity entity)
         {
-            if (this.DrawnTurn)
+            if (DrawnTurn)
             {
                 // Debug.Log("drawn true, setting to false");
         
-                this.DrawnTurn = false;
+                DrawnTurn = false;
             }
             else
             {
                 // Debug.Log("ACTIVATE");
 
-                yield return this.Run(this.GetTargets());
+                yield return Run(GetTargets());
             }
         }
 
         public IEnumerator CardPlayedDeactivate(Entity entity, Entity[] targets)
         {
-            if (entity != this.target)
+            if (entity != target)
             {
-                this.DrawnTurn = false;
+                DrawnTurn = false;
                 yield break;
             }
 
@@ -101,7 +101,7 @@ namespace HadesFrost.StatusEffects
 
         public override bool RunCardPlayedEvent(Entity entity, Entity[] targets) => true;
 
-        public override bool RunEnableEvent(Entity entity) => (Object)entity == (Object)this.target && this.target.InHand();
+        public override bool RunEnableEvent(Entity entity) => (Object)entity == (Object)target && target.InHand();
 
         public IEnumerator PreventEffectOnDrawTurn(Entity entity)
         {
@@ -110,7 +110,7 @@ namespace HadesFrost.StatusEffects
 
             if (References.Battle?.turnCount != 0) // allow for initial draw
             {
-                yield return this.DrawnTurn = true;
+                yield return DrawnTurn = true;
             }
         }
     }

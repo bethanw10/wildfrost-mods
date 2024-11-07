@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.CampaignNodes;
+using HadesFrost.CampaignNodeTypes;
 using HadesFrost.Utils;
 using UnityEngine;
 using UnityEngine.Localization.Components;
 
 namespace HadesFrost.Setup
 {
-    public static class CampaignNodes
+    public static class GiftsOfTheMoon
     {
         private static GameObject PrefabHolder;
 
@@ -19,7 +19,7 @@ namespace HadesFrost.Setup
             Object.DontDestroyOnLoad(PrefabHolder);
             PrefabHolder.SetActive(false);
 
-            mod.CampaignNodes.Add(new CampaignNodeTypeBuilder(mod)
+            mod.CampaignNodeTypes.Add(new CampaignNodeTypeBuilder(mod)
                 .Create<CampaignNodeTypeSelene>("SeleneNode")
                 .WithZoneName("Selene")
                 .WithCanEnter(true)

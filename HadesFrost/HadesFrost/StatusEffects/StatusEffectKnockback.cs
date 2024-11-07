@@ -26,24 +26,24 @@ namespace HadesFrost.StatusEffects
 
         public override void Init()
         {
-            if (this.postHit)
+            if (postHit)
             {
-                this.PostHit += this.CheckHit;
+                PostHit += CheckHit;
             }
             else
             {
-                this.OnHit += this.CheckHit;
+                OnHit += CheckHit;
             }
         }
 
         public override bool RunPreAttackEvent(Hit hit)
         {
-            if (hit.attacker == target && this.target.alive && this.target.enabled && (bool)hit.target)
+            if (hit.attacker == target && target.alive && target.enabled && (bool)hit.target)
             {
-                if (this.addDamageFactor != 0 || multiplyDamageFactor != 1.0)
+                if (addDamageFactor != 0 || multiplyDamageFactor != 1.0)
                 {
                     var flag = true;
-                    foreach (var applyConstraint in this.applyConstraints)
+                    foreach (var applyConstraint in applyConstraints)
                     {
                         if (!applyConstraint.Check(hit.target) && (!(applyConstraint is TargetConstraintHasStatus constraintHasStatus) || !constraintHasStatus.CheckWillApply(hit)))
                         {
@@ -53,29 +53,29 @@ namespace HadesFrost.StatusEffects
                     }
                     if (flag)
                     {
-                        var amount = this.GetAmount();
-                        if (this.addDamageFactor != 0)
+                        var amount = GetAmount();
+                        if (addDamageFactor != 0)
                         {
-                            hit.damage += amount * this.addDamageFactor;
+                            hit.damage += amount * addDamageFactor;
                         }
 
                         if (multiplyDamageFactor != 1.0)
                         {
-                            hit.damage = Mathf.RoundToInt(hit.damage * this.multiplyDamageFactor);
+                            hit.damage = Mathf.RoundToInt(hit.damage * multiplyDamageFactor);
                         }
                     }
                 }
-                if (!hit.Offensive && (hit.damage > 0 || (bool)effectToApply && this.effectToApply.offensive))
+                if (!hit.Offensive && (hit.damage > 0 || (bool)effectToApply && effectToApply.offensive))
                 {
                     hit.FlagAsOffensive();
                 }
 
-                this.storedHit.Add(hit);
+                storedHit.Add(hit);
             }
             return false;
         }
 
-        public override bool RunPostHitEvent(Hit hit) => this.storedHit.Contains(hit) && hit.Offensive;
+        public override bool RunPostHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
 
         public override bool RunHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
 
@@ -88,7 +88,7 @@ namespace HadesFrost.StatusEffects
                 yield break;
             }
 
-            this.entityBehind = behind;
+            entityBehind = behind;
 
             var damage = hit.damage == 0 ? 0 : (int)Math.Ceiling(hit.damage/2.0);
             var hit2 = new Hit(hit.target, behind, damage)
@@ -100,10 +100,10 @@ namespace HadesFrost.StatusEffects
 
             if ((bool)effectToApply)
             {
-                yield return this.Run(this.GetTargets(hit), hit.damage + hit.damageBlocked);
+                yield return Run(GetTargets(hit), hit.damage + hit.damageBlocked);
             }
 
-            this.storedHit.Remove(hit);
+            storedHit.Remove(hit);
         }
 
         private static Entity GetEntityBehind(Entity entity)

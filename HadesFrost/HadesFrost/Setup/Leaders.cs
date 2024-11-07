@@ -12,16 +12,16 @@ namespace HadesFrost.Setup
             ChildOfHades(mod);
 
             Melinoe(mod);
-            Zagreus(mod);
+            // Zagreus(mod);
         }
 
         private static void Melinoe(HadesFrost mod)
         {
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Melinoe", "Melinoë", idleAnim: "FloatAnimationProfile")
-                .SetSprites("Piri.png", "PiriBG.png")
+                .SetSprites("Melinoe.png", "MelinoeBG.png")
                 .WithCardType("Leader")
-                .SetStats(6, 4, 4)
+                .SetStats(6, 3, 4)
                 .FreeModify(data =>
                 {
                     data.createScripts = new[]  

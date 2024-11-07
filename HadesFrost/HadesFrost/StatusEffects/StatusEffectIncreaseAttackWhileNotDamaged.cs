@@ -17,23 +17,23 @@ namespace HadesFrost.StatusEffects
         public int currentAmount;
         public bool active;
         public int state;
-        public override bool RunEnableEvent(Entity entity) => entity == this.target;
+        public override bool RunEnableEvent(Entity entity) => entity == target;
 
         public override bool HasEnableRoutine => true;
 
-        public override IEnumerator EnableRoutine(Entity entity) => this.Check();
+        public override IEnumerator EnableRoutine(Entity entity) => Check();
 
-        public override bool RunDisableEvent(Entity entity) => entity == this.target && this.currentAmount != 0;
+        public override bool RunDisableEvent(Entity entity) => entity == target && currentAmount != 0;
 
         public override bool HasDisableRoutine => true;
 
-        public override IEnumerator DisableRoutine(Entity entity) => this.Deactivate();
+        public override IEnumerator DisableRoutine(Entity entity) => Deactivate();
 
-        public override bool RunPostHitEvent(Hit hit) => hit.target == this.target;
+        public override bool RunPostHitEvent(Hit hit) => hit.target == target;
 
         public override bool HasPostHitRoutine => true;
 
-        public override IEnumerator PostHitRoutine(Hit hit) => this.Check();
+        public override IEnumerator PostHitRoutine(Hit hit) => Check();
 
         public IEnumerator Check()
         {
@@ -62,7 +62,7 @@ namespace HadesFrost.StatusEffects
 
             attackWhileDamaged.currentAmount = attackWhileDamaged.GetAmount();
 
-            this.active = true;
+            active = true;
 
             yield return StatusEffectSystem.Apply(
                 attackWhileDamaged.target, 
@@ -90,9 +90,9 @@ namespace HadesFrost.StatusEffects
 
         public override bool RunEffectBonusChangedEvent()
         {
-            if (this.target.enabled && this.active)
+            if (target.enabled && active)
             {
-                ActionQueue.Add(new ActionSequence(this.ReAffect()));
+                ActionQueue.Add(new ActionSequence(ReAffect()));
             }
 
             return false;
@@ -100,8 +100,8 @@ namespace HadesFrost.StatusEffects
 
         public IEnumerator ReAffect()
         {
-            yield return this.Deactivate();
-            yield return this.Activate();
+            yield return Deactivate();
+            yield return Activate();
         }
     }
 }

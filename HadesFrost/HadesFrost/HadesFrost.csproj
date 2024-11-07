@@ -171,8 +171,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CampaignNodes\CampaignNodeTypeSelene.cs" />
-    <Compile Include="Setup\CampaignNodes.cs" />
+    <Compile Include="CampaignNodeTypes\CampaignNodeTypeSelene.cs" />
+    <Compile Include="Setup\GiftsOfTheMoon.cs" />
     <Compile Include="Setup\Hexes.cs" />
     <Compile Include="Setup\Tribe.cs" />
     <Compile Include="Setup\Items.cs" />
@@ -180,6 +180,7 @@
     <Compile Include="Setup\Leaders.cs" />
     <Compile Include="Setup\Boons.cs" />
     <Compile Include="StatusEffects\MorphCardSequenceExtension.cs" />
+    <Compile Include="StatusEffects\StatusEffectApplyXWhenEnemyTakesDamage.cs" />
     <Compile Include="StatusEffects\StatusEffectApplyXOnTeamHit.cs" />
     <Compile Include="StatusEffects\StatusEffectIncreaseAttackWhileNotDamaged.cs" />
     <Compile Include="StatusEffects\StatusEffectCharge.cs" />

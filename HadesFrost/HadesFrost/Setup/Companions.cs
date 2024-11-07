@@ -353,16 +353,31 @@ namespace HadesFrost.Setup
         private static void Dionysus(HadesFrost mod)
         {
             mod.StatusEffects.Add(
-                mod.StatusCopy("When Anyone Takes Shroom Damage Apply Attack To Self", "When Shroom Damage Taken Heal")
-                    .WithText("When anyone takes <keyword=shroom> damage, restore <keyword=health> of allies in the row by <{a}>")
-                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectApplyXWhenEnemyTakesDamage>("When Shroom Damage Taken Heal")
+                    .WithText("When enemy takes <keyword=shroom> damage, increase <keyword=health> of allies in the row by <{a}>")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectApplyXWhenEnemyTakesDamage data)
                     {
-                        var castData = (StatusEffectApplyXWhenAnyoneTakesDamage)data;
-                        castData.effectToApply = mod.TryGet<StatusEffectData>("Heal (No Ping)");
-                        castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.AlliesInRow;
-                        castData.applyEqualAmount = false;
+                        data.TargetDamageType = "shroom";
+                        data.effectToApply = mod.TryGet<StatusEffectData>("Increase Max Health");
+                        data.applyToFlags = StatusEffectApplyX.ApplyToFlags.AlliesInRow;
+                        data.applyEqualAmount = false;
                     })
             );
+
+            // mod.StatusEffects.Add(
+            //     mod.StatusCopy("When Anyone Takes Shroom Damage Apply Attack To Self", "When Shroom Damage Taken Heal")
+            //         .WithText("When anyone takes <keyword=shroom> damage, increase <keyword=health> of allies in the row by <{a}>")
+            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+            //         {
+            //             var castData = (StatusEffectApplyXWhenAnyoneTakesDamage)data;
+            //             // castData.effectToApply = mod.TryGet<StatusEffectData>("Heal (No Ping)");
+            //             castData.effectToApply = mod.TryGet<StatusEffectData>("Increase Max Health");
+            //             castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.AlliesInRow;
+            //             castData.applyEqualAmount = false; 
+            //         })
+            // );
 
             var boonStatus = SetupBoonStatus(mod, "Dionysus", "Boon:\nPremium Vintage", "Adds a <card=bethanw10.hadesfrost.Nectar> with <keyword=noomlin> to your deck");
 

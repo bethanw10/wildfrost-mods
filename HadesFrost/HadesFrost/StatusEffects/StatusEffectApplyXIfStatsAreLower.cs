@@ -24,20 +24,20 @@ namespace HadesFrost.StatusEffects
 
         public override void Init()
         {
-            if (this.postHit)
-                this.PostHit += new StatusEffectData.EffectHitEventHandler(this.CheckHit);
+            if (postHit)
+                PostHit += new EffectHitEventHandler(CheckHit);
             else
-                this.OnHit += new StatusEffectData.EffectHitEventHandler(this.CheckHit);
+                OnHit += new EffectHitEventHandler(CheckHit);
         }
 
         public override bool RunPreAttackEvent(Hit hit)
         {
-            if ((Object)hit.attacker == (Object)this.target && this.target.alive && this.target.enabled && (bool)(Object)hit.target)
+            if ((Object)hit.attacker == (Object)target && target.alive && target.enabled && (bool)(Object)hit.target)
             {
-                if (this.addDamageFactor != 0 || (double)this.multiplyDamageFactor != 1.0)
+                if (addDamageFactor != 0 || (double)multiplyDamageFactor != 1.0)
                 {
                     bool flag = true;
-                    foreach (TargetConstraint applyConstraint in this.applyConstraints)
+                    foreach (TargetConstraint applyConstraint in applyConstraints)
                     {
                         if (!applyConstraint.Check(hit.target) && (!(applyConstraint is TargetConstraintHasStatus constraintHasStatus) || !constraintHasStatus.CheckWillApply(hit)))
                         {
@@ -47,37 +47,37 @@ namespace HadesFrost.StatusEffects
                     }
                     if (flag)
                     {
-                        int amount = this.GetAmount();
-                        if (this.addDamageFactor != 0)
-                            hit.damage += amount * this.addDamageFactor;
-                        if ((double)this.multiplyDamageFactor != 1.0)
-                            hit.damage = Mathf.RoundToInt((float)hit.damage * this.multiplyDamageFactor);
+                        int amount = GetAmount();
+                        if (addDamageFactor != 0)
+                            hit.damage += amount * addDamageFactor;
+                        if ((double)multiplyDamageFactor != 1.0)
+                            hit.damage = Mathf.RoundToInt((float)hit.damage * multiplyDamageFactor);
                     }
                 }
-                if (!hit.Offensive && (hit.damage > 0 || (bool)(Object)this.effectToApply && this.effectToApply.offensive))
+                if (!hit.Offensive && (hit.damage > 0 || (bool)(Object)effectToApply && effectToApply.offensive))
                     hit.FlagAsOffensive();
-                this.storedHit.Add(hit);
+                storedHit.Add(hit);
             }
             return false;
         }
 
-        public override bool RunPostHitEvent(Hit hit) => this.storedHit.Contains(hit) && hit.Offensive;
+        public override bool RunPostHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
 
         public override bool RunHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
 
         public IEnumerator CheckHit(Hit hit)
         {
-            if ((bool)(Object)this.effectToApply)
+            if ((bool)(Object)effectToApply)
             {
                 // // var effectCount = this.effectToApply.count;
                 // //
                 Debug.Log(
-                    hit.target.damage.current + " current " + hit.target.tempDamage + "temp " +  this.count +  "count  " + hit.attacker.damage.current);
+                    hit.target.damage.current + " current " + hit.target.tempDamage + "temp " +  count +  "count  " + hit.attacker.damage.current);
 
                 // hit.target.hp.current + this.count <= hit.attacker.hp.current &&
-                if ((hit.target.damage.current + hit.target.tempDamage + this.count) <= hit.attacker.damage.current + hit.attacker.tempDamage)
+                if ((hit.target.damage.current + hit.target.tempDamage + count) <= hit.attacker.damage.current + hit.attacker.tempDamage)
                 {
-                    yield return (object)this.Run(this.GetTargets(hit), hit.damage + hit.damageBlocked);
+                    yield return (object)Run(GetTargets(hit), hit.damage + hit.damageBlocked);
                 }
             }
         }

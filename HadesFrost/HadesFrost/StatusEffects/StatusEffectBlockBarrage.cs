@@ -12,14 +12,14 @@ namespace HadesFrost.StatusEffects
 {
     public class StatusEffectBlockBarrage : StatusEffectData
     {
-        public override void Init() => this.OnHit += new StatusEffectData.EffectHitEventHandler(this.Check);
+        public override void Init() => OnHit += new EffectHitEventHandler(Check);
 
         public override bool RunHitEvent(Hit hit)
         {
             var allyIsBehind = IsEntityBehind(hit?.target);
 
             return allyIsBehind && 
-                   hit.target?.owner == this.target?.owner &&
+                   hit.target?.owner == target?.owner &&
                    (hit.attacker?.traits?.Any(t => t.data.name == "Barrage") ?? false) && 
                    hit.Offensive && 
                    hit.canBeNullified;
@@ -27,7 +27,7 @@ namespace HadesFrost.StatusEffects
 
         private bool IsEntityBehind(Entity hitEntity)
         {
-            foreach (var cardContainer in this.target.actualContainers.ToArray())
+            foreach (var cardContainer in target.actualContainers.ToArray())
             {
                 if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
                 {

@@ -11,11 +11,11 @@ namespace HadesFrost.StatusEffects
 {
     public class StatusEffectApplyXOnKillWithContext : StatusEffectApplyX
     {
-        public override void Init() => this.OnEntityDestroyed += this.Check;
+        public override void Init() => OnEntityDestroyed += Check;
 
         public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
         {
-            return entity.lastHit != null && entity.lastHit.attacker == this.target;
+            return entity.lastHit != null && entity.lastHit.attacker == target;
         }
 
         public IEnumerator Check(Entity entity, DeathType deathType)

@@ -63,7 +63,7 @@ namespace HadesFrost
         
         public List<ClassDataBuilder> Classes { get; } = new List<ClassDataBuilder>();
 
-        public List<CampaignNodeTypeBuilder> CampaignNodes { get; } = new List<CampaignNodeTypeBuilder>();
+        public List<CampaignNodeTypeBuilder> CampaignNodeTypes { get; } = new List<CampaignNodeTypeBuilder>();
 
         private bool preLoaded;
 
@@ -82,7 +82,7 @@ namespace HadesFrost
             Boons.Setup(this);
             Tribe.Setup(this);
             Hexes.Setup(this);
-            Setup.CampaignNodes.Setup(this);
+            GiftsOfTheMoon.Setup(this);
 
             SpriteAssetsFix();
 
@@ -147,7 +147,7 @@ namespace HadesFrost
             UnloadFromClasses();
 
             // RemoveFromPopulator();
-            Setup.CampaignNodes.Teardown();
+            Setup.GiftsOfTheMoon.Teardown();
 
             base.Unload();
         }
@@ -176,7 +176,7 @@ namespace HadesFrost
                 case nameof(ClassData):
                     return Classes.Cast<T>().ToList();
                 case nameof(CampaignNodeType):
-                    return CampaignNodes.Cast<T>().ToList();
+                    return CampaignNodeTypes.Cast<T>().ToList();
                 default:
                     return null;
             }
@@ -213,7 +213,11 @@ namespace HadesFrost
 
         private static IEnumerator CardsPhoto2()
         {
-            var everyGeneration = new[] { "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", "Dionysus", "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus" };
+            var everyGeneration = new[]
+            {
+                "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", 
+                "Dionysus", "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus"
+            };
             // string[] everyGeneration = new string[] { "Frinos", "Toula" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
@@ -241,7 +245,7 @@ namespace HadesFrost
                     targetAmount--;
                     if (targetAmount == 0)
                     {
-                        preset[0] = preset[0].Insert(i + 1, Setup.CampaignNodes.SeleneEventLetter);
+                        preset[0] = preset[0].Insert(i + 1, Setup.GiftsOfTheMoon.SeleneEventLetter);
                         for (var j = 1; j < preset.Length; j++)
                         {
                             preset[j] = preset[j].Insert(i + 1, preset[j][i].ToString());

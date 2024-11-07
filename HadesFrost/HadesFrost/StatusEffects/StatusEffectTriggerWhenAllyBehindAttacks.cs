@@ -18,25 +18,25 @@ namespace HadesFrost.StatusEffects
 
         public override bool RunHitEvent(Hit hit)
         {
-            if (this.target.enabled && Battle.IsOnBoard(this.target) && hit.countsAsHit && hit.Offensive && (bool)(Object)hit.target && this.CheckEntity(hit.attacker))
-                this.prime.Add(hit.attacker);
+            if (target.enabled && Battle.IsOnBoard(target) && hit.countsAsHit && hit.Offensive && (bool)(Object)hit.target && CheckEntity(hit.attacker))
+                prime.Add(hit.attacker);
             return false;
         }
 
         public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
         {
-            if (this.prime.Count > 0 && this.prime.Contains(entity) && targets != null && targets.Length > 0)
+            if (prime.Count > 0 && prime.Contains(entity) && targets != null && targets.Length > 0)
             {
-                this.prime.Remove(entity);
-                if (Battle.IsOnBoard(this.target) && this.CanTrigger())
-                    this.Run(entity, targets);
+                prime.Remove(entity);
+                if (Battle.IsOnBoard(target) && CanTrigger())
+                    Run(entity, targets);
             }
             return false;
         }
 
         public void Run(Entity attacker, Entity[] targets)
         {
-            if (this.againstTarget)
+            if (againstTarget)
             {
                 foreach (Entity target in targets)
                     ActionQueue.Stack(new ActionTriggerAgainst(this.target, attacker, target, null), true);
@@ -45,11 +45,11 @@ namespace HadesFrost.StatusEffects
                 ActionQueue.Stack(new ActionTrigger(this.target, attacker), true);
         }
 
-        public bool CheckEntity(Entity entity) => (bool)(Object)entity && entity.owner.team == this.target.owner.team && entity != this.target && this.CheckBehind(entity) && Battle.IsOnBoard(entity) && this.CheckDuplicate(entity) && this.CheckDuplicate(entity.triggeredBy);
+        public bool CheckEntity(Entity entity) => (bool)(Object)entity && entity.owner.team == target.owner.team && entity != target && CheckBehind(entity) && Battle.IsOnBoard(entity) && CheckDuplicate(entity) && CheckDuplicate(entity.triggeredBy);
 
         public bool CheckBehind(Entity entity)
         {
-            foreach (var cardContainer in this.target.actualContainers.ToArray())
+            foreach (var cardContainer in target.actualContainers.ToArray())
             {
                 if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
                 {
@@ -73,7 +73,7 @@ namespace HadesFrost.StatusEffects
         public bool CheckDuplicate(Entity entity)
         {
             return !entity.IsAliveAndExists() || 
-                   entity.statusEffects.All(statusEffect => statusEffect.name != this.name);
+                   entity.statusEffects.All(statusEffect => statusEffect.name != name);
         }
     }
 }
