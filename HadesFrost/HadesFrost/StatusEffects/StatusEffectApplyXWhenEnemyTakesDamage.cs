@@ -5,40 +5,35 @@
 // Assembly location: C:\Users\bess\source\repos\wildfrost-mods\HadesFrost\HadesFrost\bin\Debug\Assembly-CSharp-Publicized.dll
 
 using System.Collections;
-using HadesFrost.Utils;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Status Effects/Specific/Apply X When Anyone Takes Damage", fileName = "Apply X When Anyone Takes Damage")]
-public class StatusEffectApplyXWhenEnemyTakesDamage : StatusEffectApplyX
+namespace HadesFrost.StatusEffects
 {
-    [SerializeField]
-    public string TargetDamageType = "basic";
-
-    public bool AnyType = false;
-
-    public override void Init() => PostHit += CheckHit;
-
-    public override bool RunPostHitEvent(Hit hit)
+    public class StatusEffectApplyXWhenEnemyTakesDamage : StatusEffectApplyX
     {
-        Common.Log(hit.target.name);
-        Common.Log(target.enabled &&
+        [SerializeField]
+        public string TargetDamageType = "basic";
+
+        public string IgnoreType = null;
+
+        public bool AlLTypes = false;
+
+        public override void Init() => PostHit += CheckHit;
+
+        public override bool RunPostHitEvent(Hit hit)
+        {
+            return target.enabled &&
                    target.alive &&
                    hit.target.owner != References.Player &&
                    hit.Offensive &&
-                   (hit.damageType == TargetDamageType || AnyType) &&
-                   Battle.IsOnBoard(target));
-        Common.Log(this.GetAmount());
+                   (hit.damageType == TargetDamageType || AlLTypes) &&
+                   (IgnoreType != null || hit.damageType != IgnoreType) &&
+                   Battle.IsOnBoard(target);
+        }
 
-        return target.enabled &&
-               target.alive &&
-               hit.target.owner != References.Player &&
-               hit.Offensive &&
-               (hit.damageType == TargetDamageType || AnyType) &&
-               Battle.IsOnBoard(target);
-    }
-
-    public IEnumerator CheckHit(Hit hit)
-    {
-        return Run(GetTargets(hit), hit.damage + hit.damageBlocked);
+        private IEnumerator CheckHit(Hit hit)
+        {
+            return Run(GetTargets(hit), hit.damage + hit.damageBlocked);
+        }
     }
 }

@@ -186,6 +186,8 @@
     <Compile Include="StatusEffects\StatusEffectCharge.cs" />
     <Compile Include="StatusEffects\StatusEffectInstantMorphCard.cs" />
     <Compile Include="StatusEffects\StatusEffectInstantCombineCard.cs" />
+    <Compile Include="StatusEffects\StatusEffectHitch.cs" />
+    <Compile Include="StatusEffects\StatusEffectUses.cs" />
     <Compile Include="StatusEffects\StatusEffectNothing.cs" />
     <Compile Include="Setup\StatusTypes.cs" />
     <Compile Include="Setup\Pets.cs" />

@@ -44,7 +44,7 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Ares", "Boon:\n Battle Rage", "Leader gains 'Gain <+1><keyword=attack> on kill'");
+            var boonStatus = SetupBoonStatus(mod, "Ares", "Battle Rage", "Leader gains 'Gain <+1><keyword=attack> on kill'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Ares", "Ares", idleAnim: "FloatAnimationProfile")
@@ -93,7 +93,7 @@ namespace HadesFrost.Setup
                         castData.noTargetTypeArgs = new[] { "<sprite name=demonize>" };
                     }));
 
-            var boonStatus = SetupBoonStatus(mod, "Artemis", "Boon:\n Deadly Strike", "Leader gains 'Apply <1><keyword=demonize>'");
+            var boonStatus = SetupBoonStatus(mod, "Artemis", "Deadly Strike", "Leader gains 'Apply <1><keyword=demonize>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Artemis", "Artemis", idleAnim: "FloatAnimationProfile")
@@ -130,7 +130,7 @@ namespace HadesFrost.Setup
 
         private static void Athena(HadesFrost mod)
         {
-            var boonStatus = SetupBoonStatus(mod, "Athena", "Boon:\n Divine Protection", "Leader gains 'On turn, gain <2><keyword=shell>'");
+            var boonStatus = SetupBoonStatus(mod, "Athena", "Divine Protection", "Leader gains <1><keyword=block>");
 
             mod.StatusEffects.Add(
                 mod.StatusCopy(
@@ -164,7 +164,6 @@ namespace HadesFrost.Setup
                     data.startWithEffects = new[]
                     {
                         mod.SStack(boonStatus),
-                        mod.SStack("Block"),
                         mod.SStack("On Kill Apply Block To RandomAlly") 
                     };
                 }));
@@ -189,7 +188,7 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Aphrodite", "Boon:\n Heartbreak Strike", "Leader gains 'Apply <1><keyword=frost>'");
+            var boonStatus = SetupBoonStatus(mod, "Aphrodite", "Heartbreak Strike", "Leader gains 'Apply <1><keyword=frost>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Aphrodite", "Aphrodite", idleAnim: "FloatAnimationProfile")
@@ -255,7 +254,7 @@ namespace HadesFrost.Setup
                         effect.targetSummon = mod.TryGet<StatusEffectSummon>("Summon SunRod");
                     }));
 
-            var boonStatus = SetupBoonStatus(mod, "Apollo", "Boon:\n Perfect Image", "Leader gains 'While undamaged, <keyword=attack> is increased by <2>'");
+            var boonStatus = SetupBoonStatus(mod, "Apollo", "Perfect Image", "Leader gains 'While undamaged, <keyword=attack> is increased by <2>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Apollo", "Apollo", idleAnim: "FloatAnimationProfile")
@@ -324,7 +323,7 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Demeter", "Boon:\n Ice Strike", "Leader gains 'Apply <1><keyword=snow>'");
+            var boonStatus = SetupBoonStatus(mod, "Demeter", "Ice Strike", "Leader gains 'Apply <1><keyword=snow>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Demeter", "Demeter", idleAnim: "PingAnimationProfile")
@@ -379,7 +378,7 @@ namespace HadesFrost.Setup
             //         })
             // );
 
-            var boonStatus = SetupBoonStatus(mod, "Dionysus", "Boon:\nPremium Vintage", "Adds a <card=bethanw10.hadesfrost.Nectar> with <keyword=noomlin> to your deck");
+            var boonStatus = SetupBoonStatus(mod, "Dionysus", "Premium Vintage", "Adds a <card=bethanw10.hadesfrost.Nectar> with <keyword=noomlin> to your deck");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Dionysus", "Dionysus", idleAnim: "PingAnimationProfile")
@@ -409,7 +408,7 @@ namespace HadesFrost.Setup
 
         private static void Hera(HadesFrost mod)
         {
-            var boonStatus = SetupBoonStatus(mod, "Hera", "Boon:\nSworn Strike", "Leader gains 'Apply <1><keyword=hitch>'");
+            var boonStatus = SetupBoonStatus(mod, "Hera", "Sworn Strike", "Leader gains 'Apply <1><keyword=hitch>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hera", "Hera")
@@ -457,7 +456,7 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Hermes", "Boon:\nQuick Buck", "Gain <75><keyword=blings> now");
+            var boonStatus = SetupBoonStatus(mod, "Hermes", "Quick Buck", "Gain <75><keyword=blings> now");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hermes", "Hermes")
@@ -502,7 +501,7 @@ namespace HadesFrost.Setup
                         castData.effectToApply = mod.TryGet<StatusEffectData>("Overload");
                     }));
 
-            var boonStatus = SetupBoonStatus(mod, "Hestia", "Boon:\nFlame Strike", "Leader gains 'Apply <1><keyword=overload>'");
+            var boonStatus = SetupBoonStatus(mod, "Hestia", "Flame Strike", "Leader gains 'Apply <1><keyword=overload>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hestia", "Hestia", idleAnim: "FloatAnimationProfile")
@@ -551,7 +550,7 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Boon:\nHeavy Metal", "Leader gains <3><keyword=shell>");
+            var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Heavy Metal", "Leader gains <3><keyword=shell>");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hephaestus", "Hephaestus", idleAnim: "FloatAnimationProfile")
@@ -620,7 +619,7 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Poseidon", "Boon:\nWater Fitness", "Leader gains <+3><keyword=health>");
+            var boonStatus = SetupBoonStatus(mod, "Poseidon", "Water Fitness", "Leader gains <+3><keyword=health>");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Poseidon", "Poseidon")
@@ -655,7 +654,7 @@ namespace HadesFrost.Setup
 
         private static void Zeus(HadesFrost mod)
         {
-            var boonStatus = SetupBoonStatus(mod, "Zeus", "Boon:\nLightning Strike", "Leader gains 'Apply <1><keyword=jolted>'");
+            var boonStatus = SetupBoonStatus(mod, "Zeus", "Lightning Strike", "Leader gains 'Apply <1><keyword=jolted>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Zeus", "Zeus")
@@ -694,11 +693,11 @@ namespace HadesFrost.Setup
                     .Create($"{cardName}Boon")
                     .WithShowName(true)
                     .WithShowIcon(false)
-                    .WithTitle(title)
+                    .WithTitle("Boon <sprite name=boonicon.png>\n" + title)
                     .WithCanStack(false)
                     .WithPanelColour(Color.grey)
                     .WithBodyColour(new Color(22, 28, 21))
-                    .WithTitleColour(Color.green)
+                    .WithTitleColour(new Color(0.495f, 0.780f, 0.304f))
                     .WithDescription(description);
 
             mod.Keywords.Add(boon);

@@ -37,7 +37,7 @@ namespace HadesFrost.Setup
                     .WithCanStack(false)
                     .WithPanelColour(Color.grey)
                     .WithBodyColour(new Color(22, 28, 21))
-                    .WithTitleColour(Color.cyan)
+                    .WithTitleColour(new Color(0.486f, 0.610f, 0.900f))
                     .WithDescription(
                         "Hexes are abilities that require <sprite name=magickicon>\n\n" +
                         "When a hex is equipped, gain <sprite name=magickicon> equal to all damage dealt by your team\n\n" +
@@ -56,7 +56,9 @@ namespace HadesFrost.Setup
                 "counter",
                 Color.white,
                 Color.clear,
-                new[] { mod.TryGet<KeywordData>("magick") }, 1);
+                new[] { mod.TryGet<KeywordData>("magick") }, 
+                1,
+                0.008f);
 
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
@@ -72,7 +74,8 @@ namespace HadesFrost.Setup
                         castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
                         castData.applyEqualAmount = true;
                         castData.doPing = false;
-                        castData.AnyType = true;
+                        castData.AlLTypes = true;
+                        castData.IgnoreType = "hex";
                     })
             );
             mod.StatusEffects.Add(
@@ -99,13 +102,13 @@ namespace HadesFrost.Setup
         private static void LunarRay(HadesFrost mod)
         {
             const int cost = 25;
-            var description = "Deal <6> damage to enemies in the row\n" + $"<Cost: {cost}><sprite name=magickicon>";
+            var description = "Deal <6> damage to enemies in the row\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Lunar Ray";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
@@ -118,7 +121,7 @@ namespace HadesFrost.Setup
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
-                    castData.HitDamage = 10; // or double current attack?
+                    castData.HitDamage = 6; // or double current attack?
                     castData.MagickCost = cost;
                 })
             );
@@ -127,13 +130,13 @@ namespace HadesFrost.Setup
         private static void PhaseShift(HadesFrost mod)
         {
             const int cost = 30;
-            var description = "Increase all enemy <keyword=counter>s by <1>\n" + $"<Cost: {cost}><sprite name=magickicon>";
+            var description = "Increase all enemies' <keyword=counter> by <1>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Phase Shift";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
@@ -155,13 +158,13 @@ namespace HadesFrost.Setup
         private static void MoonWater(HadesFrost mod)
         {
             const int cost = 15;
-            var description = "Restore <3><keyword=health>\n" + $"<Cost: {cost}><sprite name=magickicon>";
+            var description = "Restore <3><keyword=health>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Moon Water";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
@@ -186,12 +189,12 @@ namespace HadesFrost.Setup
         {
             const int cost = 25;
 
-            var description = "Deal <3> damage to all enemies\n" + $"<Cost: {cost}><sprite name=magickicon>";
+            var description = "Deal <3> damage to all enemies\n" + $"<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Wolf Howl";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
@@ -204,7 +207,7 @@ namespace HadesFrost.Setup
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
-                    castData.HitDamage = 5; // double current attack?
+                    castData.HitDamage = 3; // double current attack?
                     castData.MagickCost = cost;
                 })
             );
@@ -213,12 +216,12 @@ namespace HadesFrost.Setup
         private static void TwilightCurse(HadesFrost mod)
         {
             const int cost = 35;
-            var description = "Turn a random non-boss enemy into a <card=Popper>\n" + $"<Cost: {cost}><sprite name=magickicon>";
+            var description = "Turn a random non-boss enemy into a <card=Popper>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Twilight Curse";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusEffectInstantMorphCard>("Morph Sheepopper")
@@ -263,12 +266,12 @@ namespace HadesFrost.Setup
         private static void DarkSide(HadesFrost mod)
         {
             const int cost = 30;
-            var description = $"Gain <1><keyword=block>\nGain <+1><keyword=attack>\n<Cost: {cost}><sprite name=magickicon>";
+            var description = $"Gain <1><keyword=block>\nGain <+1><keyword=attack>\n<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Dark Side";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusEffectInstantApplyEffect>("Apply Block")
@@ -313,12 +316,12 @@ namespace HadesFrost.Setup
         private static void NightBloom(HadesFrost mod)
         {
             const int cost = 30;
-            var description = "Apply <1> <keyword=haze> to front enemy\n" + $"<Cost: {cost}><sprite name=magickicon>";
+            var description = "Apply <1> <keyword=haze> to front enemy\n" + $"<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Night Bloom";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
@@ -340,12 +343,12 @@ namespace HadesFrost.Setup
         private static void TotalEclipse(HadesFrost mod)
         {
             const int cost = 20;
-            var description = $"Deal <10> damage to front enemy\n<Cost: {cost}><sprite name=magickicon>";
+            var description = $"Deal <10> damage to front enemy\n<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Total Eclipse";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
@@ -358,7 +361,7 @@ namespace HadesFrost.Setup
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
-                    castData.HitDamage = 15;
+                    castData.HitDamage = 10;
                     castData.MagickCost = cost;
                 })
             );
@@ -367,12 +370,12 @@ namespace HadesFrost.Setup
         private static void SkyFall(HadesFrost mod)
         {
             const int cost = 15;
-            var description = $"Apply <1> <keyword=weakness> to all enemies\n<Cost: {cost}><sprite name=magickicon>";
+            var description = $"Apply <1> <keyword=weakness> to all enemies\n<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Sky Fall";
             var keywordName = name.ToLower().Replace(" ", "");
 
-            CreateHexKeyword(mod, keywordName, name, description);
-            CreateHexCard(mod, name, description);
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
@@ -391,7 +394,7 @@ namespace HadesFrost.Setup
             );
         }
 
-        private static void CreateHexCard(HadesFrost mod, string name, string description)
+        private static void CreateCard(HadesFrost mod, string name, string description)
         {
             var nameNoSpaces = name.Replace(" ", "");
             mod.Cards.Add(
@@ -404,7 +407,7 @@ namespace HadesFrost.Setup
                     .WithText($"Leader gains <keyword={Extensions.PrefixGUID("hex", mod)}>:\n" + description));
         }
 
-        private static void CreateHexKeyword(HadesFrost mod, string keywordName, string name, string description)
+        private static void CreateKeyword(WildfrostMod mod, string keywordName, string name, string description)
         {
             var keyword = new KeywordDataBuilder(mod)
                 .Create(keywordName)
@@ -414,10 +417,10 @@ namespace HadesFrost.Setup
                 .WithCanStack(false)
                 .WithPanelColour(Color.grey)
                 .WithBodyColour(new Color(22, 28, 21))
-                .WithTitleColour(Color.blue)
+                .WithTitleColour(new Color(0.486f, 0.610f, 0.900f))
                 .WithDescription(description + "|Click to activate");
 
-            mod.CreateButtonIcon(
+            StatusIcons.CreateButtonIcon(
                 name,
                 mod.ImagePath(keywordName + "button.png").ToSprite(),
                 keywordName,

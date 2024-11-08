@@ -33,10 +33,11 @@ namespace HadesFrost.Setup
 
                     var unitPool = CreateRewardPool("DrawUnitPool", "Units", units);
 
-                    var itemPool = CreateRewardPool("DrawItemPool", "Items", mod.DataList<CardData>(
-                        "FlashWhip", "HongosHammer", "NutshellCake", "ScrapPile", "ShellShield", "Shellbo",
-                        "IridescentFan", "ThunderSignet", "Ambrosia", "SporePack"
-                    ));
+                    DataFile[] items = mod.DataList<CardData>(
+                        "FlashWhip", "HongosHammer", "NutshellCake", "ScrapPile", "ShellShield", "Shellbo", "SporePack",
+                        "IridescentFan", "ThunderSignet", "Ambrosia", "AdamantShard", "UmbralFlames", "ArgentSkull");
+
+                    var itemPool = CreateRewardPool("DrawItemPool", "Items", items);
 
                     var charmPool = CreateRewardPool("DrawCharmPool", "Charms", mod.DataList<CardUpgradeData>(
                         "CardUpgradeOverload", "CardUpgradeConsumeOverload", "CardUpgradeShellBecomesSpice",

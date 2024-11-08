@@ -8,6 +8,21 @@ namespace HadesFrost.Setup
     {
         public static void Setup(HadesFrost mod)
         {
+            BlackShawl(mod);
+
+            BoneHourglass(mod);
+
+            DiscordantBell(mod);
+
+            LionFang(mod);
+
+            VividSea(mod);
+
+            CloudBangle(mod);
+        }
+
+        private static void BlackShawl(HadesFrost mod)
+        {
             var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
 
             mod.StatusEffects.Add(
@@ -15,7 +30,7 @@ namespace HadesFrost.Setup
                         "On Hit Damage Damaged Target",
                         "On Hit Damage Undamaged Target")
                     .WithText("Deal <{a}> additional damage to undamaged foes")
-                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                    .SubscribeToAfterAllBuildEvent(delegate(StatusEffectData data)
                     {
                         var castData = (StatusEffectApplyXOnHit)data;
                         var constraint = new TargetConstraintDamaged
@@ -34,69 +49,26 @@ namespace HadesFrost.Setup
                     .WithText("Deal <3> additional damage to undamaged foes")
                     .SetConstraints(constraintAttack)
                     .WithTier(2)
-                    .SetEffects(new CardData.StatusEffectStacks(mod.TryGet<StatusEffectData>("On Turn Apply Attack To Self"), 1))
-                    .SubscribeToAfterAllBuildEvent(delegate (CardUpgradeData data)
+                    .SetEffects(
+                        new CardData.StatusEffectStacks(mod.TryGet<StatusEffectData>("On Turn Apply Attack To Self"), 1))
+                    .SubscribeToAfterAllBuildEvent(delegate(CardUpgradeData data)
                     {
                         data.effects = new[] { mod.SStack("On Hit Damage Undamaged Target", 3) };
                     })
             );
+        }
 
-            //--
-
-            mod.StatusEffects.Add(
-                mod.StatusCopy(
-                        "Instant Gain Fury",
-                        "Instant Gain Consume")
-                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-                    {
-                        var castData = (StatusEffectApplyXInstant)data;
-
-                        castData.effectToApply = mod.TryGet<StatusEffectData>("Temporary Consume");
-                        castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
-                    }));
-
-            mod.StatusEffects.Add(
-                mod.StatusCopy(
-                        "Lose Scrap",
-                        "Lose Gain Consume")
-                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-                    {
-                        var castData = (StatusEffectInstantLoseX)data;
-                        castData.statusToLose = mod.TryGet<StatusEffectData>("Gain Consume When Played");
-                    }));
-
-            mod.StatusEffects.Add(
-                mod.StatusCopy(
-                        "On Card Played Reduce Attack Effect 1 To Self",
-                        "Gain Consume When Played")
-                    .WithText("Gain <keyword=consume> when played")
-                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-                    {
-                        var castData = (StatusEffectApplyXOnCardPlayed)data;
-                        castData.effectToApply = mod.TryGet<StatusEffectData>("Temporary Consume");
-                    }));
-            //
-            // statusEffects.Add(
-            //     this.StatusCopy(
-            //             "On Card Played Reduce Attack Effect 1 To Self",
-            //             "Lose Gain Consume When Played")
-            //         .WithVisible(false)
-            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-            //         {
-            //             var castData = (StatusEffectApplyXOnCardPlayed)data;
-            //             castData.effectToApply = this.TryGet<StatusEffectData>("Lose Gain Consume");
-            //             castData.targetMustBeAlive = false;
-            //         }));
-
-            // //old
+        private static void BoneHourglass(HadesFrost mod)
+        {
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
-                    .Create<StatusEffectApplyXOnCardPlayed>("Lose Gain Consume When Played")
-                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                    .Create<StatusEffectUses>("Uses")
+                    .WithCanBeBoosted(true)
+                    .WithText("<{a}> use(s) left")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectUses data)
                     {
-                        var castData = (StatusEffectApplyXOnCardPlayed)data;
-                        castData.effectToApply = mod.TryGet<StatusEffectData>("Lose Gain Consume");
-                        castData.targetMustBeAlive = false;
+                        
                     })
             );
 
@@ -112,7 +84,6 @@ namespace HadesFrost.Setup
                     .WithText("Gives items with <keyword=consume> an extra use")
                     .SetConstraints(constraintConsume)
                     .WithTier(2)
-                    .SetEffects(new CardData.StatusEffectStacks(mod.TryGet<StatusEffectData>("On Turn Apply Attack To Self"), 1))
                     .SubscribeToAfterAllBuildEvent(delegate (CardUpgradeData data)
                     {
                         var lose = ScriptableObject.CreateInstance<StatusEffectInstantLoseTrait>();
@@ -120,12 +91,107 @@ namespace HadesFrost.Setup
 
                         data.effects = new[]
                         {
-                            mod.SStack("Gain Consume When Played"),
-                            mod.SStack("Lose Gain Consume When Played"),
+                            mod.SStack("Uses", 2)
                         };
                         var script = ScriptableObject.CreateInstance<CardScriptRemoveTrait>();
                         script.toRemove = new[] { mod.TryGet<TraitData>("Consume") };
                         data.scripts = new CardScript[] { script };
+                    })
+            );
+        }
+
+        private static void DiscordantBell(HadesFrost mod)
+        {
+            var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
+            var constraintUnit = ScriptableObject.CreateInstance<TargetConstraintIsUnit>();
+
+            mod.CardUpgrades.Add(
+                new CardUpgradeDataBuilder(mod)
+                    .CreateCharm("CardUpgradeDiscordantBell")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithImage("DiscordantBellCharm.png")
+                    .WithTitle("Discordant Bell Charm")
+                    .WithText("<+3><keyword=attack>\nStart with <2><keyword=weakness>")
+                    .SetConstraints(constraintAttack, constraintUnit)
+                    .WithTier(2)
+                    .ChangeDamage(3)
+                    .SetEffects(mod.SStack("Weakness", 2))
+            );
+        }
+
+        private static void LionFang(HadesFrost mod)
+        {
+            mod.StatusEffects.Add(
+                mod.StatusCopy(
+                        "On Card Played Reduce Attack Effect 1 To Self",
+                        "On Card Played Reduce Attack To Self")
+                    .WithText("Deal <{a}> additional damage to undamaged foes")
+                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                    {
+                        var castData = (StatusEffectApplyXOnCardPlayed)data;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Reduce Attack");
+                    }));
+
+            var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
+            var constraintUnit = ScriptableObject.CreateInstance<TargetConstraintIsUnit>();
+
+            mod.CardUpgrades.Add(
+                new CardUpgradeDataBuilder(mod)
+                    .CreateCharm("CardUpgradeLionFang")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithImage("LionFangCharm.png")
+                    .WithTitle("Lion Fang")
+                    .WithText("<+6><keyword=attack>\nLose <1><keyword=attack> after attacking")
+                    .SetConstraints(constraintAttack, constraintUnit)
+                    .WithTier(2)
+                    .ChangeDamage(6)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.effects = new[]
+                        {
+                            mod.SStack("On Card Played Reduce Attack To Self")
+                        };
+                    })
+            );
+        }
+
+        private static void VividSea(HadesFrost mod)
+        {
+            var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
+            var constraintUnit = ScriptableObject.CreateInstance<TargetConstraintIsUnit>();
+
+            mod.CardUpgrades.Add(
+                new CardUpgradeDataBuilder(mod)
+                    .CreateCharm("CardUpgradeVividSea")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithImage("VividSeaCharm.png")
+                    .WithTitle("Vivid Sea")
+                    .WithText($"Gain <keyword={Extensions.PrefixGUID("knockback", mod)}>")
+                    .SetConstraints(constraintAttack, constraintUnit)
+                    .WithTier(2)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.giveTraits = new[] { mod.TStack("Knockback") };
+                    })
+            );
+        }
+
+        private static void CloudBangle(HadesFrost mod)
+        {
+            var constraintUnit = ScriptableObject.CreateInstance<TargetConstraintDoesAttack>();
+
+            mod.CardUpgrades.Add(
+                new CardUpgradeDataBuilder(mod)
+                    .CreateCharm("CardUpgradeCloudBangle")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithImage("CloudBangleCharm.png")
+                    .WithTitle("Cloud Bangle")
+                    .WithText($"Apply <2> <keyword=jolted>")
+                    .SetConstraints(constraintUnit)
+                    .WithTier(2)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.attackEffects = new[] { mod.SStack("Jolted") };
                     })
             );
         }

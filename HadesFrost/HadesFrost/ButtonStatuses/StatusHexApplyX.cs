@@ -169,6 +169,7 @@ namespace HadesFrost.ButtonStatuses
                     {
                         var hit = new Hit(target, enemy, trueAmount)
                         {
+                            damageType = "hex",
                             canRetaliate = false
                         };
                         yield return hit.Process();

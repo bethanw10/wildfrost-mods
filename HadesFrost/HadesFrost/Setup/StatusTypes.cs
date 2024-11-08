@@ -66,7 +66,7 @@ namespace HadesFrost.Setup
 
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
-                    .Create<StatusEffectApplyXWhenHit>("Hitch")
+                    .Create<StatusEffectHitch>("Hitch")
                     .WithCanBeBoosted(true)
                     .WithType("hitch")
                     .WithKeyword("hitch")
@@ -79,32 +79,55 @@ namespace HadesFrost.Setup
                     .WithStackable(true)
                     .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
                     {
-                        var castData = (StatusEffectApplyXWhenHit)data;
+                        var castData = (StatusEffectHitch)data;
                         castData.removeOnDiscard = true;
                         castData.applyFormatKey = mod.TryGet<StatusEffectData>("Shroom").applyFormatKey;
                         castData.eventPriority = 2;
-                        castData.targetConstraints = new TargetConstraint[]
-                        {
-                            ScriptableObject.CreateInstance<TargetConstraintIsUnit>()
-                        };
-
-                        var script = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
-                        script.statusType = "hitch";
-
-                        castData.contextEqualAmount = script;
-                        castData.canRetaliate = false;
-                        castData.dealDamage = true;
                         castData.doesDamage = true;
-                        castData.countsAsHit = false;
-
-                        var constraint = ScriptableObject.CreateInstance<TargetConstraintHasStatusType>();
-                        constraint.statusType = "hitch";
-
-                        castData.applyConstraints = new TargetConstraint[] { constraint };
-
-                        castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
                     })
             );
+
+            // mod.StatusEffects.Add(
+            //     new StatusEffectDataBuilder(mod)
+            //         .Create<StatusEffectApplyXWhenHit>("Hitch")
+            //         .WithCanBeBoosted(true)
+            //         .WithType("hitch")
+            //         .WithKeyword("hitch")
+            //         .WithIsStatus(true)
+            //         .WithVisible(true)
+            //         .WithCanBeBoosted(true)
+            //         .WithOffensive(true)
+            //         .WithIconGroupName("health")
+            //         .WithTextInsert("{a}")
+            //         .WithStackable(true)
+            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+            //         {
+            //             var castData = (StatusEffectApplyXWhenHit)data;
+            //             castData.removeOnDiscard = true;
+            //             castData.applyFormatKey = mod.TryGet<StatusEffectData>("Shroom").applyFormatKey;
+            //             castData.eventPriority = 2;
+            //             castData.targetConstraints = new TargetConstraint[]
+            //             {
+            //                 ScriptableObject.CreateInstance<TargetConstraintIsUnit>()
+            //             };
+            //
+            //             var script = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
+            //             script.statusType = "hitch";
+            //
+            //             castData.contextEqualAmount = script;
+            //             castData.canRetaliate = false;
+            //             castData.dealDamage = true;
+            //             castData.doesDamage = true;
+            //             castData.countsAsHit = false;
+            //
+            //             var constraint = ScriptableObject.CreateInstance<TargetConstraintHasStatusType>();
+            //             constraint.statusType = "hitch";
+            //
+            //             castData.applyConstraints = new TargetConstraint[] { constraint };
+            //
+            //             castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
+            //         })
+            // );
         }
     }
 }

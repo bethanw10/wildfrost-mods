@@ -18,21 +18,27 @@ using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 using Object = UnityEngine.Object;
 
 /* TODO:
+ -Maybe-
 Rework apollo unyielding, boring boons?
+ Selene event background ?
+Boon colors - custom panel?
+
+-Release 1-
 Card images
 Pets
-Items - keepsakes, ambrosia, weapons etc.
+Items - keepsakes, weapons etc.
 Charms
-Hitch fix + icon
+Hitch icon
 Jolted anim
-Hades Child trait
- + Tribe banner
-Selene event ? 
-Boon colors - custom panel?
-Custom battles
+Tribe banner
 Remove logs
-Card animations
-Slene only for hades tribe
+Selene only for hades tribe
+Hex button sizes
+
+-Release 2-
+Custom battles
+Zagreus
+More charge items
 */
 
 namespace HadesFrost
@@ -121,7 +127,7 @@ namespace HadesFrost
             Events.OnSceneLoaded += InsertSeleneViaSpecialEvent;
             Events.OnCampaignLoadPreset += InsertSeleneViaPreset;
             Events.OnCheckEntityDrag += HexButton.DisableDrag;
-            // Events.OnSceneChanged += CardsPhoto;
+            Events.OnSceneChanged += CardsPhoto;
 
             base.Load();
             // AddToPopulator();

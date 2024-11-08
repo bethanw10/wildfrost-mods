@@ -76,7 +76,7 @@ namespace HadesFrost.Setup
                                  "|<sprite name=Controller ButtonSheet_24> an Olympian to see their boon")
                 .WithShowName(true)
                 .WithShowIcon(false)
-                .WithTitleColour(new Color(137, 168, 111))
+                .WithTitleColour(new Color(0.495f, 0.780f, 0.304f))
                 .WithTitle("Child of Hades");
 
             mod.Keywords.Add(boons);

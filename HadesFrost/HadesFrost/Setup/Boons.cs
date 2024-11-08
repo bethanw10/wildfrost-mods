@@ -100,7 +100,7 @@ namespace HadesFrost.Setup
                     {
                         upgrade = new CardUpgradeDataBuilder(mod)
                             .Create("AthenaBoon")
-                            .SetEffects(mod.SStack("On Turn Apply Shell To Self", 2));
+                            .SetEffects(mod.SStack("Block"));
                         break;
                     }
                 case "Dionysus":

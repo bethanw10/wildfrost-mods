@@ -35,13 +35,10 @@ public class StatusEffectApplyXOnTeamHit : StatusEffectApplyX
 
     public override bool RunPreAttackEvent(Hit hit)
     {
-        Common.Log("Melinoe");
         if (hit.target?.owner != References.Player &&
             target.alive && 
             target.enabled && (bool)hit.target)
         {
-        Common.Log("Melinoe");
-
             if (addDamageFactor != 0 || multiplyDamageFactor != 1.0)
             {
                 var flag = true;

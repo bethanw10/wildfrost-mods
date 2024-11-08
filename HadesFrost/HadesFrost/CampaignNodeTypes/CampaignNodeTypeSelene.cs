@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Localization;
-using static Mono.Security.X509.X520;
-using UnityEngine.Localization.Tables;
 
 namespace HadesFrost.CampaignNodeTypes
 {
@@ -52,7 +50,7 @@ namespace HadesFrost.CampaignNodeTypes
     
         public override IEnumerator Populate(CampaignNode node)
         {
-            var prompts = new[] { "Please make your choice.", "The choice is yours.", "Which suits you?", "Your choice?", "Behold my light" };
+            var prompts = new[] { "Please make your choice.", "The choice is yours.", "Which suits you?", "Your choice?", "Behold my light." };
 
             var objectOfType = FindObjectOfType<ItemEventRoutine>();
 
@@ -63,23 +61,5 @@ namespace HadesFrost.CampaignNodeTypes
 
             yield return objectOfType.Populate();
         }
-    
-        // public override IEnumerator Run(CampaignNode node)
-        // {
-        //     yield return (object)Transition.To("Event");
-        //    // AsyncOperationHandle<GameObject> task = this.routinePrefabRef.InstantiateAsync(EventManager.EventRoutineHolder);
-        //    // yield return (object)new WaitUntil((Func<bool>)(() => task.IsDone));
-        //    // EventRoutine eventRoutine = task.Result.GetComponent<EventRoutine>();
-        //    // task.Result.AddComponent<AddressableReleaser>().Add((AsyncOperationHandle)task);
-        //     var eventRoutine = FindObjectOfType<ItemEventRoutine>();
-        //     Events.InvokeEventStart(node, eventRoutine);
-        //     yield return (object)this.Populate(node);
-        //     Events.InvokeEventPopulated(eventRoutine);
-        //     Transition.End();
-        //     yield return (object)eventRoutine.Run();
-        //     yield return (object)Transition.To("MapNew");
-        //     Transition.End();
-        //     yield return (object)MapNew.CheckCompanionLimit();
-        // }
     }
 }

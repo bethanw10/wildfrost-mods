@@ -22,7 +22,8 @@ namespace HadesFrost.Utils
             Color textColor, 
             Color shadowColor, 
             KeywordData[] keys, 
-            int posX = 1)
+            int posX = 1,
+            float scale = 0.01f)
         {
             var gameObject = new GameObject(name);
             Object.DontDestroyOnLoad(gameObject);
@@ -56,7 +57,7 @@ namespace HadesFrost.Utils
             var rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.zero;
-            rectTransform.sizeDelta *= 0.01f;
+            rectTransform.sizeDelta *= scale;
             gameObject.SetActive(true);
             icon.type = type;
             cardIcons[type] = gameObject;
@@ -64,7 +65,13 @@ namespace HadesFrost.Utils
             return gameObject;
         }
 
-        public static GameObject CreateButtonIcon(this WildfrostMod mod, string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys)
+        public static GameObject CreateButtonIcon(
+            string name, 
+            Sprite sprite, 
+            string type,
+            string copyTextFrom, 
+            Color textColor, 
+            KeywordData[] keys)
         {
             var gameObject = new GameObject(name);
 

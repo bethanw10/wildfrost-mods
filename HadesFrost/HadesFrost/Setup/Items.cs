@@ -270,7 +270,7 @@ namespace HadesFrost.Setup
                         data.startWithEffects = new[]
                         {
                             mod.SStack("Summon ArgentSkullShell"),
-                            // mod.SStack("MultiHit", 2)
+                            mod.SStack("Uses", 3)
                         };
                     })
                     .WithValue(40)
