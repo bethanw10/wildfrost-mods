@@ -5,6 +5,7 @@
 // Assembly location: C:\Users\bess\source\repos\wildfrost-mods\HadesFrost\HadesFrost\bin\Debug\Assembly-CSharp-Publicized.dll
 
 using System.Collections;
+using HadesFrost.Utils;
 using UnityEngine;
 
 namespace HadesFrost.StatusEffects
@@ -16,24 +17,26 @@ namespace HadesFrost.StatusEffects
 
         public string IgnoreType = null;
 
-        public bool AlLTypes = false;
+        public bool AllTypes = false;
 
         public override void Init() => PostHit += CheckHit;
 
         public override bool RunPostHitEvent(Hit hit)
         {
+            Common.Log(hit.damageType);
             return target.enabled &&
                    target.alive &&
                    hit.target.owner != References.Player &&
                    hit.Offensive &&
-                   (hit.damageType == TargetDamageType || AlLTypes) &&
-                   (IgnoreType != null || hit.damageType != IgnoreType) &&
+                   (hit.damageType == TargetDamageType || AllTypes) &&
+                   (IgnoreType == null || hit.damageType != IgnoreType) &&
                    Battle.IsOnBoard(target);
         }
 
         private IEnumerator CheckHit(Hit hit)
         {
-            return Run(GetTargets(hit), hit.damage + hit.damageBlocked);
+            return Run(GetTargets(hit), hit.damageDealt);
+            // return Run(GetTargets(hit), hit.damage + hit.damageBlocked);
         }
     }
 }

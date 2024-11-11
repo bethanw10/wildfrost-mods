@@ -221,11 +221,31 @@ namespace HadesFrost.Setup
 
         private static void Apollo(HadesFrost mod)
         {
+            var keyword = new KeywordDataBuilder(mod)
+                .Create("Unyielding")
+                .WithCanStack(false)
+                .WithDescription("This card's <keyword=counter> can't be reduced by items/units during battle.")
+                .WithShowName(true)
+                .WithShowIcon(false)
+                .WithTitle("Unyielding");
+
+            var unyielding = new StatusEffectDataBuilder(mod)
+                .Create<StatusEffectCannotReduceCounter>("Cannot Reduce Counter")
+                .WithCanBeBoosted(false);
+
+            mod.Keywords.Add(keyword);
+            mod.StatusEffects.Add(unyielding);
+
+            mod.Traits.Add(new TraitDataBuilder(mod)
+                .Create("Unyielding")
+                .WithKeyword(keyword.Build())
+                .WithEffects(unyielding.Build())
+            );
+
             mod.Cards.Add(
                 mod.CardCopy("SunRod", "RadiantSunRod")
                 .SetTraits(mod.TStack("Consume"), mod.TStack("Zoomlin"))
-                .WithTitle("Radiant Sun Rod")
-                .WithText("Cannot target Apollo")
+                .WithTitle("Sun Rod")
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     var constraint = ScriptableObject.CreateInstance<TargetConstraintIsSpecificCard>();
@@ -256,11 +276,62 @@ namespace HadesFrost.Setup
 
             var boonStatus = SetupBoonStatus(mod, "Apollo", "Perfect Image", "Leader gains 'While undamaged, <keyword=attack> is increased by <2>'");
 
+            // mod.Cards.Add(new CardDataBuilder(mod)
+            //     .CreateUnit("Apollo", "Apollo", idleAnim: "FloatAnimationProfile")
+            //     .SetSprites("Apollo.png", "ApolloBG.png")
+            //     .SetStats(4, 4, 5)
+            //     
+            //     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+            //     {
+            //         data.greetMessages = new[]
+            //         {
+            //             "Let's show them a dazzling display they won't soon forget.",
+            //             "Brighter days are ahead, we just have to get through this rough patch together.",
+            //             "Shall we try and make these dark days a bit brighter, Cousin?",
+            //             "Must be something I can do to brighten up your evening there a bit?",
+            //             "Where there's light, there's hope, sunshine, so get set for some of each!",
+            //             "As you might have guessed, I'm taking this whole thing 'engulfing the sun in ice' thing very personally"
+            //         };
+            //         data.startWithEffects = new[]
+            //         {
+            //             mod.SStack(boonStatus),
+            //             mod.SStack("On Card Played Add Sun Rod To Hand")
+            //         };
+            //         data.traits = new List<CardData.TraitStacks>
+            //         {
+            //             mod.TStack("Unyielding")
+            //         };
+            //     }));
+
+            mod.StatusEffects.Add(
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectApplyXWhenEnemiesAttack>("Count Down When Enemies Attack")
+                    .WithText("When an enemy attacks, count down <keyword=counter> by <{a}>")
+                    .WithType("")
+                    .WithCanBeBoosted(true)
+                    .FreeModify(delegate (StatusEffectApplyXWhenEnemiesAttack data)
+                    {
+                        data.doPing = false;
+                        data.effectToApply = mod.TryGet<StatusEffectData>("Reduce Counter");
+                        data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+                    })
+            );
+            mod.StatusEffects.Add(
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectApplyXOnCardPlayed>("Trigger Allies")
+                    .WithText("Trigger all allies")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectApplyXOnCardPlayed data)
+                    {
+                        data.effectToApply = mod.TryGet<StatusEffectData>("Trigger (High Prio)");
+                        data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
+                    })
+            );
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Apollo", "Apollo", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Apollo.png", "ApolloBG.png")
-                .SetStats(4, 4, 5)
-                
+                .SetStats(6, null, 12)
+
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -275,7 +346,8 @@ namespace HadesFrost.Setup
                     data.startWithEffects = new[]
                     {
                         mod.SStack(boonStatus),
-                        mod.SStack("On Card Played Add Sun Rod To Hand")
+                        mod.SStack("Trigger Allies"),
+                        mod.SStack("Count Down When Enemies Attack"),
                     };
                 }));
         }
@@ -461,7 +533,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hermes", "Hermes")
                 .SetSprites("Hermes.png", "HermesBG.png")
-                .SetStats(3, 0, 2)
+                .SetStats(1, null, 3)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]

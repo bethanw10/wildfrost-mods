@@ -22,7 +22,7 @@ namespace HadesFrost.Setup
 
                     var inventory = ScriptableObject.CreateInstance<Inventory>();
                     inventory.deck.list = mod.DataList<CardData>(
-                        "WitchsStaff", "WitchsStaff", "SisterBlades", "MoonstoneAxe", "FrostbittenHorn", "Pom Slice", "Skelly", "Nectar")
+                        "WitchsStaff", "SisterBlades", "MoonstoneAxe", "FrostbittenHorn", "Pom Slice", "Skelly", "Nectar")
                         .ToList();
                     data.startingInventory = inventory;
 
@@ -40,7 +40,7 @@ namespace HadesFrost.Setup
                     var itemPool = CreateRewardPool("DrawItemPool", "Items", items);
 
                     var charmPool = CreateRewardPool("DrawCharmPool", "Charms", mod.DataList<CardUpgradeData>(
-                        "CardUpgradeOverload", "CardUpgradeConsumeOverload", "CardUpgradeShellBecomesSpice",
+                        "CardUpgradeOverload", "CardUpgradeConsumeOverload",
                         "CardUpgradeShroomReduceHealth",
                         "CardUpgradeShellOnKill", "CardUpgradeShroom", "CardUpgradeAcorn",
                         "CardUpgradeBlackShawl", "CardUpgradeBoneHourglass"));

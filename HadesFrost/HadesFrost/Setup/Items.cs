@@ -16,13 +16,14 @@ namespace HadesFrost.Setup
             Ambrosia(mod);
 
             FrostbittenHorn(mod);
-            ThunderSignet(mod);
-            IridescentFan(mod);
+            ThunderSignet(mod);//
+            IridescentFan(mod);//
             AdamantShard(mod);
 
             WitchsStaff(mod);
             MoonstoneAxe(mod);
-            SisterBlades(mod);
+            SisterBlades(mod); 
+
             UmbralFlames(mod);
             ArgentSkull(mod);
         }
@@ -49,7 +50,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("Nectar", "Nectar")
-                    .SetSprites("Nectar.png", "AresBG.png")
+                    .SetSprites("Nectar.png", "NectarBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .NeedsTarget()
                     .AddPool("GeneralItemPool")
@@ -76,7 +77,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("Ambrosia", "Ambrosia")
-                    .SetSprites("Ambrosia.png", "AresBG.png")
+                    .SetSprites("Ambrosia.png", "AmbrosiaBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .NeedsTarget()
                     .AddPool("GeneralItemPool")
@@ -100,7 +101,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("Pom Slice", "Pom Slice")
-                    .SetSprites("PomOfPower.png", "AresBG.png")
+                    .SetSprites("PomOfPower.png", "PomOfPowerBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .AddPool("GeneralItemPool")
                     .NeedsTarget(false)
@@ -123,7 +124,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("ThunderSignet", "Thunder Signet")
-                    .SetSprites("ThunderSignet.png", "AresBG.png")
+                    .SetSprites("ThunderSignet.png", "ThunderSignetBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .SetDamage(0)
                     .WithValue(40)
@@ -141,7 +142,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("IridescentFan", "Iridescent Fan")
-                    .SetSprites("IridescentFan.png", "AresBG.png")
+                    .SetSprites("IridescentFan.png", "IridescentFanBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .SetDamage(0)
                     .WithValue(40)
@@ -163,13 +164,13 @@ namespace HadesFrost.Setup
         {
             mod.StatusEffects.Add(
                 mod.StatusCopy("Instant Apply Frenzy (To Card In Hand)", "Instant Damage (To Card In Hand)")
-                    .WithText("Add <+{a}><keyword=attack> to a card in your hand")
+                    .WithText("Add <+{a}><keyword=attack> to an <item> in your hand")
                     .FreeModify(data =>
                     {
                         var castData = (StatusEffectApplyXInstant)data;
                         castData.effectToApply = mod.TryGet<StatusEffectData>("Increase Attack").InstantiateKeepName();
                         
-                        var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesAttack>();
+                        var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
                         var constraintItem = ScriptableObject.CreateInstance<TargetConstraintIsItem>();
 
                         castData.targetConstraints = new TargetConstraint[] { constraintItem, constraintAttack };
@@ -223,7 +224,8 @@ namespace HadesFrost.Setup
                     .SetDamage(1)
                     .WithValue(40)
                     .SetTraits(mod.TStack("Barrage"))
-                    .SetStartWithEffect(mod.SStack("On Card Played Apply Attack To Self"))
+                    //.SetStartWithEffect(mod.SStack("On Card Played Apply Attack To Self"))
+                    .SetStartWithEffect(mod.SStack("On Kill Apply Attack To Self"))
                 );
         }
 

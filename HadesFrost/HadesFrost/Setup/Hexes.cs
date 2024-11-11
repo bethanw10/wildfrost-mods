@@ -74,7 +74,7 @@ namespace HadesFrost.Setup
                         castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
                         castData.applyEqualAmount = true;
                         castData.doPing = false;
-                        castData.AlLTypes = true;
+                        castData.AllTypes = true;
                         castData.IgnoreType = "hex";
                     })
             );

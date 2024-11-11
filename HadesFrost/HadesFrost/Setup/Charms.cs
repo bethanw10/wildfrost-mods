@@ -9,15 +9,11 @@ namespace HadesFrost.Setup
         public static void Setup(HadesFrost mod)
         {
             BlackShawl(mod);
-
             BoneHourglass(mod);
-
             DiscordantBell(mod);
-
             LionFang(mod);
 
             VividSea(mod);
-
             CloudBangle(mod);
         }
 
@@ -44,7 +40,7 @@ namespace HadesFrost.Setup
                 new CardUpgradeDataBuilder(mod)
                     .CreateCharm("CardUpgradeBlackShawl")
                     .WithType(CardUpgradeData.Type.Charm)
-                    .WithImage("MakokoCharm.png")
+                    .WithImage("BlackShawlCharm.png")
                     .WithTitle("Black Shawl Charm")
                     .WithText("Deal <3> additional damage to undamaged foes")
                     .SetConstraints(constraintAttack)
@@ -79,7 +75,7 @@ namespace HadesFrost.Setup
                 new CardUpgradeDataBuilder(mod)
                     .CreateCharm("CardUpgradeBoneHourglass")
                     .WithType(CardUpgradeData.Type.Charm)
-                    .WithImage("MakokoCharm.png")
+                    .WithImage("BoneHourglassCharm.png")
                     .WithTitle("Bone Hourglass Charm")
                     .WithText("Gives items with <keyword=consume> an extra use")
                     .SetConstraints(constraintConsume)
@@ -111,11 +107,11 @@ namespace HadesFrost.Setup
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("DiscordantBellCharm.png")
                     .WithTitle("Discordant Bell Charm")
-                    .WithText("<+3><keyword=attack>\nStart with <2><keyword=weakness>")
+                    .WithText("<+3><keyword=attack>\nStart with <1><keyword=weakness>")
                     .SetConstraints(constraintAttack, constraintUnit)
                     .WithTier(2)
                     .ChangeDamage(3)
-                    .SetEffects(mod.SStack("Weakness", 2))
+                    .SetEffects(mod.SStack("Weakness", 1))
             );
         }
 
@@ -125,7 +121,7 @@ namespace HadesFrost.Setup
                 mod.StatusCopy(
                         "On Card Played Reduce Attack Effect 1 To Self",
                         "On Card Played Reduce Attack To Self")
-                    .WithText("Deal <{a}> additional damage to undamaged foes")
+                    .WithText("Reduce attack by <{a}>")
                     .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
                     {
                         var castData = (StatusEffectApplyXOnCardPlayed)data;
@@ -141,10 +137,10 @@ namespace HadesFrost.Setup
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("LionFangCharm.png")
                     .WithTitle("Lion Fang")
-                    .WithText("<+6><keyword=attack>\nLose <1><keyword=attack> after attacking")
+                    .WithText("<+5><keyword=attack>\nLose <1><keyword=attack> after attacking")
                     .SetConstraints(constraintAttack, constraintUnit)
                     .WithTier(2)
-                    .ChangeDamage(6)
+                    .ChangeDamage(5)
                     .SubscribeToAfterAllBuildEvent(data =>
                     {
                         data.effects = new[]

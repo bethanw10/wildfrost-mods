@@ -9,12 +9,10 @@ using HadesFrost.Utils;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Localization.Components;
-using UnityEngine.Localization.Tables;
 using UnityEngine.SceneManagement;
+using WildfrostHopeMod.SFX;
 using WildfrostHopeMod.Utils;
-using static HadesFrost.Utils.StatusIcons;
-using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
+using WildfrostHopeMod.VFX;
 using Object = UnityEngine.Object;
 
 /* TODO:
@@ -25,20 +23,22 @@ Boon colors - custom panel?
 
 -Release 1-
 Card images
-Pets
 Items - keepsakes, weapons etc.
 Charms
 Hitch icon
-Jolted anim
 Tribe banner
 Remove logs
-Selene only for hades tribe
 Hex button sizes
+Hex damage counts for magick
+Balancing
 
 -Release 2-
 Custom battles
 Zagreus
 More charge items
+More pets
+Pet flags??
+multiple boons
 */
 
 namespace HadesFrost
@@ -51,7 +51,7 @@ namespace HadesFrost
 
         public override string GUID => "bethanw10.hadesfrost";
 
-        public override string[] Depends => Array.Empty<string>(); // todo add in battle data and config just in case
+        public override string[] Depends => Array.Empty<string>(); // todo add in battle data and config just in case + VFX/SFX
 
         public override string Title => "Hades Frost";
 
@@ -74,6 +74,8 @@ namespace HadesFrost
         private bool preLoaded;
 
         private TMP_SpriteAsset hadesSprites;
+        public static GIFLoader VFX;
+        public static SFXLoader SFX;
 
         public override TMP_SpriteAsset SpriteAsset => hadesSprites;
 
@@ -90,12 +92,19 @@ namespace HadesFrost
             Hexes.Setup(this);
             GiftsOfTheMoon.Setup(this);
 
-            SpriteAssetsFix();
+            SetupSpriteAssets();
+            SetupVFX();
 
             preLoaded = true;
         }
 
-        private void SpriteAssetsFix()
+        private void SetupVFX()
+        {
+            VFX = new GIFLoader(this, this.ImagePath("Anim"));
+            VFX.RegisterAllAsApplyEffect();
+        }
+
+        private void SetupSpriteAssets()
         {
             hadesSprites = HopeUtils.CreateSpriteAsset(
                 "hadesSprites",
@@ -127,7 +136,7 @@ namespace HadesFrost
             Events.OnSceneLoaded += InsertSeleneViaSpecialEvent;
             Events.OnCampaignLoadPreset += InsertSeleneViaPreset;
             Events.OnCheckEntityDrag += HexButton.DisableDrag;
-            Events.OnSceneChanged += CardsPhoto;
+            // Events.OnSceneChanged += CardsPhoto;
 
             base.Load();
             // AddToPopulator();
@@ -153,7 +162,7 @@ namespace HadesFrost
             UnloadFromClasses();
 
             // RemoveFromPopulator();
-            Setup.GiftsOfTheMoon.Teardown();
+            GiftsOfTheMoon.Teardown();
 
             base.Unload();
         }
@@ -193,11 +202,14 @@ namespace HadesFrost
             var tribes = AddressableLoader.GetGroup<ClassData>("ClassData");
             foreach (var tribe in tribes)
             {
-                if (tribe == null || tribe.rewardPools == null) { continue; } //This isn't even a tribe; skip it.
+                if (tribe == null || tribe.rewardPools == null)
+                {
+                    continue;
+                }
 
                 foreach (var pool in tribe.rewardPools.Where(pool => pool != null))
                 {
-                    pool.list.RemoveAllWhere((item) => item == null || item.ModAdded == this); //Find and remove everything that needs to be removed.
+                    pool.list.RemoveAllWhere(item => item == null || item.ModAdded == this); //Find and remove everything that needs to be removed.
                 }
             }
         }
@@ -233,8 +245,12 @@ namespace HadesFrost
             yield return sequence.StartCoroutine("CreateCards", everyGeneration.Select((string s) => ("bethanw10.hadesfrost") + "." + s).ToArray());
         }
         
-        private static void InsertSeleneViaPreset(ref string[] preset)
+        private void InsertSeleneViaPreset(ref string[] preset)
         {
+            if (References.PlayerData?.classData?.ModAdded?.GUID != GUID)
+            {
+                return;
+            }
             // todo hades only?
             //See References for the two possible presets.
             //Lines 0 + 1: Node types
@@ -251,7 +267,7 @@ namespace HadesFrost
                     targetAmount--;
                     if (targetAmount == 0)
                     {
-                        preset[0] = preset[0].Insert(i + 1, Setup.GiftsOfTheMoon.SeleneEventLetter);
+                        preset[0] = preset[0].Insert(i + 1, GiftsOfTheMoon.SeleneEventLetter);
                         for (var j = 1; j < preset.Length; j++)
                         {
                             preset[j] = preset[j].Insert(i + 1, preset[j][i].ToString());
@@ -266,8 +282,8 @@ namespace HadesFrost
         {
             if (scene.name == "Campaign")
             {
-                SpecialEventsSystem specialEvents = GameObject.FindObjectOfType<SpecialEventsSystem>(); //Only 1 of these exists
-                SpecialEventsSystem.Event eve = new SpecialEventsSystem.Event()
+                var specialEvents = Object.FindObjectOfType<SpecialEventsSystem>(); //Only 1 of these exists
+                var eve = new SpecialEventsSystem.Event()
                 {
                     requiresUnlock = null,                                    //Unnecessary as this is default, but really just showing that it exists
                     nodeType = this.TryGet<CampaignNodeType>("SeleneNode"),        //Our Selene

@@ -23,8 +23,8 @@ namespace HadesFrost.StatusEffects
                 damageType = "jolt"
             };
 
-            // Pokefrost.VFX.TryPlayEffect("jolt", target.transform.position, 0.5f * target.transform.lossyScale);
-            // Pokefrost.SFX.TryPlaySound("jolt");
+            HadesFrost.VFX.TryPlayEffect("jolt", target.transform.position, 0.5f * target.transform.lossyScale);
+            // HadesFrost.SFX.TryPlaySound("jolt");
             target.curveAnimator.Ping();
             yield return new WaitForSeconds(0.25f);
             yield return hit2.Process();

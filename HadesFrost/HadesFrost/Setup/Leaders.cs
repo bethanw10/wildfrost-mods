@@ -21,7 +21,7 @@ namespace HadesFrost.Setup
                 .CreateUnit("Melinoe", "Melinoë", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Melinoe.png", "MelinoeBG.png")
                 .WithCardType("Leader")
-                .SetStats(6, 3, 4)
+                .SetStats(6, 4, 4)
                 .FreeModify(data =>
                 {
                     data.createScripts = new[]  
