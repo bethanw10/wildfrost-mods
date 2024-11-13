@@ -71,9 +71,6 @@ namespace HadesFrost.StatusEffects
             {
                 // // var effectCount = this.effectToApply.count;
                 // //
-                Debug.Log(
-                    hit.target.damage.current + " current " + hit.target.tempDamage + "temp " +  count +  "count  " + hit.attacker.damage.current);
-
                 // hit.target.hp.current + this.count <= hit.attacker.hp.current &&
                 if ((hit.target.damage.current + hit.target.tempDamage + count) <= hit.attacker.damage.current + hit.attacker.tempDamage)
                 {

@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.Utils;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace HadesFrost.ButtonStatuses
 {

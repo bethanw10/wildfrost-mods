@@ -5,14 +5,13 @@ using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.ButtonStatuses;
 using HadesFrost.Setup;
-using HadesFrost.Utils;
-using HarmonyLib;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WildfrostHopeMod.SFX;
 using WildfrostHopeMod.Utils;
 using WildfrostHopeMod.VFX;
+using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 using Object = UnityEngine.Object;
 
 /* TODO:
@@ -22,23 +21,22 @@ Rework apollo unyielding, boring boons?
 Boon colors - custom panel?
 
 -Release 1-
-Card images
-Items - keepsakes, weapons etc.
-Charms
-Hitch icon
 Tribe banner
-Remove logs
 Hex button sizes
-Hex damage counts for magick
+Vivid sea constraints
 Balancing
 
 -Release 2-
+Items - keepsakes, weapons etc.
+More Charms
+
 Custom battles
 Zagreus
 More charge items
 More pets
 Pet flags??
-multiple boons
+Hitch anim
+multiple boons - choice??
 */
 
 namespace HadesFrost
@@ -51,11 +49,22 @@ namespace HadesFrost
 
         public override string GUID => "bethanw10.hadesfrost";
 
-        public override string[] Depends => Array.Empty<string>(); // todo add in battle data and config just in case + VFX/SFX
+        public override string[] Depends => new[]
+        {
+            "mhcdc9.wildfrost.battle", 
+            "hope.wildfrost.configs",
+            "hope.wildfrost.vfx"
+        };
 
         public override string Title => "Hades Frost";
 
-        public override string Description => ":)";
+        public override string Description =>
+            @"
+A mod inspired by Hades II (and partly by the first Hades)
+
+As this is still quite new, it's likely I'll be making balancing changes in the future and there may be a fair amount of bugs.
+
+Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + permission to use it, FungEMP for the Apollo idea, and everyone else on the Discord who helped me";
 
         public List<CardDataBuilder> Cards { get; } = new List<CardDataBuilder>();
 
@@ -74,8 +83,6 @@ namespace HadesFrost
         private bool preLoaded;
 
         private TMP_SpriteAsset hadesSprites;
-        public static GIFLoader VFX;
-        public static SFXLoader SFX;
 
         public override TMP_SpriteAsset SpriteAsset => hadesSprites;
 
@@ -100,8 +107,8 @@ namespace HadesFrost
 
         private void SetupVFX()
         {
-            VFX = new GIFLoader(this, this.ImagePath("Anim"));
-            VFX.RegisterAllAsApplyEffect();
+            VFXHelper.VFX = new GIFLoader(this, this.ImagePath("Anim"));
+            VFXHelper.VFX.RegisterAllAsApplyEffect();
         }
 
         private void SetupSpriteAssets()
@@ -116,14 +123,6 @@ namespace HadesFrost
             text.textAsset.spriteAsset.fallbackSpriteAssets.Add(hadesSprites);
         }
 
-        private static void LeaderImagesFix(Entity entity)
-        {
-            if (entity.display is Card card && !card.hasScriptableImage) //These cards should use the static image
-            {
-                card.mainImage.gameObject.SetActive(true);               //And this line turns them on
-            }
-        }
-
         public override void Load()
         {
             if (!preLoaded)
@@ -131,40 +130,41 @@ namespace HadesFrost
                 CreateModAssets();
             }
 
-            Events.OnEntityCreated += LeaderImagesFix;
             Events.OnEntityChosen += EntityChosen;
-            Events.OnSceneLoaded += InsertSeleneViaSpecialEvent;
-            Events.OnCampaignLoadPreset += InsertSeleneViaPreset;
+            Events.OnCampaignLoadPreset += CampaignLoad;
+            Events.OnEntityCreated += Leaders.LeaderImagesFix;
             Events.OnCheckEntityDrag += HexButton.DisableDrag;
-            // Events.OnSceneChanged += CardsPhoto;
+            // Events.OnSceneLoaded += InsertSeleneViaSpecialEvent;
+            //Events.OnSceneChanged += CardsPhoto;
 
             base.Load();
-            // AddToPopulator();
 
-            // todo move to tribe
-            var gameMode = this.TryGet<GameMode>("GameModeNormal");
-            gameMode.classes = gameMode.classes.Append(this.TryGet<ClassData>("Hades")).ToArray();
+            Tribe.AppendTribe(this);
+
+            // AddToPopulator();
         }
 
         public override void Unload()
         {
             preLoaded = false;
-            // TODO remove from pools
-            Events.OnEntityChosen -= EntityChosen; // TODO move to boons
-            Events.OnEntityCreated -= LeaderImagesFix;
-            Events.OnSceneLoaded -= InsertSeleneViaSpecialEvent;
-            Events.OnCampaignLoadPreset -= InsertSeleneViaPreset;
+
+            Events.OnEntityChosen -= EntityChosen;
+            Events.OnCampaignLoadPreset -= CampaignLoad;
+            Events.OnEntityCreated -= Leaders.LeaderImagesFix;
             Events.OnCheckEntityDrag -= HexButton.DisableDrag;
-
-            // todo move to Tribes.cs
-            var gameMode = this.TryGet<GameMode>("GameModeNormal");
-            gameMode.classes = RemoveNulls(gameMode.classes); 
-            UnloadFromClasses();
-
+            // Events.OnSceneLoaded -= InsertSeleneViaSpecialEvent;
             // RemoveFromPopulator();
+
             GiftsOfTheMoon.Teardown();
 
+            RemoveFromPools();
             base.Unload();
+            Tribe.UnAppendTribe(this);
+        }
+
+        private void CampaignLoad(ref string[] preset)
+        {
+            GiftsOfTheMoon.InsertSeleneViaPreset(this, ref preset);
         }
 
         private void EntityChosen(Entity entity)
@@ -197,30 +197,6 @@ namespace HadesFrost
             }
         }
 
-        private void UnloadFromClasses()
-        {
-            var tribes = AddressableLoader.GetGroup<ClassData>("ClassData");
-            foreach (var tribe in tribes)
-            {
-                if (tribe == null || tribe.rewardPools == null)
-                {
-                    continue;
-                }
-
-                foreach (var pool in tribe.rewardPools.Where(pool => pool != null))
-                {
-                    pool.list.RemoveAllWhere(item => item == null || item.ModAdded == this); //Find and remove everything that needs to be removed.
-                }
-            }
-        }
-
-        private T[] RemoveNulls<T>(T[] data) where T : DataFile
-        {
-            var list = data.ToList();
-            list.RemoveAll(x => x == null || x.ModAdded == this);
-            return list.ToArray();
-        }
-
         public void CardsPhoto(Scene scene)
         {
             if (scene.name == "Town")
@@ -242,58 +218,47 @@ namespace HadesFrost
             var sequence = Object.FindObjectOfType<CardFramesUnlockedSequence>();
             var titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(includeInactive: true);
             titleObject.text = "New Cards!";
-            yield return sequence.StartCoroutine("CreateCards", everyGeneration.Select((string s) => ("bethanw10.hadesfrost") + "." + s).ToArray());
+            yield return sequence.StartCoroutine("CreateCards", everyGeneration.Select((string s) => $"bethanw10.hadesfrost.{s}").ToArray());
         }
-        
-        private void InsertSeleneViaPreset(ref string[] preset)
-        {
-            if (References.PlayerData?.classData?.ModAdded?.GUID != GUID)
-            {
-                return;
-            }
-            // todo hades only?
-            //See References for the two possible presets.
-            //Lines 0 + 1: Node types
-            //Line 2: Battle Tier (fight 1, fight 2, etc)
-            //Line 3: Zone (Snow Tundra, Ice Caves, Frostlands)
-            //const char letter = 'B'; //S is for Snowdwell, b is for non-boss, B is for boss.
-            const char letter = 'S'; //S is for Snowdwell, b is for non-boss, B is for boss.
-            var targetAmount = 1; //Stop after the 1st S.
 
-            for (var i = 0; i < preset[0].Length; i++)
+        private void RemoveFromPools()
+        {
+            try
             {
-                if (preset[0][i] == letter)
+                string[] poolsToCheck =
                 {
-                    targetAmount--;
-                    if (targetAmount == 0)
-                    {
-                        preset[0] = preset[0].Insert(i + 1, GiftsOfTheMoon.SeleneEventLetter);
-                        for (var j = 1; j < preset.Length; j++)
-                        {
-                            preset[j] = preset[j].Insert(i + 1, preset[j][i].ToString());
-                        }
-                        break;
-                    }
+                    "GeneralUnitPool",
+                    "GenralItemPool",
+                    "GeneralCharmPool",
+                    "GeneralModifierPool",
+                    "SnowUnitPool",
+                    "SnowItemPool",
+                    "SnowCharmPool",
+                    "BasicUnitPool",
+                    "BasicItemPool",
+                    "BasicCharmPool",
+                    "MagicUnitPool",
+                    "MagicItemPool",
+                    "MagicCharmPool",
+                    "ClunkUnitPool",
+                    "ClunkItemPool",
+                    "ClunkCharmPool",
+                };
+                foreach (var pool in poolsToCheck.Select(Extensions.GetRewardPool).Where(pool => pool != null))
+                {
+                    pool.list.RemoveAllWhere(l => l == null || l.ModAdded == this);
                 }
             }
-        }
-
-        public void InsertSeleneViaSpecialEvent(Scene scene)//The Scene class is from the UnityEngine.SceneManagement namespace
-        {
-            if (scene.name == "Campaign")
+            catch (Exception e)
             {
-                var specialEvents = Object.FindObjectOfType<SpecialEventsSystem>(); //Only 1 of these exists
-                var eve = new SpecialEventsSystem.Event()
-                {
-                    requiresUnlock = null,                                    //Unnecessary as this is default, but really just showing that it exists
-                    nodeType = this.TryGet<CampaignNodeType>("SeleneNode"),        //Our Selene
-                    replaceNodeTypes = new string[] { "CampaignNodeReward" }, //If you spell this string wrong, the game will loop endlessly
-                    minTier = 3,                                         //After the first boss
-                    perTier = new Vector2Int(0, 1),                            //Maximum of 2 per tier
-                    perRun = new Vector2Int(1, 1)                              //Between 2 and 4 Selenes per run
-                };
-                specialEvents.events = specialEvents.events.AddItem(eve).ToArray();
+                Debug.LogError("[bethan] error removing charms " + e.Message + "\n" + e.StackTrace);
             }
         }
+    }
+
+    public class VFXHelper
+    {
+        public static GIFLoader VFX;
+        public static SFXLoader SFX;
     }
 }

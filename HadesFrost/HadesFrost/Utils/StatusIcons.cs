@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Deadpan.Enums.Engine.Components.Modding;
+﻿using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.ButtonStatuses;
 using TMPro;
 using UnityEngine;

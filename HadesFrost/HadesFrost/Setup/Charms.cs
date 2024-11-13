@@ -15,6 +15,8 @@ namespace HadesFrost.Setup
 
             VividSea(mod);
             CloudBangle(mod);
+
+            // evil eye - deal double? +3? damage to the last enemy that hit
         }
 
         private static void BlackShawl(HadesFrost mod)
@@ -29,16 +31,16 @@ namespace HadesFrost.Setup
                     .SubscribeToAfterAllBuildEvent(delegate(StatusEffectData data)
                     {
                         var castData = (StatusEffectApplyXOnHit)data;
-                        var constraint = new TargetConstraintDamaged
-                        {
-                            not = true
-                        };
+
+                        var constraint = ScriptableObject.CreateInstance<TargetConstraintDamaged>();
+
+                        constraint.not = true;
                         castData.applyConstraints = new TargetConstraint[] { constraint };
                     }));
 
             mod.CardUpgrades.Add(
                 new CardUpgradeDataBuilder(mod)
-                    .CreateCharm("CardUpgradeBlackShawl")
+                    .Create("CardUpgradeBlackShawl")
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("BlackShawlCharm.png")
                     .WithTitle("Black Shawl Charm")
@@ -73,7 +75,7 @@ namespace HadesFrost.Setup
 
             mod.CardUpgrades.Add(
                 new CardUpgradeDataBuilder(mod)
-                    .CreateCharm("CardUpgradeBoneHourglass")
+                    .Create("CardUpgradeBoneHourglass")
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("BoneHourglassCharm.png")
                     .WithTitle("Bone Hourglass Charm")
@@ -103,7 +105,7 @@ namespace HadesFrost.Setup
 
             mod.CardUpgrades.Add(
                 new CardUpgradeDataBuilder(mod)
-                    .CreateCharm("CardUpgradeDiscordantBell")
+                    .Create("CardUpgradeDiscordantBell")
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("DiscordantBellCharm.png")
                     .WithTitle("Discordant Bell Charm")
@@ -133,7 +135,7 @@ namespace HadesFrost.Setup
 
             mod.CardUpgrades.Add(
                 new CardUpgradeDataBuilder(mod)
-                    .CreateCharm("CardUpgradeLionFang")
+                    .Create("CardUpgradeLionFang")
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("LionFangCharm.png")
                     .WithTitle("Lion Fang")
@@ -154,16 +156,22 @@ namespace HadesFrost.Setup
         private static void VividSea(HadesFrost mod)
         {
             var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
-            var constraintUnit = ScriptableObject.CreateInstance<TargetConstraintIsUnit>();
+            var constraintBarrage = ScriptableObject.CreateInstance<TargetConstraintHasTrait>();
+            constraintBarrage.trait = mod.TryGet<TraitData>("Barrage");
+            constraintBarrage.not = true;
+
+            var constraintYank = ScriptableObject.CreateInstance<TargetConstraintHasTrait>();
+            constraintYank.trait = mod.TryGet<TraitData>("Pull");
+            constraintYank.not = true;
 
             mod.CardUpgrades.Add(
                 new CardUpgradeDataBuilder(mod)
-                    .CreateCharm("CardUpgradeVividSea")
+                    .Create("CardUpgradeVividSea")
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("VividSeaCharm.png")
                     .WithTitle("Vivid Sea")
                     .WithText($"Gain <keyword={Extensions.PrefixGUID("knockback", mod)}>")
-                    .SetConstraints(constraintAttack, constraintUnit)
+                    .SetConstraints(constraintAttack, constraintBarrage, constraintYank)
                     .WithTier(2)
                     .SubscribeToAfterAllBuildEvent(data =>
                     {
@@ -178,7 +186,7 @@ namespace HadesFrost.Setup
 
             mod.CardUpgrades.Add(
                 new CardUpgradeDataBuilder(mod)
-                    .CreateCharm("CardUpgradeCloudBangle")
+                    .Create("CardUpgradeCloudBangle")
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("CloudBangleCharm.png")
                     .WithTitle("Cloud Bangle")
@@ -187,7 +195,7 @@ namespace HadesFrost.Setup
                     .WithTier(2)
                     .SubscribeToAfterAllBuildEvent(data =>
                     {
-                        data.attackEffects = new[] { mod.SStack("Jolted") };
+                        data.attackEffects = new[] { mod.SStack("Jolted", 2) };
                     })
             );
         }

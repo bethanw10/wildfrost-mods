@@ -39,7 +39,7 @@ namespace HadesFrost.Setup
                     {
                         data.effectToApply = mod.TryGet<StatusEffectData>("Instant Gain Fury");
                         data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
-                        data.contextEqualAmount = new ScriptableCurrentAttack();
+                        data.contextEqualAmount = ScriptableObject.CreateInstance<ScriptableCurrentAttack>();
                         data.applyEqualAmount = true;
                     })
             );
@@ -47,7 +47,7 @@ namespace HadesFrost.Setup
             var boonStatus = SetupBoonStatus(mod, "Ares", "Battle Rage", "Leader gains 'Gain <+1><keyword=attack> on kill'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
-                .CreateUnit("Ares", "Ares", idleAnim: "FloatAnimationProfile")
+                .CreateUnit("Ares", "Ares")
                 .SetSprites("Ares.png", "AresBG.png")
                 .SetStats(2, 2, 3)
                 
@@ -84,10 +84,8 @@ namespace HadesFrost.Setup
                         var constraint = ScriptableObject.CreateInstance<TargetConstraintHasStatus>();
                         constraint.status = mod.TryGet<StatusEffectData>("Demonize");
                         castData.unitConstraints = new TargetConstraint[] { constraint };
-                        var amount = new ScriptableCurrentStatus
-                        {
-                            statusType = "demonize"
-                        };
+                        var amount = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
+                        amount.statusType = "demonize";
                         castData.contextEqualAmount = amount;
                         castData.effectToApply = mod.TryGet<StatusEffectData>("Demonize");
                         castData.noTargetTypeArgs = new[] { "<sprite name=demonize>" };
@@ -96,7 +94,7 @@ namespace HadesFrost.Setup
             var boonStatus = SetupBoonStatus(mod, "Artemis", "Deadly Strike", "Leader gains 'Apply <1><keyword=demonize>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
-                .CreateUnit("Artemis", "Artemis", idleAnim: "FloatAnimationProfile")
+                .CreateUnit("Artemis", "Artemis")
                 .SetSprites("Artemis.png", "ArtemisBG.png")
                 .SetStats(4, 4, 4)
                 
@@ -148,7 +146,6 @@ namespace HadesFrost.Setup
                 .CreateUnit("Athena", "Athena")
                 .SetSprites("Athena.png", "AthenaBG.png")
                 .SetStats(5, 2, 3)
-                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -191,7 +188,7 @@ namespace HadesFrost.Setup
             var boonStatus = SetupBoonStatus(mod, "Aphrodite", "Heartbreak Strike", "Leader gains 'Apply <1><keyword=frost>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
-                .CreateUnit("Aphrodite", "Aphrodite", idleAnim: "FloatAnimationProfile")
+                .CreateUnit("Aphrodite", "Aphrodite")
                 .SetSprites("Aphrodite.png", "AphroditeBG.png")
                 .SetStats(3, 0, 5)
                 
@@ -242,39 +239,38 @@ namespace HadesFrost.Setup
                 .WithEffects(unyielding.Build())
             );
 
-            mod.Cards.Add(
-                mod.CardCopy("SunRod", "RadiantSunRod")
-                .SetTraits(mod.TStack("Consume"), mod.TStack("Zoomlin"))
-                .WithTitle("Sun Rod")
-                .SubscribeToAfterAllBuildEvent(delegate (CardData data)
-                {
-                    var constraint = ScriptableObject.CreateInstance<TargetConstraintIsSpecificCard>();
-                    constraint.allowedCards = new[] { mod.TryGet<CardData>("Apollo") };
-                    constraint.not = true;
-                    data.targetConstraints = new TargetConstraint[] { constraint };
-                }));
+            // mod.Cards.Add(
+            //     mod.CardCopy("SunRod", "RadiantSunRod")
+            //     .SetTraits(mod.TStack("Consume"), mod.TStack("Zoomlin"))
+            //     .WithTitle("Sun Rod")
+            //     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+            //     {
+            //         var constraint = ScriptableObject.CreateInstance<TargetConstraintIsSpecificCard>();
+            //         constraint.allowedCards = new[] { mod.TryGet<CardData>("Apollo") };
+            //         constraint.not = true;
+            //         data.targetConstraints = new TargetConstraint[] { constraint };
+            //     }));
+            //
+            // mod.StatusEffects.Add(
+            //     mod.StatusCopy("Summon SkullMuffin", "Summon SunRod")
+            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+            //         {
+            //             ((StatusEffectSummon)data).summonCard = mod.TryGet<CardData>("RadiantSunRod");
+            //         })
+            // );
+            //
+            // mod.StatusEffects.Add(
+            //     mod.StatusCopy(
+            //             "On Card Played Add SkullMuffin To Hand",
+            //             "On Card Played Add Sun Rod To Hand")
+            //         .WithText("Add <{a}> <card=bethanw10.hadesfrost.RadiantSunRod> to your hand")
+            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+            //         {
+            //             var castData = (StatusEffectApplyXOnCardPlayed)data;
+            //             var effect = (StatusEffectInstantSummon)castData.effectToApply;
+            //             effect.targetSummon = mod.TryGet<StatusEffectSummon>("Summon SunRod");
+            //         }));
 
-            mod.StatusEffects.Add(
-                mod.StatusCopy("Summon SkullMuffin", "Summon SunRod")
-                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-                    {
-                        ((StatusEffectSummon)data).summonCard = mod.TryGet<CardData>("RadiantSunRod");
-                    })
-            );
-
-            mod.StatusEffects.Add(
-                mod.StatusCopy(
-                        "On Card Played Add SkullMuffin To Hand",
-                        "On Card Played Add Sun Rod To Hand")
-                    .WithText("Add <{a}> <card=bethanw10.hadesfrost.RadiantSunRod> to your hand")
-                    .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-                    {
-                        var castData = (StatusEffectApplyXOnCardPlayed)data;
-                        var effect = (StatusEffectInstantSummon)castData.effectToApply;
-                        effect.targetSummon = mod.TryGet<StatusEffectSummon>("Summon SunRod");
-                    }));
-
-            var boonStatus = SetupBoonStatus(mod, "Apollo", "Perfect Image", "Leader gains 'While undamaged, <keyword=attack> is increased by <2>'");
 
             // mod.Cards.Add(new CardDataBuilder(mod)
             //     .CreateUnit("Apollo", "Apollo", idleAnim: "FloatAnimationProfile")
@@ -283,15 +279,6 @@ namespace HadesFrost.Setup
             //     
             //     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
             //     {
-            //         data.greetMessages = new[]
-            //         {
-            //             "Let's show them a dazzling display they won't soon forget.",
-            //             "Brighter days are ahead, we just have to get through this rough patch together.",
-            //             "Shall we try and make these dark days a bit brighter, Cousin?",
-            //             "Must be something I can do to brighten up your evening there a bit?",
-            //             "Where there's light, there's hope, sunshine, so get set for some of each!",
-            //             "As you might have guessed, I'm taking this whole thing 'engulfing the sun in ice' thing very personally"
-            //         };
             //         data.startWithEffects = new[]
             //         {
             //             mod.SStack(boonStatus),
@@ -302,6 +289,8 @@ namespace HadesFrost.Setup
             //             mod.TStack("Unyielding")
             //         };
             //     }));
+            
+            var boonStatus = SetupBoonStatus(mod, "Apollo", "Perfect Image", "Leader gains 'While undamaged, <keyword=attack> is increased by <2>'");
 
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
@@ -328,9 +317,9 @@ namespace HadesFrost.Setup
                     })
             );
             mod.Cards.Add(new CardDataBuilder(mod)
-                .CreateUnit("Apollo", "Apollo", idleAnim: "FloatAnimationProfile")
+                .CreateUnit("Apollo", "Apollo")
                 .SetSprites("Apollo.png", "ApolloBG.png")
-                .SetStats(6, null, 12)
+                .SetStats(8, null, 10)
 
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -450,12 +439,17 @@ namespace HadesFrost.Setup
             //         })
             // );
 
-            var boonStatus = SetupBoonStatus(mod, "Dionysus", "Premium Vintage", "Adds a <card=bethanw10.hadesfrost.Nectar> with <keyword=noomlin> to your deck");
+            //var boonStatus = SetupBoonStatus(mod, "Dionysus", "Premium Vintage", "Adds a <card=bethanw10.hadesfrost.Nectar> with <keyword=noomlin> to your deck");
+            var boonStatus = SetupBoonStatus(
+                mod, 
+                "Dionysus", 
+                "Premium Vintage",
+                "Adds <keyword=noomlin> to all <card=bethanw10.hadesfrost.Nectar> or <card=bethanw10.hadesfrost.Ambrosia> in your deck");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Dionysus", "Dionysus", idleAnim: "PingAnimationProfile")
                 .SetSprites("Dionysus.png", "DionysusBG.png")
-                .SetStats(8, null, 4)
+                .SetStats(8, 0, 4)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -576,7 +570,7 @@ namespace HadesFrost.Setup
             var boonStatus = SetupBoonStatus(mod, "Hestia", "Flame Strike", "Leader gains 'Apply <1><keyword=overload>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
-                .CreateUnit("Hestia", "Hestia", idleAnim: "FloatAnimationProfile")
+                .CreateUnit("Hestia", "Hestia", idleAnim: "SquishAnimationProfile")
                 .SetSprites("Hestia.png", "HestiaBG.png")
                 .SetStats(5)
                 
@@ -625,7 +619,7 @@ namespace HadesFrost.Setup
             var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Heavy Metal", "Leader gains <3><keyword=shell>");
 
             mod.Cards.Add(new CardDataBuilder(mod)
-                .CreateUnit("Hephaestus", "Hephaestus", idleAnim: "FloatAnimationProfile")
+                .CreateUnit("Hephaestus", "Hephaestus", idleAnim: "GiantAnimationProfile")
                 .SetSprites("Hephaestus.png", "HephaestusBG.png")
                 .SetStats(7, 3, 4)
                 
@@ -653,7 +647,7 @@ namespace HadesFrost.Setup
             var knockback = new KeywordDataBuilder(mod)
                 .Create("Knockback")
                 .WithCanStack(false)
-                .WithDescription("Deal half damage to enemy behind\nPush target back one")
+                .WithDescription("Deal half damage to enemy behind\n\nPush target back one")
                 .WithShowName(true)
                 .WithShowIcon(false)
                 .WithTitle("Knockback");
@@ -731,8 +725,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Zeus", "Zeus")
                 .SetSprites("Zeus.png", "ZeusBG.png")
-                .SetStats(6, null, 4)
-                
+                .SetStats(6, 0, 4)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -765,7 +758,7 @@ namespace HadesFrost.Setup
                     .Create($"{cardName}Boon")
                     .WithShowName(true)
                     .WithShowIcon(false)
-                    .WithTitle("Boon <sprite name=boonicon.png>\n" + title)
+                    .WithTitle("Boon <sprite name=boonicon>\n" + title)
                     .WithCanStack(false)
                     .WithPanelColour(Color.grey)
                     .WithBodyColour(new Color(22, 28, 21))

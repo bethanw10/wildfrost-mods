@@ -5,7 +5,6 @@
 // Assembly location: C:\Users\bess\source\repos\wildfrost-mods\HadesFrost\HadesFrost\bin\Debug\Assembly-CSharp-Publicized.dll
 
 using System.Collections;
-using UnityEngine;
 
 namespace HadesFrost.StatusEffects
 {
@@ -24,7 +23,6 @@ namespace HadesFrost.StatusEffects
             if ((bool)xwhenUnitIsKilled.contextEqualAmount)
             {
                 int amount = xwhenUnitIsKilled.contextEqualAmount.Get(entity);
-                Debug.Log("[hades] amoutn" + amount);
                 yield return xwhenUnitIsKilled.Run(xwhenUnitIsKilled.GetTargets(entity.lastHit), amount);
             }
             else

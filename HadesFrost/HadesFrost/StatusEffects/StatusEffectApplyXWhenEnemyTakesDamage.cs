@@ -5,7 +5,6 @@
 // Assembly location: C:\Users\bess\source\repos\wildfrost-mods\HadesFrost\HadesFrost\bin\Debug\Assembly-CSharp-Publicized.dll
 
 using System.Collections;
-using HadesFrost.Utils;
 using UnityEngine;
 
 namespace HadesFrost.StatusEffects
@@ -23,7 +22,6 @@ namespace HadesFrost.StatusEffects
 
         public override bool RunPostHitEvent(Hit hit)
         {
-            Common.Log(hit.damageType);
             return target.enabled &&
                    target.alive &&
                    hit.target.owner != References.Player &&

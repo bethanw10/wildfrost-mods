@@ -9,8 +9,6 @@
 
         public override void Assign(Entity entity)
         {
-            Utils.Common.Log("assign");
-
             base.Assign(entity);
             SetText();
             onValueDown.AddListener(delegate { Ping(); });
@@ -19,11 +17,9 @@
             onValueDown.AddListener(CheckDestroy);
 
             var effect = entity.FindStatus(type);
-            Utils.Common.Log("is token?");
 
             if (effect is IStatusHex hexEffect)
             {
-                Utils.Common.Log("adding listener");
                 this.hexStatusEffect = hexEffect;
                 hexEffect.ButtonCreate(this);
                 HexButton.onClick.AddListener(this.hexStatusEffect.RunButtonClicked);

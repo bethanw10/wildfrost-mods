@@ -59,8 +59,8 @@ namespace HadesFrost.Setup
                 mod.ImagePath("hitchicon.png").ToSprite(),
                 "hitch",
                 "counter",
-                Color.black,
-                Color.clear,
+                new Color(0, 0.047f, 0.176f),
+                new Color(0.29f, 0.776f, 1f),
                 new[] { mod.TryGet<KeywordData>("hitch") }, 
                 -1);
 

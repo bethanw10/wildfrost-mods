@@ -202,6 +202,7 @@
     <Compile Include="StatusEffects\StatusEffectBlockBarrage.cs" />
     <Compile Include="StatusEffects\StatusEffectApplyXOnKillWithContext.cs" />
     <Compile Include="StatusEffects\StatusEffectJolted.cs" />
+    <Compile Include="TargetModes\TargetModeBombard.cs" />
     <Compile Include="TargetModes\TargetModeStatus.cs" />
     <Compile Include="ButtonStatuses\HexButton.cs" />
     <Compile Include="ButtonStatuses\StatusHexApplyX.cs" />

@@ -101,8 +101,8 @@ namespace HadesFrost.Setup
 
         private static void LunarRay(HadesFrost mod)
         {
-            const int cost = 25;
-            var description = "Deal <6> damage to enemies in the row\n" + $"<Cost: {cost}> <sprite name=magickicon>";
+            const int cost = 30;
+            var description = "Deal <5> damage to enemies in the row\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Lunar Ray";
             var keywordName = name.ToLower().Replace(" ", "");
@@ -121,7 +121,7 @@ namespace HadesFrost.Setup
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
-                    castData.HitDamage = 6; // or double current attack?
+                    castData.HitDamage = 5; // or double current attack?
                     castData.MagickCost = cost;
                 })
             );
@@ -129,7 +129,7 @@ namespace HadesFrost.Setup
 
         private static void PhaseShift(HadesFrost mod)
         {
-            const int cost = 30;
+            const int cost = 35;
             var description = "Increase all enemies' <keyword=counter> by <1>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Phase Shift";
@@ -157,7 +157,7 @@ namespace HadesFrost.Setup
 
         private static void MoonWater(HadesFrost mod)
         {
-            const int cost = 15;
+            const int cost = 20;
             var description = "Restore <3><keyword=health>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Moon Water";
@@ -187,7 +187,7 @@ namespace HadesFrost.Setup
 
         private static void WolfHowl(HadesFrost mod)
         {
-            const int cost = 25;
+            const int cost = 30;
 
             var description = "Deal <3> damage to all enemies\n" + $"<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Wolf Howl";
@@ -215,7 +215,7 @@ namespace HadesFrost.Setup
 
         private static void TwilightCurse(HadesFrost mod)
         {
-            const int cost = 35;
+            const int cost = 40;
             var description = "Turn a random non-boss enemy into a <card=Popper>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Twilight Curse";
             var keywordName = name.ToLower().Replace(" ", "");
@@ -265,7 +265,7 @@ namespace HadesFrost.Setup
 
         private static void DarkSide(HadesFrost mod)
         {
-            const int cost = 30;
+            const int cost = 35;
             var description = $"Gain <1><keyword=block>\nGain <+1><keyword=attack>\n<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Dark Side";
             var keywordName = name.ToLower().Replace(" ", "");
@@ -315,7 +315,7 @@ namespace HadesFrost.Setup
 
         private static void NightBloom(HadesFrost mod)
         {
-            const int cost = 30;
+            const int cost = 35;
             var description = "Apply <1> <keyword=haze> to front enemy\n" + $"<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Night Bloom";
             var keywordName = name.ToLower().Replace(" ", "");
@@ -342,8 +342,8 @@ namespace HadesFrost.Setup
 
         private static void TotalEclipse(HadesFrost mod)
         {
-            const int cost = 20;
-            var description = $"Deal <10> damage to front enemy\n<Cost: {cost}> <sprite name=magickicon>";
+            const int cost = 25;
+            var description = $"Deal <8> damage to front enemy\n<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Total Eclipse";
             var keywordName = name.ToLower().Replace(" ", "");
 
@@ -361,7 +361,7 @@ namespace HadesFrost.Setup
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
-                    castData.HitDamage = 10;
+                    castData.HitDamage = 8;
                     castData.MagickCost = cost;
                 })
             );
@@ -369,7 +369,7 @@ namespace HadesFrost.Setup
 
         private static void SkyFall(HadesFrost mod)
         {
-            const int cost = 15;
+            const int cost = 20;
             var description = $"Apply <1> <keyword=weakness> to all enemies\n<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Sky Fall";
             var keywordName = name.ToLower().Replace(" ", "");
@@ -399,10 +399,9 @@ namespace HadesFrost.Setup
             var nameNoSpaces = name.Replace(" ", "");
             mod.Cards.Add(
                 new CardDataBuilder(mod)
-                    .CreateUnit(nameNoSpaces, name)
+                    .CreateUnit(nameNoSpaces, name, idleAnim: "PulseAnimationProfile")
                     .WithCardType("Summoned")
                     .SetSprites(nameNoSpaces.ToLower() + ".png", "HexBG.png")
-                    .WithIdleAnimationProfile("PingAnimationProfile")
                     .SetStats()
                     .WithText($"Leader gains <keyword={Extensions.PrefixGUID("hex", mod)}>:\n" + description));
         }

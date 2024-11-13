@@ -6,7 +6,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using HadesFrost.Utils;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Status Effects/Specific/Apply X On Hit", fileName = "Apply X On Hit")]

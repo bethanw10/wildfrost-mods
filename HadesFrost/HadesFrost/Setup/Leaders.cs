@@ -15,6 +15,14 @@ namespace HadesFrost.Setup
             // Zagreus(mod);
         }
 
+        public static void LeaderImagesFix(Entity entity)
+        {
+            if (entity.display is Card card && !card.hasScriptableImage)
+            {
+                card.mainImage.gameObject.SetActive(true);
+            }
+        }
+
         private static void Melinoe(HadesFrost mod)
         {
             mod.Cards.Add(new CardDataBuilder(mod)
@@ -27,9 +35,9 @@ namespace HadesFrost.Setup
                     data.createScripts = new[]  
                     {
                         mod.GiveUpgrade(),
-                        mod.AddRandomHealth(0, 0),
-                        mod.AddRandomDamage(0, 0),
-                        mod.AddRandomCounter(0, 0)
+                        AddRandomHealth(0, 0),
+                        AddRandomDamage(0, 0),
+                        AddRandomCounter(0, 0)
                     };
                 })
                 .SubscribeToAfterAllBuildEvent(data =>
@@ -53,9 +61,9 @@ namespace HadesFrost.Setup
                     data.createScripts = new[]
                     {
                         mod.GiveUpgrade(),
-                        mod.AddRandomHealth(0,0),
-                        mod.AddRandomDamage(0,0),
-                        mod.AddRandomCounter(0,0)
+                        AddRandomHealth(0,0),
+                        AddRandomDamage(0,0),
+                        AddRandomCounter(0,0)
                     };
                 })
                 .SubscribeToAfterAllBuildEvent(data =>
@@ -69,7 +77,7 @@ namespace HadesFrost.Setup
 
         private static void ChildOfHades(HadesFrost mod)
         {
-            var boons = new KeywordDataBuilder(mod)
+            var keyword = new KeywordDataBuilder(mod)
                 .Create("Hades")
                 .WithCanStack(false)
                 .WithDescription("Receive a boon when an Olympian God is added to your team" +
@@ -79,23 +87,23 @@ namespace HadesFrost.Setup
                 .WithTitleColour(new Color(0.495f, 0.780f, 0.304f))
                 .WithTitle("Child of Hades");
 
-            mod.Keywords.Add(boons);
+            mod.Keywords.Add(keyword);
 
             mod.Traits.Add(new TraitDataBuilder(mod)
                 .Create("Hades")
-                .WithKeyword(boons.Build())
+                .WithKeyword(keyword.Build())
             );
         }
 
         private static CardScript GiveUpgrade(this WildfrostMod mod, string name = "Crown")
         {
-            CardScriptGiveUpgrade script = ScriptableObject.CreateInstance<CardScriptGiveUpgrade>(); //This is the standard way of creating a ScriptableObject
-            script.name = $"Give {name}";                               //Name only appears in the Unity Inspector. It has no other relevance beyond that.
+            CardScriptGiveUpgrade script = ScriptableObject.CreateInstance<CardScriptGiveUpgrade>();
+            script.name = $"Give {name}";
             script.upgradeData = mod.TryGet<CardUpgradeData>(name);
             return script;
         }
 
-        private static CardScript AddRandomHealth(this WildfrostMod mod, int min, int max)
+        private static CardScript AddRandomHealth(int min, int max)
         {
             CardScriptAddRandomHealth health = ScriptableObject.CreateInstance<CardScriptAddRandomHealth>();
             health.name = "Random Health";
@@ -103,7 +111,7 @@ namespace HadesFrost.Setup
             return health;
         }
 
-        private static CardScript AddRandomDamage(this WildfrostMod mod, int min, int max) 
+        private static CardScript AddRandomDamage(int min, int max) 
         {
             CardScriptAddRandomDamage damage = ScriptableObject.CreateInstance<CardScriptAddRandomDamage>();
             damage.name = "Give Damage";
@@ -111,7 +119,7 @@ namespace HadesFrost.Setup
             return damage;
         }
 
-        private static CardScript AddRandomCounter(this WildfrostMod mod, int min, int max) 
+        private static CardScript AddRandomCounter(int min, int max) 
         {
             CardScriptAddRandomCounter counter = ScriptableObject.CreateInstance<CardScriptAddRandomCounter>();
             counter.name = "Give Counter";

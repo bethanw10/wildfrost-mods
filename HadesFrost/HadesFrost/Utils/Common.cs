@@ -12,6 +12,13 @@ namespace HadesFrost.Utils
             Debug.Log("[hades]" + message);
         }
 
+        public static T[] RemoveNulls<T>(this WildfrostMod mod, T[] data) where T : DataFile
+        {
+            var list = data.ToList();
+            list.RemoveAll(x => x == null || x.ModAdded == mod);
+            return list.ToArray();
+        }
+
         public static T[] DataList<T>(this WildfrostMod mod, params string[] names) where T : DataFile => 
             names.Select(mod.TryGet<T>).ToArray();
 

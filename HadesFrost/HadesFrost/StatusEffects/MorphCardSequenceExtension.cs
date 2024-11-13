@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using HadesFrost.Utils;
 using UnityEngine;
 using WildfrostHopeMod.Utils;
 
@@ -109,8 +108,6 @@ public static class MorphCardSequenceExtension
         var cardNotMoved = true;
         if (spawnOnBoard)
         {
-            Common.Log(row.Count.ToString());
-            Common.Log(row.ChildCount.ToString());
             if (row.Count != 3)
             {
                 yield return Sequences.CardMove(finalEntity, new[] { row });

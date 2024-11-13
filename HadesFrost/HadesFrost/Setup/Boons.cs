@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
-using UnityEngine;
 using static Console;
 
 namespace HadesFrost.Setup
@@ -81,7 +81,6 @@ namespace HadesFrost.Setup
                             .Create("ApolloBoon")
                             .SetEffects(mod.SStack("Increase Attack While Undamaged", 2));
 
-                        Debug.Log(upgrade);
                         break;
                     }
                 case "Ares":
@@ -104,14 +103,23 @@ namespace HadesFrost.Setup
                         break;
                     }
                 case "Dionysus":
-                    {
-                        var nectar = mod.TryGet<CardData>("Nectar");
-                        nectar.traits.Add(mod.TStack("Noomlin"));
-                        // nectar.traits.Add(mod.TStack("Combo"));
-                        nectar.original = nectar.Clone();
-                        References.Player.data.inventory.deck.Add(nectar);
+                {
+                        // var nectar = mod.TryGet<CardData>("Nectar");
+                        // nectar.traits.Add(mod.TStack("Noomlin"));
+                        // // nectar.traits.Add(mod.TStack("Combo"));
+                        // nectar.original = nectar.Clone();
+                        // References.Player.data.inventory.deck.Add(nectar);
+                        var noomlin = mod.TryGet<CardUpgradeData>("CardUpgradeNoomlin"); // gain arrow charm?
+
+                        foreach (var cardData in References.Player.data.inventory.deck.Where(cardData => 
+                                     cardData.name == Extensions.PrefixGUID("Nectar", mod) ||
+                                     cardData.name == Extensions.PrefixGUID("Ambrosia", mod)))
+                        {
+                            noomlin.GainEffects(cardData);
+                        }
+
                         break;
-                    }
+                }
                 case "Demeter":
                     {
                         upgrade = mod.TryGet<CardUpgradeData>("CardUpgradeSnowball");
