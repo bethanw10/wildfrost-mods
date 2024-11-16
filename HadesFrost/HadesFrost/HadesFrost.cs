@@ -23,17 +23,18 @@ Boon colors - custom panel?
 -Release 1-
 Tribe banner
 Hex button sizes
-Vivid sea constraints
-Balancing
+Balancing - witchs staff, phase shift, demeter no barrage
 
 -Release 2-
+Ascended alternatives 
+Eye data
+No hex on enemy
 Items - keepsakes, weapons etc.
 More Charms
-
 Custom battles
 Zagreus
 More charge items
-More pets
+More pets - hecuba, raki, then companions from hades 1
 Pet flags??
 Hitch anim
 multiple boons - choice??
@@ -60,9 +61,11 @@ namespace HadesFrost
 
         public override string Description =>
             @"
-A mod inspired by Hades II (and partly by the first Hades)
+A mod inspired by Hades II (and partly by the first Hades).
 
 As this is still quite new, it's likely I'll be making balancing changes in the future and there may be a fair amount of bugs.
+
+If you want a higher chance of finding the new companions/items/charms, I recommend the Increased Odds mod!
 
 Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + permission to use it, FungEMP for the Apollo idea, and everyone else on the Discord who helped me";
 

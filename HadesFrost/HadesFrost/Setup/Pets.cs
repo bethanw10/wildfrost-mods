@@ -25,7 +25,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Frinos", "Frinos", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Frinos.png", "FrinosBG.png")
-                .SetStats(3)
+                .SetStats(4)
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -71,7 +71,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Toula", "Toula", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Toula.png", "ToulaBG.png")
-                .SetStats(3, 2)
+                .SetStats(4, 2)
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {

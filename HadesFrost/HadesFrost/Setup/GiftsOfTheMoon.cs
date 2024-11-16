@@ -87,7 +87,7 @@ namespace HadesFrost.Setup
             //Lines 0 + 1: Node types
             //Line 2: Battle Tier (fight 1, fight 2, etc)
             //Line 3: Zone (Snow Tundra, Ice Caves, Frostlands)
-            const char letter = 'b'; //S is for Snowdwell, b is for non-boss, B is for boss.
+            const char letter = 'S'; //S is for Snowdwell, b is for non-boss, B is for boss.
             var targetAmount = 1; //Stop after the 1st S.
 
             for (var i = 0; i < preset[0].Length; i++)

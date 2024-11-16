@@ -40,7 +40,7 @@ namespace HadesFrost.Setup
 
                     DataFile[] items = mod.DataList<CardData>(
                         "FlashWhip", "HongosHammer", "NutshellCake", "ScrapPile", "ShellShield", "Shellbo", "SporePack",
-                        "IridescentFan", "ThunderSignet", "Ambrosia", "AdamantShard"
+                        "IridescentFan", "ThunderSignet", "Ambrosia", "AdamantShard", "SunRod"
                         , "UmbralFlames", "ArgentSkull", "BlackCoat"
                         );
 

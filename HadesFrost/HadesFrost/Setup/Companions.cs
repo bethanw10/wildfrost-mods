@@ -49,7 +49,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Ares", "Ares")
                 .SetSprites("Ares.png", "AresBG.png")
-                .SetStats(2, 2, 3)
+                .SetStats(3, 2, 3)
                 
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -380,7 +380,6 @@ namespace HadesFrost.Setup
                         var targetMode = ScriptableObject.CreateInstance<TargetModeStatus>();
                         targetMode.targetType = "snow";
                         data.targetMode = targetMode;
-                        data.targetMode = targetMode;
                     })
             );
 
@@ -390,7 +389,7 @@ namespace HadesFrost.Setup
                 .CreateUnit("Demeter", "Demeter", idleAnim: "PingAnimationProfile")
                 .SetSprites("Demeter.png", "DemeterBG.png")
                 .SetStats(8, 2, 3)
-                
+                .NeedsTarget(false)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -449,7 +448,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Dionysus", "Dionysus", idleAnim: "PingAnimationProfile")
                 .SetSprites("Dionysus.png", "DionysusBG.png")
-                .SetStats(8, 0, 4)
+                .SetStats(8, 0, 3)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -527,7 +526,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hermes", "Hermes")
                 .SetSprites("Hermes.png", "HermesBG.png")
-                .SetStats(1, null, 3)
+                .SetStats(2, null, 3)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -621,7 +620,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hephaestus", "Hephaestus", idleAnim: "GiantAnimationProfile")
                 .SetSprites("Hephaestus.png", "HephaestusBG.png")
-                .SetStats(7, 3, 4)
+                .SetStats(8, 3, 4)
                 
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -647,7 +646,7 @@ namespace HadesFrost.Setup
             var knockback = new KeywordDataBuilder(mod)
                 .Create("Knockback")
                 .WithCanStack(false)
-                .WithDescription("Deal half damage to enemy behind\n\nPush target back one")
+                .WithDescription("Deal damage to unit behind target, equal to target's <keyword=attack>\n\nPush target back one")
                 .WithShowName(true)
                 .WithShowIcon(false)
                 .WithTitle("Knockback");
@@ -690,7 +689,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Poseidon", "Poseidon")
                 .SetSprites("Poseidon.png", "PoseidonBG.png")
-                .SetStats(5, 3, 4)
+                .SetStats(5, 4, 4)
                 
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -725,7 +724,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Zeus", "Zeus")
                 .SetSprites("Zeus.png", "ZeusBG.png")
-                .SetStats(6, 0, 4)
+                .SetStats(6, 0, 3)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]

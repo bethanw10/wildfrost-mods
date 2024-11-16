@@ -129,14 +129,22 @@ namespace HadesFrost.Setup
 
         private static void PhaseShift(HadesFrost mod)
         {
-            const int cost = 35;
-            var description = "Increase all enemies' <keyword=counter> by <1>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
+            const int cost = 40;
+            var description = "Count up all enemies' <keyword=counter> by <1>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Phase Shift";
             var keywordName = name.ToLower().Replace(" ", "");
 
             CreateKeyword(mod, keywordName, name, description);
             CreateCard(mod, name, description);
+
+            mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
+                .Create<StatusInstantIncreaseCounter>("Counter Up")
+                .WithType("")
+                .SubscribeToAfterAllBuildEvent(data =>
+                {
+                    var castData = (StatusInstantIncreaseCounter)data;
+                }));
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
                 .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
@@ -146,7 +154,8 @@ namespace HadesFrost.Setup
                 {
                     var castData = (StatusHexApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Enemies;
-                    castData.effectToApply = mod.TryGet<StatusEffectData>("Increase Max Counter");
+                    //castData.effectToApply = mod.TryGet<StatusEffectData>("Increase Max Counter");
+                    castData.effectToApply = mod.TryGet<StatusEffectData>("Counter Up");
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
@@ -265,7 +274,7 @@ namespace HadesFrost.Setup
 
         private static void DarkSide(HadesFrost mod)
         {
-            const int cost = 35;
+            const int cost = 40;
             var description = $"Gain <1><keyword=block>\nGain <+1><keyword=attack>\n<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Dark Side";
             var keywordName = name.ToLower().Replace(" ", "");

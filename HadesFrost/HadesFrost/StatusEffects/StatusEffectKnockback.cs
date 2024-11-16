@@ -90,7 +90,8 @@ namespace HadesFrost.StatusEffects
 
             entityBehind = behind;
 
-            var damage = hit.damage == 0 ? 0 : (int)Math.Ceiling(hit.damage/2.0);
+            //var damage = hit.damage == 0 ? 0 : (int)Math.Ceiling(hit.damage/2.0);
+            var damage = hit.target.damage.current + hit.target.tempDamage.Value;
             var hit2 = new Hit(hit.target, behind, damage)
             {
                 canRetaliate = false

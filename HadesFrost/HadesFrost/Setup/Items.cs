@@ -17,6 +17,7 @@ namespace HadesFrost.Setup
             WitchsStaff(mod);
             MoonstoneAxe(mod);
             SisterBlades(mod);
+            FrostbittenHorn(mod);
 
             UmbralFlames(mod);
             ArgentSkull(mod);
@@ -24,7 +25,6 @@ namespace HadesFrost.Setup
 
             Ambrosia(mod);
 
-            FrostbittenHorn(mod);
             ThunderSignet(mod);
             IridescentFan(mod);
             AdamantShard(mod);
@@ -191,6 +191,11 @@ namespace HadesFrost.Setup
                         {
                             mod.SStack("Instant Damage (To Card In Hand)", 3),
                         };
+
+                        data.traits = new List<CardData.TraitStacks>
+                        {
+                            mod.TStack("Zoomlin")
+                        };
                     }));
         }
 
@@ -215,16 +220,34 @@ namespace HadesFrost.Setup
 
         private static void WitchsStaff(HadesFrost mod)
         {
+            var bonus =
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectBonusDamageEqualToX>("Bonus Damage Companions")
+                    .WithCanBeBoosted(false)
+                    .WithText("Deal additional damage equal to number of active allies")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectBonusDamageEqualToX data)
+                    {
+                        data.add = true;
+                        data.on = StatusEffectBonusDamageEqualToX.On.ScriptableAmount;
+                        data.scriptableAmount = new ScriptableNumAllies();
+                    });
+
+            mod.StatusEffects.Add(bonus);
+
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("WitchsStaff", "Witch's Staff")
                     .SetSprites("WitchsStaff.png", "WitchsStaffBG.png")
                     .WithIdleAnimationProfile("ShakeAnimationProfile")
                     .SetDamage(1)
-                    .WithValue(40)
                     .SetTraits(mod.TStack("Barrage"))
                     //.SetStartWithEffect(mod.SStack("On Card Played Apply Attack To Self"))
-                    .SetStartWithEffect(mod.SStack("On Kill Apply Attack To Self", 2))
+                    //.SetStartWithEffect(mod.SStack("On Kill Apply Attack To Self", 2))
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.startWithEffects = new[] { mod.SStack("Bonus Damage Companions") };
+                    })
                 );
         }
 
@@ -274,7 +297,7 @@ namespace HadesFrost.Setup
                             mod.SStack("Uses", 3)
                         };
                     })
-                    .WithValue(40)
+                    .WithValue(45)
             );
 
             mod.Cards.Add(
@@ -374,7 +397,7 @@ namespace HadesFrost.Setup
                     .SetSprites("BlackCoat.png", "BlackCoatBG.png")
                     .WithIdleAnimationProfile("Heartbeat2AnimationProfile")
                     .SetDamage(5)
-                    .WithValue(40)
+                    .WithValue(45)
                     .NeedsTarget(false)
                     .WithPlayType(Card.PlayType.Play)
                     .WithTargetMode(new TargetModeBombard())
