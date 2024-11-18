@@ -29,27 +29,42 @@ namespace HadesFrost.Setup
 
         private static void Ares(HadesFrost mod)
         {
+            // mod.StatusEffects.Add(
+            //     new StatusEffectDataBuilder(mod)
+            //         .Create<StatusEffectApplyXOnKillWithContext>("When Enemy Is Killed Gain Fury Equal To Attack")
+            //         .WithCanBeBoosted(false)
+            //         .WithText("On kill, gain <keyword=fury> equal to target's <keyword=attack>")
+            //         .WithType("")
+            //         .FreeModify(delegate (StatusEffectApplyXOnKillWithContext data)
+            //         {
+            //             data.effectToApply = mod.TryGet<StatusEffectData>("Instant Gain Fury");
+            //             data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            //             data.contextEqualAmount = ScriptableObject.CreateInstance<ScriptableCurrentAttack>();
+            //             data.applyEqualAmount = true;
+            //         })
+            // );
+
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
-                    .Create<StatusEffectApplyXOnKillWithContext>("When Enemy Is Killed Gain Fury Equal To Attack")
+                    .Create<StatusEffectApplyXOnHit>("Gain Teeth Equal To Damage")
                     .WithCanBeBoosted(false)
-                    .WithText("On kill, gain <keyword=fury> equal to target's <keyword=attack>")
+                    .WithText("Gain <keyword=teeth> equal to damage dealt")
                     .WithType("")
-                    .FreeModify(delegate (StatusEffectApplyXOnKillWithContext data)
+                    .FreeModify(delegate (StatusEffectApplyXOnHit data)
                     {
-                        data.effectToApply = mod.TryGet<StatusEffectData>("Instant Gain Fury");
+                        data.effectToApply = mod.TryGet<StatusEffectData>("Teeth");
                         data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
-                        data.contextEqualAmount = ScriptableObject.CreateInstance<ScriptableCurrentAttack>();
                         data.applyEqualAmount = true;
                     })
             );
 
+            // var boonStatus = SetupBoonStatus(mod, "Ares", "Curse of Vengeance", "Leader gains 'Gain <+2><keyword=teeth>'");
             var boonStatus = SetupBoonStatus(mod, "Ares", "Battle Rage", "Leader gains 'Gain <+1><keyword=attack> on kill'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Ares", "Ares")
                 .SetSprites("Ares.png", "AresBG.png")
-                .SetStats(3, 2, 3)
+                .SetStats(7, 2, 4)
                 
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -65,7 +80,7 @@ namespace HadesFrost.Setup
                     data.startWithEffects = new[]
                     {
                         mod.SStack(boonStatus),
-                        mod.SStack("When Enemy Is Killed Gain Fury Equal To Attack")
+                        mod.SStack("Gain Teeth Equal To Damage")
                     };
                 }));
         }
@@ -167,7 +182,8 @@ namespace HadesFrost.Setup
         }
 
         private static void Aphrodite(HadesFrost mod)
-        {
+        { 
+            // 3 hp apply haze on hit fragile?
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectApplyXIfStatsAreLower>("Apply Haze If")
@@ -185,12 +201,27 @@ namespace HadesFrost.Setup
                     })
             );
 
+            mod.StatusEffects.Add(
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectApplyXWhenHit>("Apply Haze On Hit")
+                    .WithCanBeBoosted(true)
+                    .WithText("On hit apply <{a}><keyword=haze> to the attacker")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectApplyXWhenHit data)
+                    {
+                        var constraint = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
+                        data.applyConstraints = new TargetConstraint[] { constraint };
+                        data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Attacker;
+                        data.effectToApply = mod.TryGet<StatusEffectData>("Haze");
+                    })
+            );
+
             var boonStatus = SetupBoonStatus(mod, "Aphrodite", "Heartbreak Strike", "Leader gains 'Apply <1><keyword=frost>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Aphrodite", "Aphrodite")
                 .SetSprites("Aphrodite.png", "AphroditeBG.png")
-                .SetStats(3, 0, 5)
+                .SetStats(3)
                 
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -211,7 +242,11 @@ namespace HadesFrost.Setup
                     data.startWithEffects = new[]
                     {
                         mod.SStack(boonStatus),
-                        mod.SStack("Apply Haze If"),
+                        mod.SStack("Apply Haze On Hit"),
+                    };
+                    data.traits = new List<CardData.TraitStacks>
+                    {
+                        mod.TStack("Fragile")
                     };
                 }));
         }
@@ -571,7 +606,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hestia", "Hestia", idleAnim: "SquishAnimationProfile")
                 .SetSprites("Hestia.png", "HestiaBG.png")
-                .SetStats(5)
+                .SetStats(6)
                 
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
@@ -615,7 +650,8 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Heavy Metal", "Leader gains <3><keyword=shell>");
+            //var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Heavy Metal", "Leader gains <3><keyword=shell>");
+            var boonStatus = SetupBoonStatus(mod, $"Hephaestus", "Fine Tuning", $"Give a random item in your deck <keyword={Extensions.PrefixGUID("charge", mod)}>");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hephaestus", "Hephaestus", idleAnim: "GiantAnimationProfile")
@@ -721,10 +757,21 @@ namespace HadesFrost.Setup
         {
             var boonStatus = SetupBoonStatus(mod, "Zeus", "Lightning Strike", "Leader gains 'Apply <1><keyword=jolted>'");
 
+            mod.StatusEffects.Add(
+                mod.StatusCopy(
+                        "Double Overload",
+                        "Double Jolted")
+                    .WithText("Double the target's <keyword=jolted>")
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        ((StatusEffectInstantDoubleX)data).statusToDouble = mod.TryGet<StatusEffectData>("Jolted");
+                    })
+            );
+
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Zeus", "Zeus")
                 .SetSprites("Zeus.png", "ZeusBG.png")
-                .SetStats(6, 0, 3)
+                .SetStats(4, 0, 3)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -737,7 +784,8 @@ namespace HadesFrost.Setup
                     };
                     data.attackEffects = new[]
                     {
-                        mod.SStack("Jolted", 2)
+                        mod.SStack("Double Jolted"),
+                        mod.SStack("Jolted", 3)
                     };
                     data.traits = new List<CardData.TraitStacks>
                     {

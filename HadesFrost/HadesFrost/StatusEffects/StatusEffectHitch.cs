@@ -13,6 +13,11 @@ namespace HadesFrost.StatusEffects
             var cardsOnBoard = Battle.GetCardsOnBoard(this.target.owner);
             cardsOnBoard.Remove(this.target);
 
+            if (hit.damageType == "hitch")
+            {
+                yield break;
+            }
+
             foreach (var entity in cardsOnBoard)
             {
                 var hasHitch = entity.statusEffects.Any(s => s.type == "hitch");
@@ -25,7 +30,6 @@ namespace HadesFrost.StatusEffects
                 var hit2 = new Hit(hit.target, entity, count)
                 {
                     canRetaliate = false,
-                    countsAsHit = false,
                     damageType = "hitch"
                 };
 

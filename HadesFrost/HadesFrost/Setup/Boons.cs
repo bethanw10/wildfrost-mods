@@ -3,6 +3,7 @@ using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
+using UnityEngine;
 using static Console;
 
 namespace HadesFrost.Setup
@@ -88,6 +89,9 @@ namespace HadesFrost.Setup
                         upgrade = new CardUpgradeDataBuilder(mod)
                             .Create("AresBoon")
                             .SetEffects(mod.SStack("On Kill Apply Attack To Self"));
+                        // upgrade = new CardUpgradeDataBuilder(mod)
+                        //     .Create("AresBoon")
+                        //     .SetEffects(mod.SStack("Teeth", 2));
                         break;
                     }
                 case "Artemis":
@@ -127,9 +131,27 @@ namespace HadesFrost.Setup
                     }
                 case "Hephaestus":
                     {
-                        upgrade = new CardUpgradeDataBuilder(mod)
+                        // upgrade = new CardUpgradeDataBuilder(mod)
+                        //     .Create("HephaestusBoon")
+                        //     .SetEffects(mod.SStack("Shell", 3));
+
+                        var boon = new CardUpgradeDataBuilder(mod)
                             .Create("HephaestusBoon")
-                            .SetEffects(mod.SStack("Shell", 3));
+                            .SetTraits(mod.TStack("Charge")).Build();
+
+                        var randomDeck = References.Player.data.inventory.deck
+                            .Where(cardData => cardData.cardType.item && cardData.hasAttack)
+                            .Clone();
+
+                        randomDeck.Shuffle();
+
+                        var item = randomDeck.FirstOrDefault();
+
+                        if (item != null)
+                        {
+                            boon.GainEffects(item);
+                        }
+
                         break;
                     }
                 case "Hera":

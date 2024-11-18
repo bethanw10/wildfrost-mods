@@ -211,7 +211,7 @@ namespace ShellBattle
                         castData.noTargetTypeArgs = new[] { "<sprite name=shell>" };
                         var target = new TargetConstraintHasStatusType
                         {
-                            statusType = "teeth"
+                            statusType = "shell"
                         };
                         castData.applyConstraints = new TargetConstraint[] { target };
                     })

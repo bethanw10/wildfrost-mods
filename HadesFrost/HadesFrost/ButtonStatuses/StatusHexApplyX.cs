@@ -81,6 +81,12 @@ namespace HadesFrost.ButtonStatuses
                 return;
             }
 
+            if (target.silenced)
+            {
+                PopupText("Inked!");
+                return;
+            }
+
             foreach (var constraint in clickConstraints)
             {
                 if (!constraint.Check(target))

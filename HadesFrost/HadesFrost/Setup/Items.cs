@@ -28,6 +28,79 @@ namespace HadesFrost.Setup
             ThunderSignet(mod);
             IridescentFan(mod);
             AdamantShard(mod);
+
+            //
+            StygianBlade(mod); //Swing?
+            ShieldOfChaos(mod);
+            EternalSpear(mod);
+        }
+
+        private static void StygianBlade(HadesFrost mod)
+        {
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("StygianBlade", "Stygian Blade")
+                    .SetSprites("StygianBlade.png", "StygianBladeBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .NeedsTarget()
+                    .SetDamage(2)
+                    .WithValue(40));
+        }
+
+        private static void ShieldOfChaos(HadesFrost mod)
+        {
+            mod.StatusEffects.Add(
+                mod.StatusCopy("On Hit Equal Heal To FrontAlly", "On Hit Equal Shell To FrontAlly")
+                    .WithText("Apply <keyword=shell> to front ally equal to damage dealt")
+                    .FreeModify(data =>
+                    {
+                        var castData = (StatusEffectApplyXOnHit)data;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Shell").InstantiateKeepName();
+                    }));
+
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("ShieldOfChaos", "Shield of Chaos")
+                    .SetSprites("ShieldOfChaos.png", "ShieldOfChaosBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .NeedsTarget()
+                    .SetDamage(3)
+                    .WithValue(40)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.startWithEffects = new[]
+                        {
+                            mod.SStack("On Hit Equal Shell To FrontAlly")
+                        };
+                    }));
+        }
+
+        private static void EternalSpear(HadesFrost mod)
+        {
+            mod.StatusEffects.Add(
+                mod.StatusCopy("On Hit Equal Heal To FrontAlly", "On Hit Equal Shell To FrontAlly")
+                    .WithText("Apply <keyword=shell> to front ally equal to damage dealt")
+                    .FreeModify(data =>
+                    {
+                        var castData = (StatusEffectApplyXOnHit)data;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Shell").InstantiateKeepName();
+                    }));
+
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("ShieldOfChaos", "Shield of Chaos")
+                    .SetSprites("ShieldOfChaos.png", "ShieldOfChaosBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .NeedsTarget()
+                    .SetDamage(3)
+                    .WithValue(40)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.startWithEffects = new[]
+                        {
+                            mod.SStack("On Hit Equal Shell To FrontAlly")
+                        };
+                    }));
         }
 
         private static void Nectar(HadesFrost mod)
@@ -55,6 +128,7 @@ namespace HadesFrost.Setup
                     .SetSprites("Nectar.png", "NectarBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .NeedsTarget()
+                    .CanPlayOnHand()
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(delegate(CardData data)
                     {
@@ -81,6 +155,7 @@ namespace HadesFrost.Setup
                     .SetSprites("Ambrosia.png", "AmbrosiaBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .NeedsTarget()
+                    .CanPlayOnHand()
                     .WithValue(60)
                     .SubscribeToAfterAllBuildEvent(delegate(CardData data)
                     {
@@ -125,13 +200,13 @@ namespace HadesFrost.Setup
                     .CreateItem("ThunderSignet", "Thunder Signet")
                     .SetSprites("ThunderSignet.png", "ThunderSignetBG.png")
                     .WithIdleAnimationProfile("Heartbeat2AnimationProfile")
-                    .SetDamage(0)
+                    .SetDamage(1)
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                     {
                         data.attackEffects = new[]
                         {
-                            mod.SStack("Jolted", 4),
+                            mod.SStack("Jolted", 7),
                         };
                     }));
         }
@@ -163,16 +238,15 @@ namespace HadesFrost.Setup
         {
             mod.StatusEffects.Add(
                 mod.StatusCopy("Instant Apply Frenzy (To Card In Hand)", "Instant Damage (To Card In Hand)")
-                    .WithText("Add <+{a}><keyword=attack> to an <item> in your hand")
+                    .WithText("Add <+{a}><keyword=attack> to a card in your hand")
                     .FreeModify(data =>
                     {
                         var castData = (StatusEffectApplyXInstant)data;
                         castData.effectToApply = mod.TryGet<StatusEffectData>("Increase Attack").InstantiateKeepName();
                         
                         var constraintAttack = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
-                        var constraintItem = ScriptableObject.CreateInstance<TargetConstraintIsItem>();
 
-                        castData.targetConstraints = new TargetConstraint[] { constraintItem, constraintAttack };
+                        castData.targetConstraints = new TargetConstraint[] { constraintAttack };
                     }));
 
             mod.Cards.Add(
@@ -189,12 +263,12 @@ namespace HadesFrost.Setup
                     {
                         data.attackEffects = new[]
                         {
-                            mod.SStack("Instant Damage (To Card In Hand)", 3),
+                            mod.SStack("Instant Damage (To Card In Hand)", 4),
                         };
 
                         data.traits = new List<CardData.TraitStacks>
                         {
-                            mod.TStack("Zoomlin")
+                            mod.TStack("Zoomlin"), mod.TStack("Consume")
                         };
                     }));
         }
@@ -224,7 +298,7 @@ namespace HadesFrost.Setup
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectBonusDamageEqualToX>("Bonus Damage Companions")
                     .WithCanBeBoosted(false)
-                    .WithText("Deal additional damage equal to number of active allies")
+                    .WithText("Deal +1 bonus damage for each active companion")
                     .WithType("")
                     .FreeModify(delegate (StatusEffectBonusDamageEqualToX data)
                     {
@@ -246,7 +320,11 @@ namespace HadesFrost.Setup
                     //.SetStartWithEffect(mod.SStack("On Kill Apply Attack To Self", 2))
                     .SubscribeToAfterAllBuildEvent(data =>
                     {
-                        data.startWithEffects = new[] { mod.SStack("Bonus Damage Companions") };
+                        data.startWithEffects = new[]
+                        {
+                            // mod.SStack("Bonus Damage Companions"),
+                            mod.SStack("On Hit Damage Undamaged Target"),
+                        };
                     })
                 );
         }
@@ -315,7 +393,7 @@ namespace HadesFrost.Setup
             var chargeEffect =
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectCharge>("Gain Attack While In Hand")
-                    .WithCanBeBoosted(false)
+                    .WithCanBeBoosted(true)
                     .WithText("")
                     .WithType("")
                     .FreeModify(delegate(StatusEffectCharge data)
@@ -327,8 +405,8 @@ namespace HadesFrost.Setup
 
             var chargeKeyword = new KeywordDataBuilder(mod)
                 .Create("Charge")
-                .WithCanStack(false)
-                .WithDescription("<+1><keyword=attack> each turn spent in hand.\n\nReset <keyword=attack> when played or discarded.")
+                .WithCanStack(true)
+                .WithDescription("Gain <keyword=attack> each turn spent in hand.\n\nReset <keyword=attack> when played or discarded")
                 .WithShowName(true)
                 .WithShowIcon(false)
                 .WithTitle("Charge");
@@ -338,7 +416,6 @@ namespace HadesFrost.Setup
 
             mod.Traits.Add(new TraitDataBuilder(mod)
                 .Create("Charge")
-                .WithOverrides(mod.TryGet<TraitData>("Pull"), mod.TryGet<TraitData>("Barrage"))
                 .WithKeyword(chargeKeyword.Build())
                 .WithEffects(chargeEffect.Build())
             );
@@ -396,7 +473,7 @@ namespace HadesFrost.Setup
                     .CreateItem("BlackCoat", "Black Coat")
                     .SetSprites("BlackCoat.png", "BlackCoatBG.png")
                     .WithIdleAnimationProfile("Heartbeat2AnimationProfile")
-                    .SetDamage(5)
+                    .SetDamage(7)
                     .WithValue(45)
                     .NeedsTarget(false)
                     .WithPlayType(Card.PlayType.Play)

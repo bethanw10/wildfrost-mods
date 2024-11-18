@@ -25,7 +25,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Frinos", "Frinos", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Frinos.png", "FrinosBG.png")
-                .SetStats(4)
+                .SetStats(3)
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {

@@ -23,7 +23,7 @@ Boon colors - custom panel?
 -Release 1-
 Tribe banner
 Hex button sizes
-Balancing - witchs staff, phase shift, demeter no barrage
+Balancing - witchs staff
 
 -Release 2-
 Ascended alternatives 
@@ -63,7 +63,7 @@ namespace HadesFrost
             @"
 A mod inspired by Hades II (and partly by the first Hades).
 
-As this is still quite new, it's likely I'll be making balancing changes in the future and there may be a fair amount of bugs.
+As this is still quite new, it's likely I'll be making balancing changes in the future and there may be a some bugs.
 
 If you want a higher chance of finding the new companions/items/charms, I recommend the Increased Odds mod!
 
@@ -210,17 +210,23 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
 
         private static IEnumerator CardsPhoto2()
         {
-            var everyGeneration = new[]
+            // var everyGeneration = new[]
+            // {
+            //     "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", 
+            //     "Dionysus", "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus"
+            // };
+           // string[] everyGeneration = new string[] { "Frinos", "Toula" };
+            string[] everyGeneration = new string[]
             {
-                "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", 
-                "Dionysus", "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus"
+                "WitchsStaff","SisterBlades", "MoonstoneAxe", "FrostbittenHorn", "Pom Slice", "Skelly", "Nectar",
+                "IridescentFan", "ThunderSignet", "Ambrosia", "AdamantShard"
+                , "UmbralFlames", "ArgentSkull", "BlackCoat"
             };
-            // string[] everyGeneration = new string[] { "Frinos", "Toula" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
             var sequence = Object.FindObjectOfType<CardFramesUnlockedSequence>();
             var titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(includeInactive: true);
-            titleObject.text = "New Cards!";
+            titleObject.text = "New Items!";
             yield return sequence.StartCoroutine("CreateCards", everyGeneration.Select((string s) => $"bethanw10.hadesfrost.{s}").ToArray());
         }
 

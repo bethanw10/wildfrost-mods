@@ -58,7 +58,7 @@ namespace HadesFrost.Setup
                 Color.clear,
                 new[] { mod.TryGet<KeywordData>("magick") }, 
                 1,
-                0.008f);
+                0.01f);
 
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
@@ -166,7 +166,7 @@ namespace HadesFrost.Setup
 
         private static void MoonWater(HadesFrost mod)
         {
-            const int cost = 20;
+            const int cost = 25;
             var description = "Restore <3><keyword=health>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Moon Water";
@@ -378,7 +378,7 @@ namespace HadesFrost.Setup
 
         private static void SkyFall(HadesFrost mod)
         {
-            const int cost = 20;
+            const int cost = 25;
             var description = $"Apply <1> <keyword=weakness> to all enemies\n<Cost: {cost}> <sprite name=magickicon>";
             const string name = "Sky Fall";
             var keywordName = name.ToLower().Replace(" ", "");

@@ -14,7 +14,7 @@ public class ScriptableNumAllies : ScriptableAmount
         
         var allies = Battle.GetAllUnits(entity.owner);
         
-        var count = allies?.Count(a => a.IsAliveAndExists() && a.data.cardType.name != "Leader");
+        var count = allies?.Count(a => a.IsAliveAndExists() && !a.data.IsClunker && a.data.cardType.name != "Leader");
         //
         // var deck = References.Player?.data?.inventory?.deck;
         //

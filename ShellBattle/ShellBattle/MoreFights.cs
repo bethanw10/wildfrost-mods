@@ -53,7 +53,7 @@ namespace ShellBattle
             }
 
             AddShellCards();
-            AddIceCards();
+            //AddIceCards();
 
             base.Load();
 
