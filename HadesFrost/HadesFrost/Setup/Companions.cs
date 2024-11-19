@@ -345,6 +345,7 @@ namespace HadesFrost.Setup
                     .Create<StatusEffectApplyXOnCardPlayed>("Trigger Allies")
                     .WithText("Trigger all allies")
                     .WithType("")
+                    .WithCanBeBoosted(false)
                     .FreeModify(delegate (StatusEffectApplyXOnCardPlayed data)
                     {
                         data.effectToApply = mod.TryGet<StatusEffectData>("Trigger (High Prio)");
@@ -355,7 +356,6 @@ namespace HadesFrost.Setup
                 .CreateUnit("Apollo", "Apollo")
                 .SetSprites("Apollo.png", "ApolloBG.png")
                 .SetStats(8, null, 10)
-
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -410,9 +410,11 @@ namespace HadesFrost.Setup
                     .Create<StatusEffectChangeTargetMode>("Hits All Snowed Enemies")
                     .WithText("Hits all <keyword=snow>'d enemies")
                     .WithType("")
+                    .WithCanBeBoosted(false)
                     .FreeModify(delegate (StatusEffectChangeTargetMode data)
                     {
-                        var targetMode = ScriptableObject.CreateInstance<TargetModeStatus>();
+                        var targetMode = ScriptableObject.CreateInstance<TargetModeStatus>().InstantiateKeepName();
+                        targetMode.name = "TargetModeStatus";
                         targetMode.targetType = "snow";
                         data.targetMode = targetMode;
                     })
@@ -424,7 +426,6 @@ namespace HadesFrost.Setup
                 .CreateUnit("Demeter", "Demeter", idleAnim: "PingAnimationProfile")
                 .SetSprites("Demeter.png", "DemeterBG.png")
                 .SetStats(8, 2, 3)
-                .NeedsTarget(false)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -451,6 +452,7 @@ namespace HadesFrost.Setup
                     .Create<StatusEffectApplyXWhenEnemyTakesDamage>("When Shroom Damage Taken Heal")
                     .WithText("When enemy takes <keyword=shroom> damage, increase <keyword=health> of allies in the row by <{a}>")
                     .WithType("")
+                    .WithCanBeBoosted(true)
                     .FreeModify(delegate (StatusEffectApplyXWhenEnemyTakesDamage data)
                     {
                         data.TargetDamageType = "shroom";
@@ -483,7 +485,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Dionysus", "Dionysus", idleAnim: "PingAnimationProfile")
                 .SetSprites("Dionysus.png", "DionysusBG.png")
-                .SetStats(8, 0, 3)
+                .SetStats(7, 0, 3)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -607,7 +609,6 @@ namespace HadesFrost.Setup
                 .CreateUnit("Hestia", "Hestia", idleAnim: "SquishAnimationProfile")
                 .SetSprites("Hestia.png", "HestiaBG.png")
                 .SetStats(6)
-                
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {
                     data.greetMessages = new[]
@@ -682,7 +683,7 @@ namespace HadesFrost.Setup
             var knockback = new KeywordDataBuilder(mod)
                 .Create("Knockback")
                 .WithCanStack(false)
-                .WithDescription("Deal damage to unit behind target, equal to target's <keyword=attack>\n\nPush target back one")
+                .WithDescription("Also deal damage to unit behind the target, equal to the target's <keyword=attack>\n\nPush target back one")
                 .WithShowName(true)
                 .WithShowIcon(false)
                 .WithTitle("Knockback");

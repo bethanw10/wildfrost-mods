@@ -17,13 +17,9 @@ using Object = UnityEngine.Object;
 /* TODO:
  -Maybe-
 Rework apollo unyielding, boring boons?
- Selene event background ?
+Selene event background ?
 Boon colors - custom panel?
-
--Release 1-
-Tribe banner
-Hex button sizes
-Balancing - witchs staff
+Fix clicking hex button is wonky
 
 -Release 2-
 Ascended alternatives 
@@ -37,7 +33,8 @@ More charge items
 More pets - hecuba, raki, then companions from hades 1
 Pet flags??
 Hitch anim
-multiple boons - choice??
+multiple boons - choice when slecting a god??
+duo boons!
 */
 
 namespace HadesFrost

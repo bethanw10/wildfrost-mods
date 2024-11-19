@@ -30,7 +30,7 @@ namespace HadesFrost.Setup
             AdamantShard(mod);
 
             //
-            StygianBlade(mod); //Swing?
+            StygianBlade(mod); //Swing? hit in other row?
             ShieldOfChaos(mod);
             EternalSpear(mod);
         }
@@ -77,30 +77,15 @@ namespace HadesFrost.Setup
 
         private static void EternalSpear(HadesFrost mod)
         {
-            mod.StatusEffects.Add(
-                mod.StatusCopy("On Hit Equal Heal To FrontAlly", "On Hit Equal Shell To FrontAlly")
-                    .WithText("Apply <keyword=shell> to front ally equal to damage dealt")
-                    .FreeModify(data =>
-                    {
-                        var castData = (StatusEffectApplyXOnHit)data;
-                        castData.effectToApply = mod.TryGet<StatusEffectData>("Shell").InstantiateKeepName();
-                    }));
-
             mod.Cards.Add(
                 new CardDataBuilder(mod)
-                    .CreateItem("ShieldOfChaos", "Shield of Chaos")
-                    .SetSprites("ShieldOfChaos.png", "ShieldOfChaosBG.png")
+                    .CreateItem("EternalSpear", "Eternal Spear")
+                    .SetSprites("EternalSpear.png", "EternalSpearBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .NeedsTarget()
                     .SetDamage(3)
                     .WithValue(40)
-                    .SubscribeToAfterAllBuildEvent(data =>
-                    {
-                        data.startWithEffects = new[]
-                        {
-                            mod.SStack("On Hit Equal Shell To FrontAlly")
-                        };
-                    }));
+                    .WithTargetMode(new TargetModePierce()));
         }
 
         private static void Nectar(HadesFrost mod)
@@ -473,7 +458,7 @@ namespace HadesFrost.Setup
                     .CreateItem("BlackCoat", "Black Coat")
                     .SetSprites("BlackCoat.png", "BlackCoatBG.png")
                     .WithIdleAnimationProfile("Heartbeat2AnimationProfile")
-                    .SetDamage(7)
+                    .SetDamage(6)
                     .WithValue(45)
                     .NeedsTarget(false)
                     .WithPlayType(Card.PlayType.Play)

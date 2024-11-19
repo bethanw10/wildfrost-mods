@@ -9,6 +9,8 @@ namespace HadesFrost.TargetModes
         public bool missing = false;
         public bool failSafe = false;
 
+        public override bool NeedsTarget => false;
+
         public override Entity[] GetPotentialTargets(Entity entity, Entity target, CardContainer targetContainer)
         {
             var hashSet = new HashSet<Entity>();

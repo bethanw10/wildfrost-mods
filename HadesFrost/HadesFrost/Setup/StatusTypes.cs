@@ -51,7 +51,7 @@ namespace HadesFrost.Setup
 
         private static void Hitch(HadesFrost mod)
         {
-            mod.CreateIconKeyword("hitch", "Hitch", "Damages other Hitched allies when hit | Does not count down!", "hitchicon")
+            mod.CreateIconKeyword("hitch", "Hitch", "When any damage taken, deal damage to other <sprite name=hitchicon>'d allies | Does not count down!", "hitchicon")
                 .ChangeColor(note: new Color(0.98f, 0.89f, 0.61f));
 
             StatusIcons.CreateIcon(
@@ -86,48 +86,6 @@ namespace HadesFrost.Setup
                         castData.doesDamage = true;
                     })
             );
-
-            // mod.StatusEffects.Add(
-            //     new StatusEffectDataBuilder(mod)
-            //         .Create<StatusEffectApplyXWhenHit>("Hitch")
-            //         .WithCanBeBoosted(true)
-            //         .WithType("hitch")
-            //         .WithKeyword("hitch")
-            //         .WithIsStatus(true)
-            //         .WithVisible(true)
-            //         .WithCanBeBoosted(true)
-            //         .WithOffensive(true)
-            //         .WithIconGroupName("health")
-            //         .WithTextInsert("{a}")
-            //         .WithStackable(true)
-            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-            //         {
-            //             var castData = (StatusEffectApplyXWhenHit)data;
-            //             castData.removeOnDiscard = true;
-            //             castData.applyFormatKey = mod.TryGet<StatusEffectData>("Shroom").applyFormatKey;
-            //             castData.eventPriority = 2;
-            //             castData.targetConstraints = new TargetConstraint[]
-            //             {
-            //                 ScriptableObject.CreateInstance<TargetConstraintIsUnit>()
-            //             };
-            //
-            //             var script = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
-            //             script.statusType = "hitch";
-            //
-            //             castData.contextEqualAmount = script;
-            //             castData.canRetaliate = false;
-            //             castData.dealDamage = true;
-            //             castData.doesDamage = true;
-            //             castData.countsAsHit = false;
-            //
-            //             var constraint = ScriptableObject.CreateInstance<TargetConstraintHasStatusType>();
-            //             constraint.statusType = "hitch";
-            //
-            //             castData.applyConstraints = new TargetConstraint[] { constraint };
-            //
-            //             castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
-            //         })
-            // );
         }
     }
 }
