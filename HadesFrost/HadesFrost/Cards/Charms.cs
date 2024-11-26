@@ -114,7 +114,7 @@ namespace HadesFrost.Cards
                     .SetConstraints(constraintAttack, constraintUnit)
                     .WithTier(2)
                     .ChangeDamage(3)
-                    .SetEffects(mod.SStack("Weakness", 1))
+                    .SetEffects(mod.SStack("Weakness"))
             );
         }
 
@@ -191,7 +191,7 @@ namespace HadesFrost.Cards
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithImage("CloudBangleCharm.png")
                     .WithTitle("Cloud Bangle")
-                    .WithText($"Apply <2> <keyword=jolted>")
+                    .WithText("Apply <2> <keyword=jolted>")
                     .SetConstraints(constraintUnit)
                     .WithTier(2)
                     .SubscribeToAfterAllBuildEvent(data =>

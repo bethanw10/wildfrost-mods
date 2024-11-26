@@ -19,8 +19,11 @@ namespace HadesFrost.Mechanics
             AphroditeCall(mod);
             AresCall(mod);
             AthenaCall(mod);
+            ArtemisCall(mod);
             DemeterCall(mod);
             DionysusCall(mod);
+            PoseidonCall(mod);
+            ZeusCall(mod);
         }
 
         private static void CallKeyword(HadesFrost mod)
@@ -57,20 +60,20 @@ namespace HadesFrost.Mechanics
         
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
-                    .Create<StatusEffectApplyXWhenEnemyTakesDamage>("Gain Magick Equal To Team Damage Dealt")
+                    .Create<StatusEffectApplyXWhenAnyTakesDamage>("Gain God Gauge Equal All Damage")
                     .WithCanBeBoosted(false)
                     .WithType("")
                     .WithStackable(false)
-                    .WithText("Gain <keyword=godgauge> equal to damage dealt to enemy")
+                    .WithText("Gain <keyword=godgauge> equal to damage dealt to anyone")
                     .SubscribeToAfterAllBuildEvent(data =>
                     {
-                        var castData = (StatusEffectApplyXWhenEnemyTakesDamage)data;
-                        castData.effectToApply = mod.TryGet<StatusEffectData>("Magick");
+                        var castData = (StatusEffectApplyXWhenAnyTakesDamage)data;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("God Gauge");
                         castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
                         castData.applyEqualAmount = true;
                         castData.doPing = false;
                         castData.AllTypes = true;
-                        castData.IgnoreType = "hex";
+                        castData.IgnoreType = "godgauge";
                         data.targetConstraints = TargetConstraintAlliesOnly(mod);
                     })
             );
@@ -130,7 +133,7 @@ namespace HadesFrost.Mechanics
         private static void AresCall(HadesFrost mod)
         {
             const int cost = 60;
-            var description = "Apply <4> <keyword=teeth> to self\n" + $"<Cost: {cost}> <sprite name=magickicon>";
+            var description = "Apply <3> <keyword=teeth> to self\n" + $"<Cost: {cost}> <sprite name=magickicon>";
 
             const string name = "Ares'";
             var nameOnlyLetters = name.Replace(" ", "").Replace("'", "");
@@ -152,6 +155,8 @@ namespace HadesFrost.Mechanics
                         castData.isStatus = true;
                         castData.iconGroupName = "counter";
                         castData.effectToApply = mod.TryGet<StatusEffectData>("Teeth");
+                        castData.applyEqualAmount = true;
+                        castData.FixedAmount = 3;
                         castData.MagickCost = cost;
 
                         data.targetConstraints = TargetConstraintAlliesOnly(mod);
@@ -159,7 +164,40 @@ namespace HadesFrost.Mechanics
                 );
         }
 
-        private static void AthenaCall(HadesFrost mod)
+        private static void ArtemisCall(HadesFrost mod)
+        {
+            const int cost = 100;
+            var description = "Apply <1> <keyword=demonize> to enemies in row\n" + $"<Cost: {cost}> <sprite name=magickicon>";
+
+            const string name = "Artemis'";
+            var nameOnlyLetters = name.Replace(" ", "").Replace("'", "");
+            var keywordName = nameOnlyLetters.ToLower();
+
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
+
+            mod.StatusEffects
+                .Add(new StatusEffectDataBuilder(mod)
+                    .Create<StatusActionApplyX>(nameOnlyLetters + "Aid")
+                    .WithType(keywordName)
+                    .WithStackable(false)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        var castData = (StatusActionApplyX)data;
+                        castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.EnemiesInRow;
+                        castData.visible = true;
+                        castData.isStatus = true;
+                        castData.iconGroupName = "counter";
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Demonize");
+                        castData.MagickCost = cost;
+
+                        data.targetConstraints = TargetConstraintAlliesOnly(mod);
+                    })
+                );
+        }
+
+
+        private static void AthenaCall(HadesFrost mod) // todo deflect?
         {
             const int cost = 100;
             var description = "Gain `<1> <keyword=block>' and <1> <deflect>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
@@ -255,6 +293,71 @@ namespace HadesFrost.Mechanics
                 );
         }
 
+        private static void PoseidonCall(HadesFrost mod) // yank last instead? knockback both in front?
+        {
+            const int cost = 10;
+            var description = "Deal <1> damage and push back front enemy\n" + $"<Cost: {cost}> <sprite name=magickicon>";
+
+            const string name = "Poseidon's";
+            var nameOnlyLetters = name.Replace(" ", "").Replace("'", "");
+            var keywordName = nameOnlyLetters.ToLower();
+
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
+
+            mod.StatusEffects
+                .Add(new StatusEffectDataBuilder(mod)
+                    .Create<StatusActionApplyX>(nameOnlyLetters + "Aid")
+                    .WithType(keywordName)
+                    .WithStackable(false)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        var castData = (StatusActionApplyX)data;
+                        castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.FrontEnemy;
+                        castData.visible = true;
+                        castData.isStatus = true;
+                        castData.iconGroupName = "counter";
+                        castData.HitDamage = 1;
+                        castData.MagickCost = cost;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Push");
+
+                        data.targetConstraints = TargetConstraintAlliesOnly(mod);
+                    })
+                );
+        }
+
+        private static void ZeusCall(HadesFrost mod)
+        {
+            const int cost = 10;
+            var description = "Deal damage too all enemies equal to their <keyword=jolted>\n" + $"<Cost: {cost}> <sprite name=magickicon>";
+
+            const string name = "Zeus'";
+            var nameOnlyLetters = name.Replace(" ", "").Replace("'", "");
+            var keywordName = nameOnlyLetters.ToLower();
+
+            CreateKeyword(mod, keywordName, name, description);
+            CreateCard(mod, name, description);
+
+            mod.StatusEffects
+                .Add(new StatusEffectDataBuilder(mod)
+                    .Create<StatusActionApplyX>(nameOnlyLetters + "Aid")
+                    .WithType(keywordName)
+                    .WithStackable(false)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        var castData = (StatusActionApplyX)data;
+                        castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Enemies;
+                        castData.visible = true;
+                        castData.isStatus = true;
+                        castData.iconGroupName = "counter";
+                        castData.MagickCost = cost;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Push");
+
+                        data.targetConstraints = TargetConstraintAlliesOnly(mod);
+                    })
+                );
+        }
+
         private static void CreateCard(HadesFrost mod, string name, string description)
         {
             var nameNoSpaces = name.Replace(" ", "").Replace("'", "");
@@ -311,7 +414,15 @@ namespace HadesFrost.Mechanics
 
             CardData.StatusEffectStacks statusEffect;
 
-            if (cardName == "AphroditesAid" || cardName == "AresAid")
+            if (cardName == "AphroditesAid" ||
+                cardName == "AthenasAid" ||
+                cardName == "ArtemisAid" ||
+                cardName == "AresAid" ||
+                cardName == "DemetersAid" ||
+                cardName == "DionysusAid" ||
+                cardName == "PoseidonAid" ||
+                cardName == "ZeusAid"
+                )
             {
                 statusEffect = mod.SStack(cardName);
             }
@@ -324,7 +435,7 @@ namespace HadesFrost.Mechanics
                 .Create("Hex")
                 .SetEffects(
                     statusEffect,
-                    mod.SStack("Gain Magick Equal To Team Damage Dealt"))
+                    mod.SStack("Gain God Gauge Equal All Damage"))
                 .Build();
 
             References.Player.data.inventory.deck.Remove(entity.data);

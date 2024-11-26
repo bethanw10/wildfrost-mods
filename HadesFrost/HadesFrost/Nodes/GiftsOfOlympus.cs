@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.Mechanics;
 using HadesFrost.Utils;
-using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Localization.Components;
-using UnityEngine.SceneManagement;
 
 namespace HadesFrost.Nodes
 {
@@ -23,25 +20,30 @@ namespace HadesFrost.Nodes
             PrefabHolder.SetActive(false);
 
             mod.CampaignNodeTypes.Add(new CampaignNodeTypeBuilder(mod)
-                .Create<CampaignNodeTypeSelene>("SeleneNode")
-                .WithZoneName("Selene")
+                .Create<CampaignNodeTypeCall>("CallNode")
+                .WithZoneName("Call")
                 .WithCanEnter(true)
                 .WithInteractable(true)
                 .WithCanSkip(true)
                 .WithCanLink(true) 
                 .WithLetter(CallEventLetter)
                 .SubscribeToAfterAllBuildEvent(
-                    (data) =>
+                    data =>
                     {
-                        var castData = (CampaignNodeTypeSelene)data;
+                        var castData = (CampaignNodeTypeCall)data;
                         var item = mod.TryGet<CampaignNodeType>("CampaignNodeItem");
                         castData.routinePrefabRef = ((CampaignNodeTypeItem)item).routinePrefabRef;
 
                         castData.Pool = new List<CardData>
                         {
-                            mod.TryGet<CardData>("AphroditesCall"),
-                            mod.TryGet<CardData>("AresCall"),
-                            mod.TryGet<CardData>("AthenasCall")
+                            mod.TryGet<CardData>("AphroditesAid"),
+                            mod.TryGet<CardData>("AresAid"),
+                            mod.TryGet<CardData>("AthenasAid"),
+                            mod.TryGet<CardData>("ArtemisAid"),
+                            mod.TryGet<CardData>("DemetersAid"),
+                            mod.TryGet<CardData>("DionysusAid"),
+                            mod.TryGet<CardData>("PoseidonsAid"),
+                            mod.TryGet<CardData>("ZeusAid"),
                         };
 
                         var mapNode = mod.TryGet<CampaignNodeType>("CampaignNodeGold").mapNodePrefab.InstantiateKeepName();
@@ -102,24 +104,6 @@ namespace HadesFrost.Nodes
                     }
                     break;
                 }
-            }
-        }
-
-        public static void InsertSeleneViaSpecialEvent(HadesFrost mod, Scene scene)
-        {
-            if (scene.name == "Campaign")
-            {
-                var specialEvents = Object.FindObjectOfType<SpecialEventsSystem>(); //Only 1 of these exists
-                var eve = new SpecialEventsSystem.Event()
-                {
-                    requiresUnlock = null,
-                    nodeType = mod.TryGet<CampaignNodeType>("SeleneNode"),
-                    replaceNodeTypes = new[] { "CampaignNodeReward" },
-                    minTier = 3,                                         //After the first boss
-                    perTier = new Vector2Int(0, 1),                            //Maximum of 2 per tier
-                    perRun = new Vector2Int(1, 1)                              //Between 2 and 4 Selenes per run
-                };
-                specialEvents.events = specialEvents.events.AddItem(eve).ToArray();
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Deadpan.Enums.Engine.Components.Modding;
+﻿using System.Collections.Generic;
+using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
 
@@ -55,10 +56,7 @@ namespace HadesFrost.Cards
                     {
                         mod.SStack("MultiHit", 2)
                     };
-                    data.startWithEffects = new[]
-                    {
-                        mod.SStack("Fury", 2)
-                    };
+                    data.traits = new List<CardData.TraitStacks> { mod.TStack("Fury", 2) };
                 }));
         }
 

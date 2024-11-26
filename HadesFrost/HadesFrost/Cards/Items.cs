@@ -372,32 +372,17 @@ namespace HadesFrost.Cards
                     {
                         data.attackEffects = new[]
                         {
-                            mod.SStack("Reduce Counter")
+                            mod.SStack("Reduce Counter", 2)
                         };
                         data.traits = new List<CardData.TraitStacks>
                         {
-                            mod.TStack("Draw"), mod.TStack("Zoomlin")
+                            mod.TStack("Zoomlin")
                         };
                     }));
         }
 
         private static void WitchsStaff(HadesFrost mod)
         {
-            var bonus =
-                new StatusEffectDataBuilder(mod)
-                    .Create<StatusEffectBonusDamageEqualToX>("Bonus Damage Companions")
-                    .WithCanBeBoosted(false)
-                    .WithText("Deal +1 bonus damage for each active companion")
-                    .WithType("")
-                    .FreeModify(delegate (StatusEffectBonusDamageEqualToX data)
-                    {
-                        data.add = true;
-                        data.on = StatusEffectBonusDamageEqualToX.On.ScriptableAmount;
-                        data.scriptableAmount = new ScriptableNumAllies();
-                    });
-
-            mod.StatusEffects.Add(bonus);
-
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("WitchsStaff", "Witch's Staff")

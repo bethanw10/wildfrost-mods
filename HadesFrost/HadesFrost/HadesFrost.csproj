@@ -174,6 +174,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Nodes\CampaignNodeTypeCall.cs" />
     <Compile Include="Nodes\CampaignNodeTypeSelene.cs" />
     <Compile Include="Cards\Eyes.cs" />
     <Compile Include="Nodes\GiftsOfOlympus.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="Cards\Leaders.cs" />
     <Compile Include="Mechanics\Boons.cs" />
     <Compile Include="StatusEffects\Morph\MorphCardSequenceExtension.cs" />
+    <Compile Include="StatusEffects\StatusEffectApplyXWhenAnyTakesDamage.cs" />
     <Compile Include="StatusEffects\StatusInstantIncreaseCounter.cs" />
     <Compile Include="StatusEffects\StatusEffectCannotReduceCounter.cs" />
     <Compile Include="StatusEffects\StatusEffectApplyXWhenEnemyTakesDamage.cs" />
@@ -193,7 +195,7 @@
     <Compile Include="StatusEffects\StatusEffectIncreaseAttackWhileNotDamaged.cs" />
     <Compile Include="StatusEffects\StatusEffectCharge.cs" />
     <Compile Include="StatusEffects\Morph\StatusEffectInstantMorphCard.cs" />
-    <Compile Include="StatusEffects\StatusEffectInstantCombineCard.cs" />
+    <Compile Include="StatusEffects\Morph\StatusEffectInstantCombineCard.cs" />
     <Compile Include="StatusEffects\StatusEffectHitch.cs" />
     <Compile Include="StatusEffects\StatusEffectUses.cs" />
     <Compile Include="StatusEffects\StatusEffectNothing.cs" />
@@ -201,7 +203,6 @@
     <Compile Include="Cards\Pets.cs" />
     <Compile Include="Cards\Companions.cs" />
     <Compile Include="StatusEffects\StatusEffectKnockback.cs" />
-    <Compile Include="StatusEffects\StatusEffectApplyXIfStatsAreLower.cs" />
     <Compile Include="StatusEffects\StatusEffectTriggerWhenAllyBehindAttacks.cs" />
     <Compile Include="StatusEffects\StatusEffectBlockBarrage.cs" />
     <Compile Include="StatusEffects\StatusEffectApplyXOnKillWithContext.cs" />

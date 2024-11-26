@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
+using FMODUnity;
 using HadesFrost.Utils;
 using HarmonyLib;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace HadesFrost.Mechanics
         {
             mod.Classes.Add(mod.TribeCopy("Basic", MELINOE_TRIBE) //Snowdweller = "Basic", Shadmancer = "Magic"
                 .WithFlag("Images/DrawFlag.png")
-                .WithSelectSfxEvent(FMODUnity.RuntimeManager.PathToEventReference("event:/sfx/card/draw_multi"))
+                .WithSelectSfxEvent(RuntimeManager.PathToEventReference("event:/sfx/card/draw_multi"))
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
                     var gameObject = data.characterPrefab.gameObject.InstantiateKeepName();
@@ -83,7 +84,7 @@ namespace HadesFrost.Mechanics
         {
             mod.Classes.Add(mod.TribeCopy("Basic", ZAGREUS_TRIBE) //Snowdweller = "Basic", Shadmancer = "Magic"
                 .WithFlag("Images/DrawFlag.png")
-                .WithSelectSfxEvent(FMODUnity.RuntimeManager.PathToEventReference("event:/sfx/card/draw_multi"))
+                .WithSelectSfxEvent(RuntimeManager.PathToEventReference("event:/sfx/card/draw_multi"))
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
                     var gameObject = data.characterPrefab.gameObject.InstantiateKeepName();

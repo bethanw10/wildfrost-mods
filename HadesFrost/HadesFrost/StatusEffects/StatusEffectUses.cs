@@ -43,8 +43,8 @@ namespace HadesFrost.StatusEffects
                 {
                     count -= 1;
 
-                    this.target.display.promptUpdateDescription = true;
-                    this.target.PromptUpdate();
+                    target.display.promptUpdateDescription = true;
+                    target.PromptUpdate();
                 }
             }
 

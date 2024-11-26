@@ -1,17 +1,16 @@
 ﻿using System.Collections;
 using System.Linq;
-using UnityEngine;
 
 namespace HadesFrost.StatusEffects
 {
     public class StatusEffectHitch : StatusEffectData
     {
-        public override void Init() => this.OnHit += new StatusEffectData.EffectHitEventHandler(this.Hit);
+        public override void Init() => OnHit += Hit;
 
         private IEnumerator Hit(Hit hit)
         {
-            var cardsOnBoard = Battle.GetCardsOnBoard(this.target.owner);
-            cardsOnBoard.Remove(this.target);
+            var cardsOnBoard = Battle.GetCardsOnBoard(target.owner);
+            cardsOnBoard.Remove(target);
 
             if (hit.damageType == "hitch")
             {
@@ -41,6 +40,6 @@ namespace HadesFrost.StatusEffects
             // Pokefrost.SFX.TryPlaySound("jolt");
         }
 
-        public override bool RunHitEvent(global::Hit hit) => hit.Offensive && this.count > 0 && (Object)hit.target == (Object)this.target;
+        public override bool RunHitEvent(Hit hit) => hit.Offensive && count > 0 && hit.target == target;
     }
 }

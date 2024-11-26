@@ -110,7 +110,7 @@ namespace HadesFrost.Actions
                 //     this.target.PromptUpdate();
                 // }
 
-                target.StartCoroutine(magick?.RemoveStacks(this.MagickCost, false));
+                target.StartCoroutine(magick?.RemoveStacks(MagickCost, false));
                 //magick?.RemoveStacks(this.MagickCost, false);
             }
         }

@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Dead;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace HadesFrost.StatusEffects
 {
@@ -159,7 +161,7 @@ namespace HadesFrost.StatusEffects
 
             if (oldCards.Count == cardsToRemove.Length)
             {
-                var upgrades = new List<CardUpgradeData> { };
+                var upgrades = new List<CardUpgradeData>();
 
                 foreach (var card in oldCards)
                 {
@@ -294,13 +296,13 @@ namespace HadesFrost.StatusEffects
                 zero += entity3.transform.position;
             }
 
-            zero /= (float)entities.Length;
+            zero /= entities.Length;
 
             seq.group.position = zero;
             array = entities;
             foreach (var entity4 in array)
             {
-                var transform = UnityEngine.Object.Instantiate(seq.pointPrefab, entity4.transform.position, Quaternion.identity, seq.group);
+                var transform = Object.Instantiate(seq.pointPrefab, entity4.transform.position, Quaternion.identity, seq.group);
                 transform.gameObject.SetActive(value: true);
                 entity4.transform.SetParent(transform);
                 entity4.flipper.FlipUp();
@@ -315,7 +317,7 @@ namespace HadesFrost.StatusEffects
 
             yield return new WaitForSeconds(0.4f);
 
-            Events.InvokeScreenShake(1f, 0f);
+            Events.InvokeScreenShake();
             array = entities;
             foreach (var ent in array)
             {
@@ -328,7 +330,7 @@ namespace HadesFrost.StatusEffects
             }
 
             LeanTween.moveLocal(seq.group.gameObject, new Vector3(0f, 0f, -2f), 1f).setEaseInOutQuad();
-            LeanTween.rotateZ(seq.group.gameObject, Dead.PettyRandom.Range(160f, 180f), 1f).setOnUpdateVector3(delegate
+            LeanTween.rotateZ(seq.group.gameObject, PettyRandom.Range(160f, 180f), 1f).setOnUpdateVector3(delegate
             {
                 foreach (var point3 in seq.points)
                 {
@@ -337,7 +339,7 @@ namespace HadesFrost.StatusEffects
             }).setEaseInOutQuad();
             yield return new WaitForSeconds(1f);
 
-            Events.InvokeScreenShake(1f, 0f);
+            Events.InvokeScreenShake();
             if ((bool)seq.ps)
             {
                 seq.ps.Play();

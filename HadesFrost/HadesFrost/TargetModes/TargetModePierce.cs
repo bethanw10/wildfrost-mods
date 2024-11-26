@@ -54,7 +54,7 @@ namespace HadesFrost.TargetModes
             Entity target,
             CardContainer targetContainer)
         {
-            return this.GetTargets(entity, target, targetContainer);
+            return GetTargets(entity, target, targetContainer);
         }
 
         private static Entity GetBehind(Entity target)

@@ -20,7 +20,7 @@
 
             if (effect is IStatusAction actionEffect)
             {
-                this.statusEffect = actionEffect;
+                statusEffect = actionEffect;
                 actionEffect.ButtonCreate(this);
                 HexButton.onClick.AddListener(statusEffect.RunButtonClicked);
                 onDestroy.AddListener(DisableDragBlocker);

@@ -5,7 +5,6 @@
 // Assembly location: C:\Users\bess\source\repos\wildfrost-mods\HadesFrost\HadesFrost\bin\Debug\Assembly-CSharp-Publicized.dll
 
 using System.Collections;
-using HadesFrost.Utils;
 using UnityEngine;
 
 namespace HadesFrost.StatusEffects

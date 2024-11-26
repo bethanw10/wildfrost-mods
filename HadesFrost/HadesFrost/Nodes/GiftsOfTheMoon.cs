@@ -31,7 +31,7 @@ namespace HadesFrost.Nodes
                 .WithCanLink(true) 
                 .WithLetter(SeleneEventLetter)
                 .SubscribeToAfterAllBuildEvent(
-                    (data) =>
+                    data =>
                     {
                         var castData = (CampaignNodeTypeSelene)data;
                         var item = mod.TryGet<CampaignNodeType>("CampaignNodeItem");
@@ -114,7 +114,7 @@ namespace HadesFrost.Nodes
             if (scene.name == "Campaign")
             {
                 var specialEvents = Object.FindObjectOfType<SpecialEventsSystem>(); //Only 1 of these exists
-                var eve = new SpecialEventsSystem.Event()
+                var eve = new SpecialEventsSystem.Event
                 {
                     requiresUnlock = null,
                     nodeType = mod.TryGet<CampaignNodeType>("SeleneNode"),

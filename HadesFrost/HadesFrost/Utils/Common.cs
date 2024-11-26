@@ -47,7 +47,7 @@ namespace HadesFrost.Utils
 
             if (data == null)
                 throw new Exception(
-                    $"TryGet Error: Could not find a [{typeof(T).Name}] with the name [{name}] or [{Deadpan.Enums.Engine.Components.Modding.Extensions.PrefixGUID(name, mod)}]");
+                    $"TryGet Error: Could not find a [{typeof(T).Name}] with the name [{name}] or [{Extensions.PrefixGUID(name, mod)}]");
 
             return data;
         }

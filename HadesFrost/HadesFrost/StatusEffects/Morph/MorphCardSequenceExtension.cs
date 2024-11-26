@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Dead;
 using UnityEngine;
 using WildfrostHopeMod.Utils;
 
@@ -78,7 +79,7 @@ namespace HadesFrost.StatusEffects.Morph
             }
 
             LeanTween.moveLocal(seq.group.gameObject, new Vector3(0f, 0f, -2f), 1f).setEaseInOutQuad();
-            LeanTween.rotateZ(seq.group.gameObject, Dead.PettyRandom.Range(160f, 180f), 1f).setOnUpdateVector3(delegate
+            LeanTween.rotateZ(seq.group.gameObject, PettyRandom.Range(160f, 180f), 1f).setOnUpdateVector3(delegate
             {
                 foreach (var point3 in seq.points)
                 {

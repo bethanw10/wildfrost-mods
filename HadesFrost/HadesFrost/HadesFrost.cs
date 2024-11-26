@@ -23,20 +23,23 @@ Selene event background ?
 Boon colors - custom panel?
 Fix clicking hex button is wonky
 
--Release 2-
+Infernal arms
+More charms
+More items
+Chaos
+God gauge icon + swap out magick + gain on hit and damage
+tribe
+Eye data 
+More pets - hecuba, raki, then companions from hades 1 ?
+   
+-Release 3-
 Ascended alternatives 
-Eye data
-No hex on enemy
-Items - keepsakes, weapons etc.
-More Charms
-Custom battles
-Zagreus
 More charge items
-More pets - hecuba, raki, then companions from hades 1
 Pet flags??
 Hitch anim
 multiple boons - choice when slecting a god??
 duo boons!
+Custom battles
 */
 
 namespace HadesFrost
@@ -112,7 +115,7 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
 
         private void SetupVFX()
         {
-            VFXHelper.VFX = new GIFLoader(this, this.ImagePath("Anim"));
+            VFXHelper.VFX = new GIFLoader(this, ImagePath("Anim"));
             VFXHelper.VFX.RegisterAllAsApplyEffect();
         }
 
@@ -216,8 +219,7 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
             //     "Dionysus", "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus"
             // };
            // string[] everyGeneration = new string[] { "Frinos", "Toula" };
-            string[] everyGeneration = new string[]
-            {
+            string[] everyGeneration = {
                 "WitchsStaff","SisterBlades", "MoonstoneAxe", "FrostbittenHorn", "Pom Slice", "Skelly", "Nectar",
                 "IridescentFan", "ThunderSignet", "Ambrosia", "AdamantShard"
                 , "UmbralFlames", "ArgentSkull", "BlackCoat"
@@ -227,7 +229,7 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
             var sequence = Object.FindObjectOfType<CardFramesUnlockedSequence>();
             var titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(includeInactive: true);
             titleObject.text = "New Items!";
-            yield return sequence.StartCoroutine("CreateCards", everyGeneration.Select((string s) => $"bethanw10.hadesfrost.{s}").ToArray());
+            yield return sequence.StartCoroutine("CreateCards", everyGeneration.Select(s => $"bethanw10.hadesfrost.{s}").ToArray());
         }
 
         private void RemoveFromPools()

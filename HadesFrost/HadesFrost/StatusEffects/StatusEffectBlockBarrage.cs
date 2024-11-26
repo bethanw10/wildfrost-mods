@@ -12,7 +12,7 @@ namespace HadesFrost.StatusEffects
 {
     public class StatusEffectBlockBarrage : StatusEffectData
     {
-        public override void Init() => OnHit += new EffectHitEventHandler(Check);
+        public override void Init() => OnHit += Check;
 
         public override bool RunHitEvent(Hit hit)
         {

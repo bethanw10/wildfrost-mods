@@ -10,7 +10,6 @@ using UnityEngine;
 
 namespace HadesFrost.StatusEffects
 {
-    [CreateAssetMenu(menuName = "Status Effects/Specific/Apply X On Hit", fileName = "Apply X On Hit")]
     public class StatusEffectApplyXOnTeamHit : StatusEffectApplyX
     {
         [SerializeField]

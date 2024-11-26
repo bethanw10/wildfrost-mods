@@ -2,6 +2,7 @@
 using HadesFrost.Actions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Localization.Tables;
 using UnityEngine.UI;
 
@@ -37,11 +38,11 @@ namespace HadesFrost.Utils
                 icon.textColourBelowMax = textColor;
                 icon.textElement.fontMaterial.SetColor("_UnderlayColor", shadowColor);
             }
-            icon.onCreate = new UnityEngine.Events.UnityEvent();
-            icon.onDestroy = new UnityEngine.Events.UnityEvent();
+            icon.onCreate = new UnityEvent();
+            icon.onDestroy = new UnityEvent();
             icon.onValueDown = new UnityEventStatStat();
             icon.onValueUp = new UnityEventStatStat();
-            icon.afterUpdate = new UnityEngine.Events.UnityEvent();
+            icon.afterUpdate = new UnityEvent();
             var image = gameObject.AddComponent<Image>();
             image.sprite = sprite;
             var cardHover = gameObject.AddComponent<CardHover>();
@@ -89,11 +90,11 @@ namespace HadesFrost.Utils
                 icon.textColourAboveMax = textColor;
                 icon.textColourBelowMax = textColor;
             }
-            icon.onCreate = new UnityEngine.Events.UnityEvent();
-            icon.onDestroy = new UnityEngine.Events.UnityEvent();
+            icon.onCreate = new UnityEvent();
+            icon.onDestroy = new UnityEvent();
             icon.onValueDown = new UnityEventStatStat();
             icon.onValueUp = new UnityEventStatStat();
-            icon.afterUpdate = new UnityEngine.Events.UnityEvent();
+            icon.afterUpdate = new UnityEvent();
             var image = gameObject.AddComponent<Image>();
             image.sprite = sprite;
             var cardHover = gameObject.AddComponent<CardHover>();

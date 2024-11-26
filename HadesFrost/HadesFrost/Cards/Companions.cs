@@ -2,7 +2,6 @@
 using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.StatusEffects;
 using HadesFrost.TargetModes;
-using HadesFrost.Utils;
 using UnityEngine;
 using static HadesFrost.Utils.Common;
 
@@ -111,10 +110,6 @@ namespace HadesFrost.Cards
                         "Well, perfect timing, now let's stock up and head out.",
                         "Hello again, you ready for this hunt? Me, I've been looking forward since last time, so, let's get on with it.",
                     };
-                    // data.attackEffects = new[]
-                    // {
-                    //     mod.SStack("Demonize"),
-                    // };
                     data.startWithEffects = new[]
                     {
                         mod.SStack(boonStatus),
@@ -163,31 +158,13 @@ namespace HadesFrost.Cards
                     {
                         mod.SStack(boonStatus),
                         mod.SStack("Block", 2),
-                        mod.SStack("When hit, deal equal damage to the attacker") 
+                        mod.SStack("When Hit Equal Damage To Attacker") 
                     };
                 }));
         }
 
         private static void Aphrodite(HadesFrost mod)
         { 
-            // 3 hp apply haze on hit fragile?
-            mod.StatusEffects.Add(
-                new StatusEffectDataBuilder(mod)
-                    .Create<StatusEffectApplyXIfStatsAreLower>("Apply Haze If")
-                    .WithCanBeBoosted(true)
-                    .WithText("Apply <{a}><keyword=haze> if <keyword=attack> is at least <{a}> higher than the target's <keyword=attack>")
-                    .WithType("")
-                    .FreeModify(delegate (StatusEffectApplyXIfStatsAreLower data)
-                    {
-                        var constraint = ScriptableObject.CreateInstance<TargetConstraintDoesDamage>();
-                        data.applyConstraints = new TargetConstraint[] { constraint };
-                        data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
-                        data.effectToApply = mod.TryGet<StatusEffectData>("Haze");
-                        data.effectToApply.count = data.count; // ?
-                        data.eventPriority = 2;
-                    })
-            );
-
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectApplyXWhenHit>("Apply Haze On Hit")
@@ -611,7 +588,7 @@ namespace HadesFrost.Cards
             );
 
             //var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Heavy Metal", "<Child of Hades> gains <3><keyword=shell>");
-            var boonStatus = SetupBoonStatus(mod, $"Hephaestus", "Fine Tuning", $"Give a random <Item> in your deck <keyword={Extensions.PrefixGUID("charge", mod)}>");
+            var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Fine Tuning", $"Give a random <Item> in your deck <keyword={Extensions.PrefixGUID("charge", mod)}>");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hephaestus", "Hephaestus", idleAnim: "GiantAnimationProfile")
