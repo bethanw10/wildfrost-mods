@@ -95,9 +95,12 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
             Items.Setup(this);
             StatusTypes.Setup(this);
             Boons.Setup(this);
-            Tribe.Setup(this);
+            Tribes.Setup(this);
             Hexes.Setup(this);
+            Calls.Setup(this);
             GiftsOfTheMoon.Setup(this);
+            GiftsOfOlympus.Setup(this);
+            Eyes.Setup();
 
             SetupSpriteAssets();
             SetupVFX();
@@ -133,15 +136,12 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
             Events.OnEntityChosen += EntityChosen;
             Events.OnCampaignLoadPreset += CampaignLoad;
             Events.OnEntityCreated += Leaders.LeaderImagesFix;
-            Events.OnCheckEntityDrag += HexButton.DisableDrag;
-            // Events.OnSceneLoaded += InsertSeleneViaSpecialEvent;
+            Events.OnCheckEntityDrag += ActionButton.DisableDrag;
             //Events.OnSceneChanged += CardsPhoto;
 
             base.Load();
 
-            Tribe.AppendTribe(this);
-
-            // AddToPopulator();
+            Tribes.AppendTribe(this);
         }
 
         public override void Unload()
@@ -151,26 +151,27 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
             Events.OnEntityChosen -= EntityChosen;
             Events.OnCampaignLoadPreset -= CampaignLoad;
             Events.OnEntityCreated -= Leaders.LeaderImagesFix;
-            Events.OnCheckEntityDrag -= HexButton.DisableDrag;
-            // Events.OnSceneLoaded -= InsertSeleneViaSpecialEvent;
-            // RemoveFromPopulator();
+            Events.OnCheckEntityDrag -= ActionButton.DisableDrag;
 
             GiftsOfTheMoon.Teardown();
+            GiftsOfOlympus.Teardown();
 
             RemoveFromPools();
             base.Unload();
-            Tribe.UnAppendTribe(this);
+            Tribes.UnAppendTribe(this);
         }
 
         private void CampaignLoad(ref string[] preset)
         {
-            GiftsOfTheMoon.InsertSeleneViaPreset(this, ref preset);
+            GiftsOfTheMoon.InsertViaPreset(this, ref preset);
+            GiftsOfOlympus.InsertViaPreset(this, ref preset);
         }
 
         private void EntityChosen(Entity entity)
         {
             Boons.GiveBoons(this, entity);
             Hexes.GiveHex(this, entity);
+            Calls.GiveCall(this, entity);
         }
 
         public override List<T> AddAssets<T, TY>()
@@ -234,7 +235,7 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
                 string[] poolsToCheck =
                 {
                     "GeneralUnitPool",
-                    "GenralItemPool",
+                    "GeneralItemPool",
                     "GeneralCharmPool",
                     "GeneralModifierPool",
                     "SnowUnitPool",
@@ -257,7 +258,7 @@ Thank you to Lost for Jolted icon, Josh A and Michael C for the Jolted code + pe
             }
             catch (Exception e)
             {
-                Debug.LogError("[bethan] error removing charms " + e.Message + "\n" + e.StackTrace);
+                Debug.LogError("[bethan] error unloading " + e.Message + "\n" + e.StackTrace);
             }
         }
     }

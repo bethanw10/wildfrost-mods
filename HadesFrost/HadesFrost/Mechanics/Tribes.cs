@@ -6,13 +6,20 @@ using UnityEngine;
 
 namespace HadesFrost.Setup
 {
-    public static class Tribe
+    public static class Tribes
     {
-        private const string TRIBE_NAME = "Hades";
+        public const string MELINOE_TRIBE = "Hades";
+        public const string ZAGREUS_TRIBE = "Zag";
 
         public static void Setup(HadesFrost mod)
         {
-            mod.Classes.Add(mod.TribeCopy("Basic", TRIBE_NAME) //Snowdweller = "Basic", Shadmancer = "Magic"
+            Zagreus(mod);
+            Melinoe(mod);
+        }
+
+        private static void Melinoe(HadesFrost mod)
+        {
+            mod.Classes.Add(mod.TribeCopy("Basic", MELINOE_TRIBE) //Snowdweller = "Basic", Shadmancer = "Magic"
                 .WithFlag("Images/DrawFlag.png")
                 .WithSelectSfxEvent(FMODUnity.RuntimeManager.PathToEventReference("event:/sfx/card/draw_multi"))
                 .SubscribeToAfterAllBuildEvent(data =>
@@ -25,8 +32,9 @@ namespace HadesFrost.Setup
 
                     var inventory = ScriptableObject.CreateInstance<Inventory>();
                     inventory.deck.list = mod.DataList<CardData>(
-                        // "WitchsStaff", "SisterBlades", "MoonstoneAxe", "ArgentSkull", "UmbralFlames", "BlackCoat", "FrostbittenHorn", "Pom Slice", "Skelly", "Nectar"
-                        "WitchsStaff", "WitchsStaff", "SisterBlades", "SisterBlades", "MoonstoneAxe", "FrostbittenHorn", "Pom Slice", "Skelly", "Nectar"
+                            // "WitchsStaff", "SisterBlades", "MoonstoneAxe", "ArgentSkull", "UmbralFlames", "BlackCoat", "FrostbittenHorn", "Pom Slice", "Skelly", "Nectar"
+                            "WitchsStaff", "WitchsStaff", "SisterBlades", "SisterBlades", "MoonstoneAxe", "FrostbittenHorn",
+                            "Pom Slice", "Schelemeus", "Nectar"
                         )
                         .ToList();
                     data.startingInventory = inventory;
@@ -42,7 +50,7 @@ namespace HadesFrost.Setup
                         "FlashWhip", "HongosHammer", "NutshellCake", "ScrapPile", "ShellShield", "Shellbo", "SporePack",
                         "IridescentFan", "ThunderSignet", "Ambrosia", "AdamantShard", "SunRod"
                         , "UmbralFlames", "ArgentSkull", "BlackCoat"
-                        );
+                    );
 
                     var itemPool = CreateRewardPool("DrawItemPool", "Items", items);
 
@@ -71,6 +79,68 @@ namespace HadesFrost.Setup
             );
         }
 
+        private static void Zagreus(HadesFrost mod)
+        {
+            mod.Classes.Add(mod.TribeCopy("Basic", ZAGREUS_TRIBE) //Snowdweller = "Basic", Shadmancer = "Magic"
+                .WithFlag("Images/DrawFlag.png")
+                .WithSelectSfxEvent(FMODUnity.RuntimeManager.PathToEventReference("event:/sfx/card/draw_multi"))
+                .SubscribeToAfterAllBuildEvent(data =>
+                {
+                    var gameObject = data.characterPrefab.gameObject.InstantiateKeepName();
+                    Object.DontDestroyOnLoad(gameObject);
+                    gameObject.name = "Player (Zag)";
+                    data.characterPrefab = gameObject.GetComponent<Character>();
+                    data.leaders = mod.DataList<CardData>("Zagreus");
+
+                    var inventory = ScriptableObject.CreateInstance<Inventory>();
+                    inventory.deck.list = mod.DataList<CardData>(
+                            "StygianBlade", "StygianBlade", "EternalSpear", "ShieldOfChaos", "FrostbittenHorn",
+                            "LambentPlume", "LambentPlume", "Pom Slice", "Skelly", "Nectar"
+                        )
+                        .ToList();
+                    data.startingInventory = inventory;
+
+                    DataFile[] units = mod.DataList<CardData>(
+                        "Ares", "Artemis", "Athena", "Aphrodite", "Apollo", "Demeter", "Dionysus",
+                        "Hera", "Hermes", "Hestia", "Hephaestus", "Poseidon", "Zeus",
+                        "Flash" /*vesta*/, "Zoog" /*shen*/, "Zula", "Wort", "Shelly", "Chompom", "Yuki", "Wallop", "Kernel");
+
+                    var unitPool = CreateRewardPool("DrawUnitPool", "Units", units);
+
+                    DataFile[] items = mod.DataList<CardData>(
+                        "FlashWhip", "HongosHammer", "NutshellCake", "ScrapPile", "ShellShield", "Shellbo", "SporePack",
+                        "IridescentFan", "ThunderSignet", "Ambrosia", "AdamantShard", "SunRod"
+                        , "UmbralFlames", "ArgentSkull", "BlackCoat"
+                    );
+
+                    var itemPool = CreateRewardPool("DrawItemPool", "Items", items);
+
+                    DataFile[] charms = mod.DataList<CardUpgradeData>(
+                        "CardUpgradeOverload", "CardUpgradeConsumeOverload", "CardUpgradeShroomReduceHealth",
+                        "CardUpgradeShellOnKill", "CardUpgradeShroom", "CardUpgradeAcorn",
+                        "CardUpgradeBlackShawl", "CardUpgradeBoneHourglass", "CardUpgradeDiscordantBell",
+                        "CardUpgradeLionFang", "CardUpgradeVividSea", "CardUpgradeCloudBangle");
+
+                    var charmPool = CreateRewardPool("DrawCharmPool", "Charms", charms);
+
+                    data.rewardPools = new[]
+                    {
+                        unitPool,
+                        itemPool,
+                        charmPool,
+                        Extensions.GetRewardPool("GeneralUnitPool"),
+                        Extensions.GetRewardPool("GeneralItemPool"),
+                        Extensions.GetRewardPool("GeneralCharmPool"),
+                        Extensions.GetRewardPool("GeneralModifierPool"),
+                        Extensions.GetRewardPool("SnowUnitPool"),
+                        Extensions.GetRewardPool("SnowItemPool"),
+                        Extensions.GetRewardPool("SnowCharmPool"),
+                    };
+                })
+            );
+        }
+
+
         private static RewardPool CreateRewardPool(string name, string type, DataFile[] list)
         {
             var pool = ScriptableObject.CreateInstance<RewardPool>();
@@ -83,7 +153,8 @@ namespace HadesFrost.Setup
         public static void AppendTribe(HadesFrost mod)
         {
             var gameMode = mod.TryGet<GameMode>("GameModeNormal");
-            gameMode.classes = gameMode.classes.Append(mod.TryGet<ClassData>(TRIBE_NAME)).ToArray();
+            gameMode.classes = gameMode.classes.Append(mod.TryGet<ClassData>(ZAGREUS_TRIBE)).ToArray();
+            gameMode.classes = gameMode.classes.Append(mod.TryGet<ClassData>(MELINOE_TRIBE)).ToArray();
         }
 
         public static void UnAppendTribe(HadesFrost mod)

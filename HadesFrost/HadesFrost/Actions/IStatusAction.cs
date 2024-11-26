@@ -2,9 +2,9 @@
 
 namespace HadesFrost.ButtonStatuses
 {
-    public interface IStatusHex
+    public interface IStatusAction
     {
-        void ButtonCreate(HexStatusIcon icon);
+        void ButtonCreate(ActionStatusIcon icon);
 
         void RunButtonClicked();
 

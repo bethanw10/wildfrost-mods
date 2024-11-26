@@ -36,24 +36,25 @@ namespace HadesFrost.Setup
 
         public static void GiveBoons(HadesFrost mod, Entity entity)
         {
-            CardData leader;
-            try
-            {
-                // No leader data when picking pet
-                leader = References.LeaderData;
-            }
-            catch (Exception)
-            {
-                return;
-            }
-            
-            if (entity == null || leader == null)
-            {
-                return;
-            }
+            // CardData leader;
+            // try
+            // {
+            //     // No leader data when picking pet
+            //     leader = References.LeaderData;
+            // }
+            // catch (Exception)
+            // {
+            //     return;
+            // }
+            //
+            // if (entity == null || leader == null)
+            // {
+            //     return;
+            // }
 
-            // var hadesCards = References.PlayerData?.inventory?.deck?.Where(d =>
-            //     d.traits?.Any(t => t.data.name == $"{mod.GUID}.Hades") ?? false);
+            var hadesCards = References.PlayerData?.inventory?.deck?
+                .Where(d => d.traits?.Any(t => t.data.name == $"{mod.GUID}.Hades") ?? false)
+                .ToArray();
 
             var cardName = entity.name.Replace($"{mod.GUID}.", "");
             
@@ -180,7 +181,11 @@ namespace HadesFrost.Setup
                         //     {
                         //         data.hp = 3;
                         //     });
-                        leader.hp += 3;
+                        foreach (var hadesCard in hadesCards)
+                        {
+                            hadesCard.hp += 3;
+                        }
+                        
                         // knockback or more gold from bling cave?
                         // deal more damage to enemies with debuff
                         break;
@@ -202,7 +207,11 @@ namespace HadesFrost.Setup
             }
 
             // a tad hacky
-            upgrade.GainEffects(leader);
+            foreach (var hadesCard in hadesCards)
+            {
+                upgrade.GainEffects(hadesCard);
+            }
+            
         }
     }
 }

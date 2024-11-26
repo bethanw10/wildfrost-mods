@@ -2,7 +2,7 @@
 
 namespace HadesFrost.ButtonStatuses
 {
-    public class StatusHexApplyXListener : StatusEffectApplyX
+    public class StatusActionApplyXListener : StatusEffectApplyX
     {
         public IEnumerator Run()
         {

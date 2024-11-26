@@ -29,14 +29,49 @@ namespace HadesFrost.Setup
             IridescentFan(mod);
             AdamantShard(mod);
 
-            //
-            StygianBlade(mod); //Swing? hit in other row?
+            // Zagreus
+            StygianBlade(mod); 
             ShieldOfChaos(mod);
             EternalSpear(mod);
+            LambentPlume(mod);
+            Schelemeus(mod);
         }
 
         private static void StygianBlade(HadesFrost mod)
         {
+            var effect =
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectChangeTargetMode>("Slash")
+                    .WithCanBeBoosted(true)
+                    .WithText("")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectChangeTargetMode data)
+                    {
+                        data.targetMode = ScriptableObject.CreateInstance<TargetModeSlash>();
+                    });
+
+            var chargeKeyword = new KeywordDataBuilder(mod)
+                .Create("Slash")
+                .WithCanStack(false)
+                .WithDescription("Also hits the adjacent enemy in the other row")
+                .WithShowName(true)
+                .WithShowIcon(false)
+                .WithTitle("Slash");
+
+            mod.Keywords.Add(chargeKeyword);
+            mod.StatusEffects.Add(effect);
+
+            mod.Traits.Add(new TraitDataBuilder(mod)
+                .Create("Slash")
+                .WithOverrides(
+                    mod.TryGet<TraitData>("Barrage"),
+                    mod.TryGet<TraitData>("Longshot"),
+                    mod.TryGet<TraitData>("Aimless")
+                )
+                .WithKeyword(chargeKeyword.Build())
+                .WithEffects(effect.Build())
+            );
+
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("StygianBlade", "Stygian Blade")
@@ -44,7 +79,14 @@ namespace HadesFrost.Setup
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .NeedsTarget()
                     .SetDamage(2)
-                    .WithValue(40));
+                    .WithValue(40)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.traits = new List<CardData.TraitStacks>
+                        {
+                            mod.TStack("Slash")
+                        };
+                    }));
         }
 
         private static void ShieldOfChaos(HadesFrost mod)
@@ -56,6 +98,7 @@ namespace HadesFrost.Setup
                     {
                         var castData = (StatusEffectApplyXOnHit)data;
                         castData.effectToApply = mod.TryGet<StatusEffectData>("Shell").InstantiateKeepName();
+                        castData.noTargetTypeArgs = new[] { "shell" };
                     }));
 
             mod.Cards.Add(
@@ -64,7 +107,7 @@ namespace HadesFrost.Setup
                     .SetSprites("ShieldOfChaos.png", "ShieldOfChaosBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .NeedsTarget()
-                    .SetDamage(3)
+                    .SetDamage(2)
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(data =>
                     {
@@ -77,15 +120,54 @@ namespace HadesFrost.Setup
 
         private static void EternalSpear(HadesFrost mod)
         {
+            var effect =
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectChangeTargetMode>("Pierce")
+                    .WithCanBeBoosted(true)
+                    .WithText("")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectChangeTargetMode data)
+                    {
+                        data.targetMode = ScriptableObject.CreateInstance<TargetModePierce>();
+                    });
+
+            var chargeKeyword = new KeywordDataBuilder(mod)
+                .Create("Pierce")
+                .WithCanStack(false)
+                .WithDescription("Also hits the enemy behind")
+                .WithShowName(true)
+                .WithShowIcon(false)
+                .WithTitle("Pierce");
+
+            mod.Keywords.Add(chargeKeyword);
+            mod.StatusEffects.Add(effect);
+
+            mod.Traits.Add(new TraitDataBuilder(mod)
+                .Create("Pierce")
+                .WithOverrides(
+                    mod.TryGet<TraitData>("Barrage"), 
+                    mod.TryGet<TraitData>("Longshot"),
+                    mod.TryGet<TraitData>("Aimless")
+                )
+                .WithKeyword(chargeKeyword.Build())
+                .WithEffects(effect.Build())
+            );
+
             mod.Cards.Add(
                 new CardDataBuilder(mod)
                     .CreateItem("EternalSpear", "Eternal Spear")
                     .SetSprites("EternalSpear.png", "EternalSpearBG.png")
                     .WithIdleAnimationProfile("PingAnimationProfile")
                     .NeedsTarget()
-                    .SetDamage(3)
+                    .SetDamage(2)
                     .WithValue(40)
-                    .WithTargetMode(new TargetModePierce()));
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.traits = new List<CardData.TraitStacks>
+                        {
+                            mod.TStack("Pierce")
+                        };
+                    }));
         }
 
         private static void Nectar(HadesFrost mod)
@@ -248,12 +330,12 @@ namespace HadesFrost.Setup
                     {
                         data.attackEffects = new[]
                         {
-                            mod.SStack("Instant Damage (To Card In Hand)", 4),
+                            mod.SStack("Instant Damage (To Card In Hand)", 5),
                         };
 
                         data.traits = new List<CardData.TraitStacks>
                         {
-                            mod.TStack("Zoomlin"), mod.TStack("Consume")
+                            mod.TStack("Consume")
                         };
                     }));
         }
@@ -273,6 +355,28 @@ namespace HadesFrost.Setup
                         {
                             mod.SStack("Snow", 2),
                             mod.SStack("Frost", 2)
+                        };
+                    }));
+        }
+
+        private static void LambentPlume(HadesFrost mod)
+        {
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateItem("LambentPlume", "Lambent Plume")
+                    .SetSprites("LambentPlume.png", "LambentPlumeBG.png")
+                    .WithIdleAnimationProfile("PingAnimationProfile")
+                    .WithValue(40)
+                    .SetDamage(0)
+                    .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+                    {
+                        data.attackEffects = new[]
+                        {
+                            mod.SStack("Reduce Counter")
+                        };
+                        data.traits = new List<CardData.TraitStacks>
+                        {
+                            mod.TStack("Draw"), mod.TStack("Zoomlin")
                         };
                     }));
         }
@@ -414,10 +518,6 @@ namespace HadesFrost.Setup
                     .WithValue(40)
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                     {
-                        // data.startWithEffects = new[]
-                        // {
-                        //     mod.SStack("Gain Attack While In Hand")
-                        // };
                         data.traits = new List<CardData.TraitStacks>
                         {
                             mod.TStack("Charge")
@@ -470,44 +570,6 @@ namespace HadesFrost.Setup
                             mod.TStack("Bombard 1")
                         };
                     }));
-
-            // mod.StatusEffects.Add(
-            //     mod.StatusCopy("Temporary Aimless", "Temporary Bombard")
-            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-            //         {
-            //             ((StatusEffectTemporaryTrait)data).trait = mod.TryGet<TraitData>("Bombard 1");
-            //         })
-            // );
-            //
-            // mod.StatusEffects.Add(
-            //     mod.StatusCopy("Instant Gain Aimless", "Instant Gain Bombard")
-            //         .WithText($"Add <keyword=bombard> to the target")
-            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-            //         {
-            //             ((StatusEffectApplyXInstant)data).effectToApply = mod.TryGet<StatusEffectData>("Temporary Bombard");
-            //             ((StatusEffectApplyXInstant)data).doPing = true;
-            //         })
-            // );
-            //
-            // mod.Cards.Add(
-            //     new CardDataBuilder(mod)
-            //         .CreateItem("BlackCoat", "Black Coat")
-            //         .SetSprites("BlackCoat.png", "BlackCoatBG.png")
-            //         .WithIdleAnimationProfile("PingAnimationProfile")
-            //         .WithValue(40)
-            //         .NeedsTarget(true)
-            //         .SubscribeToAfterAllBuildEvent(delegate (CardData data)
-            //         {
-            //             data.traits = new List<CardData.TraitStacks>
-            //             {
-            //                 mod.TStack("Consume")
-            //             };
-            //             data.attackEffects = new[]
-            //             {
-            //                 mod.SStack("Instant Gain Bombard"),
-            //                 mod.SStack("Increase Attack", 2)
-            //             };
-            //         }));
         }
 
         private static void Skelly(HadesFrost mod)
@@ -520,6 +582,25 @@ namespace HadesFrost.Setup
                     .WithCardType("Clunker")
                     .SetStats()
                     .WithFlavour("Give me everything you got!!")
+                    .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+                    {
+                        data.startWithEffects = new[]
+                        {
+                            mod.SStack("Scrap", 3),
+                        };
+                    }));
+        }
+
+        private static void Schelemeus(HadesFrost mod)
+        {
+            mod.Cards.Add(
+                new CardDataBuilder(mod)
+                    .CreateUnit("Schelemeus", "Schelemeus")
+                    .SetSprites("Schelemeus.png", "SchelemeusBG.png")
+                    .WithIdleAnimationProfile()
+                    .WithCardType("Clunker")
+                    .SetStats()
+                    .WithFlavour("These old bones are more resilient than they appear")
                     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                     {
                         data.startWithEffects = new[]

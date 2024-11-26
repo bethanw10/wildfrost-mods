@@ -9,8 +9,7 @@ using System.Linq;
 using HadesFrost.Utils;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "TargetModeBasic", menuName = "Target Modes/Basic")]
-public class TargetModePierce : TargetMode
+public class TargetModeSlash : TargetMode
 {
     public override bool TargetRow => false;
 
@@ -31,17 +30,12 @@ public class TargetModePierce : TargetMode
             return null;
         }
 
-        var behind = GetBehind(entities.First());
+        var adjacent = GetAdjacent(entities.First());
 
-        if (behind != null)
+        if (adjacent != null)
         {
-            entities = basic.GetPotentialTargets(entity, behind, targetContainer);
+            entities = basic.GetPotentialTargets(entity, adjacent, targetContainer);
             entitySet.AddRange(entities);
-        }
-
-        foreach (var entity1 in entitySet)
-        {
-            Common.Log(entity1.name);
         }
 
         return entitySet.Count <= 0 ? null : entitySet.ToArray();
@@ -55,13 +49,8 @@ public class TargetModePierce : TargetMode
         return this.GetTargets(entity, target, targetContainer);
     }
 
-    private static Entity GetBehind(Entity target)
+    private static Entity GetAdjacent(Entity target)
     {
-      //   Entity target = hit.target;
-      // CardContainer container = target.containers[0];
-      // int index1 = container.IndexOf(target);
-      // int index2 = Mathf.Min(index1 + this.GetAmount(), container.max - 1);
-
         foreach (var cardContainer in target.actualContainers.ToArray())
         {
             if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
@@ -69,11 +58,18 @@ public class TargetModePierce : TargetMode
                 continue;
             }
 
-            var rowEntity = group.slots[group.slots.IndexOf(cardSlot) + 1].GetTop();
+            var slot = group.slots.IndexOf(cardSlot);
 
-            if ((bool)rowEntity)
+            foreach (var row in Battle.instance.GetRows(target.owner))
             {
-                return rowEntity;
+                var entity = row[slot];
+
+                Debug.Log(entity?.name);
+
+                if (entity != null && entity != target)
+                {
+                    return entity;
+                }
             }
         }
 

@@ -1,11 +1,11 @@
 ﻿namespace HadesFrost.ButtonStatuses
 {
-    public class HexStatusIcon : StatusIcon
+    public class ActionStatusIcon : StatusIcon
     {
         public ButtonAnimator Animator;
-        public HexButton HexButton;
+        public ActionButton HexButton;
 
-        private IStatusHex hexStatusEffect;
+        private IStatusAction statusEffect;
 
         public override void Assign(Entity entity)
         {
@@ -18,11 +18,11 @@
 
             var effect = entity.FindStatus(type);
 
-            if (effect is IStatusHex hexEffect)
+            if (effect is IStatusAction actionEffect)
             {
-                this.hexStatusEffect = hexEffect;
-                hexEffect.ButtonCreate(this);
-                HexButton.onClick.AddListener(this.hexStatusEffect.RunButtonClicked);
+                this.statusEffect = actionEffect;
+                actionEffect.ButtonCreate(this);
+                HexButton.onClick.AddListener(statusEffect.RunButtonClicked);
                 onDestroy.AddListener(DisableDragBlocker);
             }
         }

@@ -4,6 +4,7 @@ using HadesFrost.StatusEffects;
 using HadesFrost.TargetModes;
 using HadesFrost.Utils;
 using UnityEngine;
+using static HadesFrost.Utils.Common;
 
 namespace HadesFrost.Setup
 {
@@ -29,21 +30,6 @@ namespace HadesFrost.Setup
 
         private static void Ares(HadesFrost mod)
         {
-            // mod.StatusEffects.Add(
-            //     new StatusEffectDataBuilder(mod)
-            //         .Create<StatusEffectApplyXOnKillWithContext>("When Enemy Is Killed Gain Fury Equal To Attack")
-            //         .WithCanBeBoosted(false)
-            //         .WithText("On kill, gain <keyword=fury> equal to target's <keyword=attack>")
-            //         .WithType("")
-            //         .FreeModify(delegate (StatusEffectApplyXOnKillWithContext data)
-            //         {
-            //             data.effectToApply = mod.TryGet<StatusEffectData>("Instant Gain Fury");
-            //             data.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
-            //             data.contextEqualAmount = ScriptableObject.CreateInstance<ScriptableCurrentAttack>();
-            //             data.applyEqualAmount = true;
-            //         })
-            // );
-
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
                     .Create<StatusEffectApplyXOnHit>("Gain Teeth Equal To Damage")
@@ -58,8 +44,8 @@ namespace HadesFrost.Setup
                     })
             );
 
-            // var boonStatus = SetupBoonStatus(mod, "Ares", "Curse of Vengeance", "Leader gains 'Gain <+2><keyword=teeth>'");
-            var boonStatus = SetupBoonStatus(mod, "Ares", "Battle Rage", "Leader gains 'Gain <+1><keyword=attack> on kill'");
+            // var boonStatus = SetupBoonStatus(mod, "Ares", "Curse of Vengeance", "<Child of Hades> gains 'Gain <+2><keyword=teeth>'");
+            var boonStatus = SetupBoonStatus(mod, "Ares", "Battle Rage", "<Child of Hades> cards gain\n'Gain <+1><keyword=attack> on kill'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Ares", "Ares")
@@ -106,7 +92,7 @@ namespace HadesFrost.Setup
                         castData.noTargetTypeArgs = new[] { "<sprite name=demonize>" };
                     }));
 
-            var boonStatus = SetupBoonStatus(mod, "Artemis", "Deadly Strike", "Leader gains 'Apply <1><keyword=demonize>'");
+            var boonStatus = SetupBoonStatus(mod, "Artemis", "Deadly Strike", "<Child of Hades> cards gain\n'Apply <1><keyword=demonize>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Artemis", "Artemis")
@@ -143,7 +129,7 @@ namespace HadesFrost.Setup
 
         private static void Athena(HadesFrost mod)
         {
-            var boonStatus = SetupBoonStatus(mod, "Athena", "Divine Protection", "Leader gains <1><keyword=block>");
+            var boonStatus = SetupBoonStatus(mod, "Athena", "Divine Protection", "<Child of Hades> card gain <1><keyword=block>");
 
             mod.StatusEffects.Add(
                 mod.StatusCopy(
@@ -176,7 +162,8 @@ namespace HadesFrost.Setup
                     data.startWithEffects = new[]
                     {
                         mod.SStack(boonStatus),
-                        mod.SStack("On Kill Apply Block To RandomAlly") 
+                        mod.SStack("Block", 2),
+                        mod.SStack("When hit, deal equal damage to the attacker") 
                     };
                 }));
         }
@@ -216,7 +203,7 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Aphrodite", "Heartbreak Strike", "Leader gains 'Apply <1><keyword=frost>'");
+            var boonStatus = SetupBoonStatus(mod, "Aphrodite", "Heartbreak Strike", "<Child of Hades> cards gain\n'Apply <1><keyword=frost>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Aphrodite", "Aphrodite")
@@ -273,59 +260,8 @@ namespace HadesFrost.Setup
                 .WithKeyword(keyword.Build())
                 .WithEffects(unyielding.Build())
             );
-
-            // mod.Cards.Add(
-            //     mod.CardCopy("SunRod", "RadiantSunRod")
-            //     .SetTraits(mod.TStack("Consume"), mod.TStack("Zoomlin"))
-            //     .WithTitle("Sun Rod")
-            //     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
-            //     {
-            //         var constraint = ScriptableObject.CreateInstance<TargetConstraintIsSpecificCard>();
-            //         constraint.allowedCards = new[] { mod.TryGet<CardData>("Apollo") };
-            //         constraint.not = true;
-            //         data.targetConstraints = new TargetConstraint[] { constraint };
-            //     }));
-            //
-            // mod.StatusEffects.Add(
-            //     mod.StatusCopy("Summon SkullMuffin", "Summon SunRod")
-            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-            //         {
-            //             ((StatusEffectSummon)data).summonCard = mod.TryGet<CardData>("RadiantSunRod");
-            //         })
-            // );
-            //
-            // mod.StatusEffects.Add(
-            //     mod.StatusCopy(
-            //             "On Card Played Add SkullMuffin To Hand",
-            //             "On Card Played Add Sun Rod To Hand")
-            //         .WithText("Add <{a}> <card=bethanw10.hadesfrost.RadiantSunRod> to your hand")
-            //         .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
-            //         {
-            //             var castData = (StatusEffectApplyXOnCardPlayed)data;
-            //             var effect = (StatusEffectInstantSummon)castData.effectToApply;
-            //             effect.targetSummon = mod.TryGet<StatusEffectSummon>("Summon SunRod");
-            //         }));
-
-
-            // mod.Cards.Add(new CardDataBuilder(mod)
-            //     .CreateUnit("Apollo", "Apollo", idleAnim: "FloatAnimationProfile")
-            //     .SetSprites("Apollo.png", "ApolloBG.png")
-            //     .SetStats(4, 4, 5)
-            //     
-            //     .SubscribeToAfterAllBuildEvent(delegate (CardData data)
-            //     {
-            //         data.startWithEffects = new[]
-            //         {
-            //             mod.SStack(boonStatus),
-            //             mod.SStack("On Card Played Add Sun Rod To Hand")
-            //         };
-            //         data.traits = new List<CardData.TraitStacks>
-            //         {
-            //             mod.TStack("Unyielding")
-            //         };
-            //     }));
             
-            var boonStatus = SetupBoonStatus(mod, "Apollo", "Perfect Image", "Leader gains 'While undamaged, <keyword=attack> is increased by <2>'");
+            var boonStatus = SetupBoonStatus(mod, "Apollo", "Perfect Image", "<Child of Hades> cards gain\n'While undamaged, <keyword=attack> is increased by <2>'");
 
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
@@ -420,7 +356,7 @@ namespace HadesFrost.Setup
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Demeter", "Ice Strike", "Leader gains 'Apply <1><keyword=snow>'");
+            var boonStatus = SetupBoonStatus(mod, "Demeter", "Ice Strike", "<Child of Hades> cards gain\n'Apply <1><keyword=snow>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Demeter", "Demeter", idleAnim: "PingAnimationProfile")
@@ -510,7 +446,7 @@ namespace HadesFrost.Setup
 
         private static void Hera(HadesFrost mod)
         {
-            var boonStatus = SetupBoonStatus(mod, "Hera", "Sworn Strike", "Leader gains 'Apply <1><keyword=hitch>'");
+            var boonStatus = SetupBoonStatus(mod, "Hera", "Sworn Strike", "<Child of Hades> cards gain\n'Apply <1><keyword=hitch>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hera", "Hera")
@@ -555,6 +491,27 @@ namespace HadesFrost.Setup
                     {
                         data.applyToFlags = StatusEffectApplyX.ApplyToFlags.AllyInFrontOf;
                         data.effectToApply = mod.TryGet<StatusEffectData>("Reduce Counter").InstantiateKeepName();
+
+                        data.targetConstraints = TargetConstraintAlliesOnly(mod);
+                    })
+            );
+
+
+            // Does not work
+            mod.StatusEffects.Add(
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectApplyXOnTurn>("On Turn Count Down Ally In Row")
+                    .WithCanBeBoosted(true)
+                    .WithText("Count down <keyword=counter> of allies in row by <{a}>")
+                    .WithType("")
+                    .FreeModify(delegate (StatusEffectApplyXOnTurn data)
+                    {
+                        data.applyToFlags = StatusEffectApplyX.ApplyToFlags.AlliesInRow;
+                        data.effectToApply = mod.TryGet<StatusEffectData>("Reduce Counter").InstantiateKeepName();
+
+                        var constraint = ScriptableObject.CreateInstance<TargetConstraintIsCardType>();
+                        constraint.allowedTypes = new[] { mod.TryGet<CardType>("Enemy") };
+                        data.targetConstraints = new TargetConstraint[] { constraint };
                     })
             );
 
@@ -603,7 +560,7 @@ namespace HadesFrost.Setup
                         castData.effectToApply = mod.TryGet<StatusEffectData>("Overload");
                     }));
 
-            var boonStatus = SetupBoonStatus(mod, "Hestia", "Flame Strike", "Leader gains 'Apply <1><keyword=overload>'");
+            var boonStatus = SetupBoonStatus(mod, "Hestia", "Flame Strike", "<Child of Hades> cards gain\n'Apply <1><keyword=overload>'");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hestia", "Hestia", idleAnim: "SquishAnimationProfile")
@@ -648,11 +605,13 @@ namespace HadesFrost.Setup
                         data.canBeBoosted = true;
                         data.applyConstraints = new TargetConstraint[] { constraintAttack, constraintItem };
                         data.desc = "Apply <+{a}><keyword=attack> to items in hand";
+
+                        data.targetConstraints = TargetConstraintAlliesOnly(mod);
                     })
             );
 
-            //var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Heavy Metal", "Leader gains <3><keyword=shell>");
-            var boonStatus = SetupBoonStatus(mod, $"Hephaestus", "Fine Tuning", $"Give a random item in your deck <keyword={Extensions.PrefixGUID("charge", mod)}>");
+            //var boonStatus = SetupBoonStatus(mod, "Hephaestus", "Heavy Metal", "<Child of Hades> gains <3><keyword=shell>");
+            var boonStatus = SetupBoonStatus(mod, $"Hephaestus", "Fine Tuning", $"Give a random <Item> in your deck <keyword={Extensions.PrefixGUID("charge", mod)}>");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Hephaestus", "Hephaestus", idleAnim: "GiantAnimationProfile")
@@ -718,10 +677,12 @@ namespace HadesFrost.Setup
                     .SubscribeToAfterAllBuildEvent(data =>
                     {
                         ((StatusEffectApplyXWhenUnitIsKilled)data).sacrificed = false;
+
+                        data.targetConstraints = TargetConstraintAlliesOnly(mod);
                     })
             );
 
-            var boonStatus = SetupBoonStatus(mod, "Poseidon", "Water Fitness", "Leader gains <+3><keyword=health>");
+            var boonStatus = SetupBoonStatus(mod, "Poseidon", "Water Fitness", "<Child of Hades> cards gain\n<+3><keyword=health>");
 
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Poseidon", "Poseidon")
@@ -754,9 +715,10 @@ namespace HadesFrost.Setup
                 }));
         }
 
+
         private static void Zeus(HadesFrost mod)
         {
-            var boonStatus = SetupBoonStatus(mod, "Zeus", "Lightning Strike", "Leader gains 'Apply <1><keyword=jolted>'");
+            var boonStatus = SetupBoonStatus(mod, "Zeus", "Lightning Strike", "<Child of Hades> cards gain\n'Apply <1><keyword=jolted>'");
 
             mod.StatusEffects.Add(
                 mod.StatusCopy(

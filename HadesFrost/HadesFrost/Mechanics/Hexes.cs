@@ -4,6 +4,7 @@ using HadesFrost.ButtonStatuses;
 using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
 using UnityEngine;
+using static HadesFrost.Utils.Common;
 
 namespace HadesFrost.Setup
 {
@@ -56,9 +57,7 @@ namespace HadesFrost.Setup
                 "counter",
                 Color.white,
                 Color.clear,
-                new[] { mod.TryGet<KeywordData>("magick") }, 
-                1,
-                0.01f);
+                new[] { mod.TryGet<KeywordData>("magick") });
 
             mod.StatusEffects.Add(
                 new StatusEffectDataBuilder(mod)
@@ -76,6 +75,7 @@ namespace HadesFrost.Setup
                         castData.doPing = false;
                         castData.AllTypes = true;
                         castData.IgnoreType = "hex";
+                        data.targetConstraints = TargetConstraintAlliesOnly(mod);
                     })
             );
             mod.StatusEffects.Add(
@@ -111,18 +111,20 @@ namespace HadesFrost.Setup
             CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.EnemiesInRow;
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.HitDamage = 5; // or double current attack?
                     castData.MagickCost = cost;
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }
@@ -147,12 +149,12 @@ namespace HadesFrost.Setup
                 }));
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Enemies;
                     //castData.effectToApply = mod.TryGet<StatusEffectData>("Increase Max Counter");
                     castData.effectToApply = mod.TryGet<StatusEffectData>("Counter Up");
@@ -160,6 +162,8 @@ namespace HadesFrost.Setup
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.MagickCost = cost;
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }
@@ -176,12 +180,12 @@ namespace HadesFrost.Setup
             CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
                     castData.effectToApply = mod.TryGet<StatusEffectData>("Heal");
                     castData.FixedAmount = 3;
@@ -190,6 +194,8 @@ namespace HadesFrost.Setup
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.MagickCost = cost;
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }
@@ -206,18 +212,20 @@ namespace HadesFrost.Setup
             CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Enemies;
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.HitDamage = 3; // double current attack?
                     castData.MagickCost = cost;
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }
@@ -256,18 +264,20 @@ namespace HadesFrost.Setup
             );
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.RandomEnemy;
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.MagickCost = cost;
                     castData.effectToApply = mod.TryGet<StatusEffectData>("Morph Sheepopper");
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }
@@ -305,12 +315,12 @@ namespace HadesFrost.Setup
             );
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
                     castData.effectToApply = mod.TryGet<StatusEffectData>("Block And Increase Damage");
 
@@ -318,6 +328,8 @@ namespace HadesFrost.Setup
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.MagickCost = cost;
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }
@@ -333,18 +345,20 @@ namespace HadesFrost.Setup
             CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.FrontEnemy;
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.effectToApply = mod.TryGet<StatusEffectData>("Haze");
                     castData.MagickCost = cost;
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }
@@ -360,18 +374,20 @@ namespace HadesFrost.Setup
             CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.FrontEnemy;
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.HitDamage = 8;
                     castData.MagickCost = cost;
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }
@@ -387,18 +403,20 @@ namespace HadesFrost.Setup
             CreateCard(mod, name, description);
 
             mod.StatusEffects.Add(new StatusEffectDataBuilder(mod)
-                .Create<StatusHexApplyX>(name.Replace(" ", "") + " Hex")
+                .Create<StatusActionApplyX>(name.Replace(" ", "") + " Hex")
                 .WithType(keywordName)
                 .WithStackable(false)
                 .SubscribeToAfterAllBuildEvent(data =>
                 {
-                    var castData = (StatusHexApplyX)data;
+                    var castData = (StatusActionApplyX)data;
                     castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Enemies;
                     castData.visible = true;
                     castData.isStatus = true;
                     castData.iconGroupName = "counter";
                     castData.effectToApply = mod.TryGet<StatusEffectData>("Weakness");
                     castData.MagickCost = cost;
+
+                    data.targetConstraints = TargetConstraintAlliesOnly(mod);
                 })
             );
         }

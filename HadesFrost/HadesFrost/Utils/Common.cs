@@ -78,5 +78,12 @@ namespace HadesFrost.Utils
             builder.Mod = mod;
             return builder;
         }
+
+        public static TargetConstraint[] TargetConstraintAlliesOnly(HadesFrost mod)
+        {
+            var constraint = ScriptableObject.CreateInstance<TargetConstraintIsCardType>();
+            constraint.allowedTypes = new[] { mod.TryGet<CardType>("Leader"), mod.TryGet<CardType>("Friendly") };
+            return new TargetConstraint[] { constraint };
+        }
     }
 }

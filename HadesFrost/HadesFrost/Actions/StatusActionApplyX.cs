@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace HadesFrost.ButtonStatuses
 {
-    public class StatusHexApplyX : StatusEffectApplyX, IStatusHex
+    public class StatusActionApplyX : StatusEffectApplyX, IStatusAction
     {
         [Flags]
         public enum PlayFromFlags
@@ -174,7 +174,8 @@ namespace HadesFrost.ButtonStatuses
                         var hit = new Hit(target, enemy, trueAmount)
                         {
                             damageType = "hex",
-                            canRetaliate = false
+                            canRetaliate = false,
+                            screenShake = 1f,
                         };
                         yield return hit.Process();
                     }
@@ -192,12 +193,12 @@ namespace HadesFrost.ButtonStatuses
             yield return PostClick();
         }
 
-        public List<StatusHexApplyXListener> FindListeners()
+        public List<StatusActionApplyXListener> FindListeners()
         {
-            var listeners = new List<StatusHexApplyXListener>();
+            var listeners = new List<StatusActionApplyXListener>();
             foreach (var status in target.statusEffects)
             {
-                if (status is StatusHexApplyXListener status2)
+                if (status is StatusActionApplyXListener status2)
                 {
                     if (status2.type == type + "_listener")
                     {
@@ -226,7 +227,7 @@ namespace HadesFrost.ButtonStatuses
             }
         }
 
-        public void ButtonCreate(HexStatusIcon icon)
+        public void ButtonCreate(ActionStatusIcon icon)
         {
         }
     }

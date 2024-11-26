@@ -12,7 +12,7 @@ namespace HadesFrost.Setup
             ChildOfHades(mod);
 
             Melinoe(mod);
-            // Zagreus(mod);
+            Zagreus(mod);
         }
 
         public static void LeaderImagesFix(Entity entity)

@@ -1,4 +1,5 @@
-﻿using Deadpan.Enums.Engine.Components.Modding;
+﻿using System.Collections.Generic;
+using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
 
@@ -10,6 +11,56 @@ namespace HadesFrost.Setup
         {
             Frinos(mod);
             Toula(mod);
+            Cerberus(mod);
+        }
+
+        private static void Cerberus(HadesFrost mod)
+        {
+            mod.StatusEffects.Add(
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectTriggerWhenAllyBehindAttacks>("Trigger When Ally Behind Attacks")
+                    .WithCanBeBoosted(false)
+                    .WithText("Trigger when ally behind attacks")
+                    .WithType("")
+                    .WithIsReaction(true)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        data.descColorHex = "F99C61";
+                    })
+            );
+
+            mod.StatusEffects.Add(
+                new StatusEffectDataBuilder(mod)
+                    .Create<StatusEffectApplyXPostAttack>("Snow Self")
+                    .WithCanBeBoosted(true)
+                    .WithText("Apply <{a}> <keyword=snow> to self")
+                    .WithType("")
+                    .WithIsReaction(false)
+                    .SubscribeToAfterAllBuildEvent(data =>
+                    {
+                        var castData = (StatusEffectApplyXPostAttack)data;
+                        castData.effectToApply = mod.TryGet<StatusEffectData>("Snow");
+                        castData.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+                        castData.queue = true;
+                    })
+            );
+
+            mod.Cards.Add(new CardDataBuilder(mod)
+                .CreateUnit("Cerberus", "Cerberus", idleAnim: "FloatAnimationProfile")
+                .SetSprites("Cerberus.png", "CerberusBG.png")
+                .SetStats(3, 1, 4)
+                .IsPet((ChallengeData)null)
+                .SubscribeToAfterAllBuildEvent(delegate (CardData data)
+                {
+                    data.startWithEffects = new[]
+                    {
+                        mod.SStack("MultiHit", 2)
+                    };
+                    data.startWithEffects = new[]
+                    {
+                        mod.SStack("Fury", 2)
+                    };
+                }));
         }
 
         private static void Frinos(HadesFrost mod)
@@ -25,7 +76,7 @@ namespace HadesFrost.Setup
             mod.Cards.Add(new CardDataBuilder(mod)
                 .CreateUnit("Frinos", "Frinos", idleAnim: "FloatAnimationProfile")
                 .SetSprites("Frinos.png", "FrinosBG.png")
-                .SetStats(3)
+                .SetStats(4)
                 .IsPet((ChallengeData)null)
                 .SubscribeToAfterAllBuildEvent(delegate (CardData data)
                 {

@@ -3,11 +3,11 @@ using UnityEngine.UI;
 
 namespace HadesFrost.ButtonStatuses
 {
-    public class HexButton : Button
+    public class ActionButton : Button
     {
-        private HexStatusIcon Icon => GetComponent<HexStatusIcon>();
+        private ActionStatusIcon Icon => GetComponent<ActionStatusIcon>();
 
-        private static HexButton dragBlocker;
+        private static ActionButton dragBlocker;
 
         private Entity Entity => Icon?.target;
 

@@ -9,25 +9,23 @@ namespace HadesFrost.Utils
 {
     public static class StatusIcons
     {
-        public static StringTable Collection => LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
-
         private static StringTable KeyCollection => LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
 
-        public static GameObject CreateIcon(
+        public static void CreateIcon(
             string name,
-            Sprite sprite, 
-            string type, 
+            Sprite sprite,
+            string type,
             string copyTextFrom,
-            Color textColor, 
-            Color shadowColor, 
-            KeywordData[] keys, 
+            Color textColor,
+            Color shadowColor,
+            KeywordData[] keys,
             int posX = 1,
             float scale = 0.01f)
         {
             var gameObject = new GameObject(name);
             Object.DontDestroyOnLoad(gameObject);
             gameObject.SetActive(false);
-            StatusIcon icon = gameObject.AddComponent<HexStatusIcon>();
+            StatusIcon icon = gameObject.AddComponent<ActionStatusIcon>();
             var cardIcons = CardManager.cardIcons;
             if (!copyTextFrom.IsNullOrEmpty())
             {
@@ -60,16 +58,13 @@ namespace HadesFrost.Utils
             gameObject.SetActive(true);
             icon.type = type;
             cardIcons[type] = gameObject;
-
-            return gameObject;
         }
 
-        public static GameObject CreateButtonIcon(
-            string name, 
-            Sprite sprite, 
+        public static void CreateButtonIcon(string name,
+            Sprite sprite,
             string type,
-            string copyTextFrom, 
-            Color textColor, 
+            string copyTextFrom,
+            Color textColor,
             KeywordData[] keys)
         {
             var gameObject = new GameObject(name);
@@ -80,10 +75,10 @@ namespace HadesFrost.Utils
 
             gameObject.transform.SetParent(hadesUi.transform);
             gameObject.SetActive(false);
-            var icon = gameObject.AddComponent<HexStatusIcon>();
+            var icon = gameObject.AddComponent<ActionStatusIcon>();
             var cardIcons = CardManager.cardIcons;
             icon.Animator = gameObject.AddComponent<ButtonAnimator>();
-            icon.HexButton = gameObject.AddComponent<HexButton>();
+            icon.HexButton = gameObject.AddComponent<ActionButton>();
             icon.Animator.button = icon.HexButton;
             if (!copyTextFrom.IsNullOrEmpty())
             {
@@ -115,8 +110,6 @@ namespace HadesFrost.Utils
             icon.type = type;
             cardIcons[type] = gameObject;
             gameObject.AddComponent<UINavigationItem>();
-
-            return gameObject;
         }
 
         public static KeywordData CreateIconKeyword(this WildfrostMod mod, string name, string title, string desc, string icon, bool useSmallPanel = false)
