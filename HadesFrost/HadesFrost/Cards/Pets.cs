@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Deadpan.Enums.Engine.Components.Modding;
+﻿using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Cards
 {
     public static class Pets
     {

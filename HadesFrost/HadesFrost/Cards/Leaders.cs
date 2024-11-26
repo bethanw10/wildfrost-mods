@@ -3,7 +3,7 @@ using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.Utils;
 using UnityEngine;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Cards
 {
     public static class Leaders
     {

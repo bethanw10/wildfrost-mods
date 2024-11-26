@@ -1,4 +1,4 @@
-﻿namespace HadesFrost.ButtonStatuses
+﻿namespace HadesFrost.Actions
 {
     public class ActionStatusIcon : StatusIcon
     {

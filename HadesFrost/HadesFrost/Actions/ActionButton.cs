@@ -1,7 +1,7 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace HadesFrost.ButtonStatuses
+namespace HadesFrost.Actions
 {
     public class ActionButton : Button
     {

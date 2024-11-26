@@ -1,10 +1,10 @@
-﻿using Deadpan.Enums.Engine.Components.Modding;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using Deadpan.Enums.Engine.Components.Modding;
 using UnityEngine;
 using UnityEngine.Localization;
 
-namespace HadesFrost.CampaignNodeTypes
+namespace HadesFrost.Nodes
 {
     public class CampaignNodeTypeSelene : CampaignNodeTypeItem
     {

@@ -1,5 +1,5 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.ButtonStatuses;
+using HadesFrost.Actions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Tables;

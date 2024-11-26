@@ -6,73 +6,75 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using HadesFrost.Utils;
 using UnityEngine;
 
-public class TargetModeSlash : TargetMode
+namespace HadesFrost.TargetModes
 {
-    public override bool TargetRow => false;
-
-    public override Entity[] GetPotentialTargets(
-      Entity entity,
-      Entity target,
-      CardContainer targetContainer)
+    public class TargetModeSlash : TargetMode
     {
-        var entitySet = new HashSet<Entity>();
+        public override bool TargetRow => false;
 
-        var basic = new TargetModeBasic();
-
-        var entities = basic.GetPotentialTargets(entity, target, targetContainer);
-        entitySet.AddRange(entities);
-
-        if (entitySet.Count <= 0)
+        public override Entity[] GetPotentialTargets(
+            Entity entity,
+            Entity target,
+            CardContainer targetContainer)
         {
-            return null;
-        }
+            var entitySet = new HashSet<Entity>();
 
-        var adjacent = GetAdjacent(entities.First());
+            var basic = new TargetModeBasic();
 
-        if (adjacent != null)
-        {
-            entities = basic.GetPotentialTargets(entity, adjacent, targetContainer);
+            var entities = basic.GetPotentialTargets(entity, target, targetContainer);
             entitySet.AddRange(entities);
-        }
 
-        return entitySet.Count <= 0 ? null : entitySet.ToArray();
-    }
-
-    public override Entity[] GetSubsequentTargets(
-        Entity entity,
-        Entity target,
-        CardContainer targetContainer)
-    {
-        return this.GetTargets(entity, target, targetContainer);
-    }
-
-    private static Entity GetAdjacent(Entity target)
-    {
-        foreach (var cardContainer in target.actualContainers.ToArray())
-        {
-            if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
+            if (entitySet.Count <= 0)
             {
-                continue;
+                return null;
             }
 
-            var slot = group.slots.IndexOf(cardSlot);
+            var adjacent = GetAdjacent(entities.First());
 
-            foreach (var row in Battle.instance.GetRows(target.owner))
+            if (adjacent != null)
             {
-                var entity = row[slot];
+                entities = basic.GetPotentialTargets(entity, adjacent, targetContainer);
+                entitySet.AddRange(entities);
+            }
 
-                Debug.Log(entity?.name);
+            return entitySet.Count <= 0 ? null : entitySet.ToArray();
+        }
 
-                if (entity != null && entity != target)
+        public override Entity[] GetSubsequentTargets(
+            Entity entity,
+            Entity target,
+            CardContainer targetContainer)
+        {
+            return this.GetTargets(entity, target, targetContainer);
+        }
+
+        private static Entity GetAdjacent(Entity target)
+        {
+            foreach (var cardContainer in target.actualContainers.ToArray())
+            {
+                if (!(cardContainer is CardSlot cardSlot) || !(cardContainer.Group is CardSlotLane group))
                 {
-                    return entity;
+                    continue;
+                }
+
+                var slot = group.slots.IndexOf(cardSlot);
+
+                foreach (var row in Battle.instance.GetRows(target.owner))
+                {
+                    var entity = row[slot];
+
+                    Debug.Log(entity?.name);
+
+                    if (entity != null && entity != target)
+                    {
+                        return entity;
+                    }
                 }
             }
-        }
 
-        return null;
+            return null;
+        }
     }
 }

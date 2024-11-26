@@ -6,26 +6,29 @@
 
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Status Effects/Traits/Cannot Increase Max Health", fileName = "Cannot Increase Max Health")]
-public class StatusEffectCannotReduceCounter : StatusEffectData
+namespace HadesFrost.StatusEffects
 {
-    public override bool RunApplyStatusEvent(StatusEffectApply apply)
+    [CreateAssetMenu(menuName = "Status Effects/Traits/Cannot Increase Max Health", fileName = "Cannot Increase Max Health")]
+    public class StatusEffectCannotReduceCounter : StatusEffectData
     {
-        if (apply.target == target && !target.silenced && CheckEffectType(apply.effectData))
+        public override bool RunApplyStatusEvent(StatusEffectApply apply)
         {
-            apply.count = 0;
-        }
+            if (apply.target == target && !target.silenced && CheckEffectType(apply.effectData))
+            {
+                apply.count = 0;
+            }
 
-        return false;
-    }
-
-    private static bool CheckEffectType(StatusEffectData effectData)
-    {
-        if (!(bool)effectData)
-        {
             return false;
         }
 
-        return effectData.type == "counter down";
+        private static bool CheckEffectType(StatusEffectData effectData)
+        {
+            if (!(bool)effectData)
+            {
+                return false;
+            }
+
+            return effectData.type == "counter down";
+        }
     }
 }

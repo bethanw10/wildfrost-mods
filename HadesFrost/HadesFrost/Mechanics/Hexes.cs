@@ -1,12 +1,13 @@
 ﻿using System;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.ButtonStatuses;
+using HadesFrost.Actions;
 using HadesFrost.StatusEffects;
+using HadesFrost.StatusEffects.Morph;
 using HadesFrost.Utils;
 using UnityEngine;
 using static HadesFrost.Utils.Common;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Mechanics
 {
     public static class Hexes
     {

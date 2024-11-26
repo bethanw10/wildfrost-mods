@@ -174,15 +174,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CampaignNodeTypes\CampaignNodeTypeSelene.cs" />
+    <Compile Include="Nodes\CampaignNodeTypeSelene.cs" />
     <Compile Include="Cards\Eyes.cs" />
-    <Compile Include="Mechanics\GiftsOfOlympus.cs" />
-    <Compile Include="Mechanics\GiftsOfTheMoon.cs" />
+    <Compile Include="Nodes\GiftsOfOlympus.cs" />
+    <Compile Include="Nodes\GiftsOfTheMoon.cs" />
     <Compile Include="Mechanics\Calls.cs" />
     <Compile Include="Mechanics\Hexes.cs" />
     <Compile Include="Mechanics\Tribes.cs" />
     <Compile Include="Cards\Items.cs" />
-    <Compile Include="Mechanics\Charms.cs" />
+    <Compile Include="Cards\Charms.cs" />
     <Compile Include="Cards\Leaders.cs" />
     <Compile Include="Mechanics\Boons.cs" />
     <Compile Include="StatusEffects\Morph\MorphCardSequenceExtension.cs" />

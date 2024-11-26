@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
-internal class StatusInstantIncreaseCounter : StatusEffectInstant
+namespace HadesFrost.StatusEffects
 {
-    public override IEnumerator Process()
+    internal class StatusInstantIncreaseCounter : StatusEffectInstant
     {
-        target.counter.current += count;
-        yield return base.Process();
+        public override IEnumerator Process()
+        {
+            target.counter.current += count;
+            yield return base.Process();
+        }
     }
 }

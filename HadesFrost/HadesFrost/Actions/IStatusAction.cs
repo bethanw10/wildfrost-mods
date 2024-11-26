@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace HadesFrost.ButtonStatuses
+namespace HadesFrost.Actions
 {
     public interface IStatusAction
     {

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
 using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
-using UnityEngine;
 using static Console;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Mechanics
 {
     public static class Boons
     {

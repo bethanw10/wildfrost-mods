@@ -4,65 +4,68 @@
 // MVID: 4C9F0F28-E1DA-4288-A489-EB0A2F4123E8
 // Assembly location: C:\Users\bess\source\repos\wildfrost-mods\HadesFrost\HadesFrost\bin\Debug\Assembly-CSharp-Publicized.dll
 
-public class StatusEffectUses : StatusEffectData
+namespace HadesFrost.StatusEffects
 {
-    public bool subbed;
-    public bool destroy;
-
-    public void OnDestroy() => Unsub();
-
-    public void Sub()
+    public class StatusEffectUses : StatusEffectData
     {
-        Events.OnActionPerform += CheckAction;
-        subbed = true;
-    }
+        public bool subbed;
+        public bool destroy;
 
-    public void Unsub()
-    {
-        if (!subbed)
+        public void OnDestroy() => Unsub();
+
+        public void Sub()
         {
-            return;
+            Events.OnActionPerform += CheckAction;
+            subbed = true;
         }
 
-        Events.OnActionPerform -= CheckAction;
-        subbed = false;
-    }
-
-    public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
-    {
-        if (entity == target && !target.silenced)
+        public void Unsub()
         {
-            Sub();
-            if (count <= 1)
+            if (!subbed)
             {
-                destroy = true;
+                return;
             }
-            else
+
+            Events.OnActionPerform -= CheckAction;
+            subbed = false;
+        }
+
+        public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
+        {
+            if (entity == target && !target.silenced)
             {
-                count -= 1;
+                Sub();
+                if (count <= 1)
+                {
+                    destroy = true;
+                }
+                else
+                {
+                    count -= 1;
 
-                this.target.display.promptUpdateDescription = true;
-                this.target.PromptUpdate();
+                    this.target.display.promptUpdateDescription = true;
+                    this.target.PromptUpdate();
+                }
             }
+
+            return false;
         }
 
-        return false;
-    }
-
-    public void CheckAction(PlayAction action)
-    {
-        if (!(action is ActionReduceUses actionReduceUses) || !(actionReduceUses.entity == target))
+        public void CheckAction(PlayAction action)
         {
-            return;
-        }
+            if (!(action is ActionReduceUses actionReduceUses) || !(actionReduceUses.entity == target))
+            {
+                return;
+            }
 
-        Unsub();
-        if (!destroy)
-        {
-            return;
-        }
+            Unsub();
+            if (!destroy)
+            {
+                return;
+            }
 
-        target.alive = false;
-        ActionQueue.Stack(new ActionConsume(target));
+            target.alive = false;
+            ActionQueue.Stack(new ActionConsume(target));
+        }
     }
 }

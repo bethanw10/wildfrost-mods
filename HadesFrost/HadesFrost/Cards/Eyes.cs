@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Cards
 {
     public static class Eyes
     {

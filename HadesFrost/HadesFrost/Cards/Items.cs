@@ -5,7 +5,7 @@ using HadesFrost.TargetModes;
 using HadesFrost.Utils;
 using UnityEngine;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Cards
 {
     public static class Items
     {

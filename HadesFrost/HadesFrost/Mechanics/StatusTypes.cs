@@ -3,7 +3,7 @@ using HadesFrost.StatusEffects;
 using HadesFrost.Utils;
 using UnityEngine;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Mechanics
 {
     public static class StatusTypes
     {

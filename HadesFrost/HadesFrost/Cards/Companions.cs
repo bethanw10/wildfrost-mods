@@ -6,7 +6,7 @@ using HadesFrost.Utils;
 using UnityEngine;
 using static HadesFrost.Utils.Common;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Cards
 {
     public static class Companions
     {

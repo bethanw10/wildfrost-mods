@@ -8,82 +8,85 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Status Effects/Specific/Apply X On Hit", fileName = "Apply X On Hit")]
-public class StatusEffectApplyXOnTeamHit : StatusEffectApplyX
+namespace HadesFrost.StatusEffects
 {
-    [SerializeField]
-    public bool postHit;
-    [Header("Modify Damage")]
-    [SerializeField]
-    public int addDamageFactor;
-    [SerializeField]
-    public float multiplyDamageFactor = 1f;
-    public readonly List<Hit> storedHit = new List<Hit>();
-
-    public override void Init()
+    [CreateAssetMenu(menuName = "Status Effects/Specific/Apply X On Hit", fileName = "Apply X On Hit")]
+    public class StatusEffectApplyXOnTeamHit : StatusEffectApplyX
     {
-        if (postHit)
-        {
-            PostHit += CheckHit;
-        }
-        else
-        {
-            OnHit += CheckHit;
-        }
-    }
+        [SerializeField]
+        public bool postHit;
+        [Header("Modify Damage")]
+        [SerializeField]
+        public int addDamageFactor;
+        [SerializeField]
+        public float multiplyDamageFactor = 1f;
+        public readonly List<Hit> storedHit = new List<Hit>();
 
-    public override bool RunPreAttackEvent(Hit hit)
-    {
-        if (hit.target?.owner != References.Player &&
-            target.alive && 
-            target.enabled && (bool)hit.target)
+        public override void Init()
         {
-            if (addDamageFactor != 0 || multiplyDamageFactor != 1.0)
+            if (postHit)
             {
-                var flag = true;
-                foreach (var applyConstraint in applyConstraints)
+                PostHit += CheckHit;
+            }
+            else
+            {
+                OnHit += CheckHit;
+            }
+        }
+
+        public override bool RunPreAttackEvent(Hit hit)
+        {
+            if (hit.target?.owner != References.Player &&
+                target.alive && 
+                target.enabled && (bool)hit.target)
+            {
+                if (addDamageFactor != 0 || multiplyDamageFactor != 1.0)
                 {
-                    if (!applyConstraint.Check(hit.target) && (!(applyConstraint is TargetConstraintHasStatus constraintHasStatus) || !constraintHasStatus.CheckWillApply(hit)))
+                    var flag = true;
+                    foreach (var applyConstraint in applyConstraints)
                     {
-                        flag = false;
-                        break;
+                        if (!applyConstraint.Check(hit.target) && (!(applyConstraint is TargetConstraintHasStatus constraintHasStatus) || !constraintHasStatus.CheckWillApply(hit)))
+                        {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag)
+                    {
+                        var amount = GetAmount();
+                        if (addDamageFactor != 0)
+                        {
+                            hit.damage += amount * addDamageFactor;
+                        }
+
+                        if (multiplyDamageFactor != 1.0)
+                        {
+                            hit.damage = Mathf.RoundToInt(hit.damage * multiplyDamageFactor);
+                        }
                     }
                 }
-                if (flag)
+                if (!hit.Offensive && (hit.damage > 0 || (bool)(Object)effectToApply && effectToApply.offensive))
                 {
-                    var amount = GetAmount();
-                    if (addDamageFactor != 0)
-                    {
-                        hit.damage += amount * addDamageFactor;
-                    }
-
-                    if (multiplyDamageFactor != 1.0)
-                    {
-                        hit.damage = Mathf.RoundToInt(hit.damage * multiplyDamageFactor);
-                    }
+                    hit.FlagAsOffensive();
                 }
-            }
-            if (!hit.Offensive && (hit.damage > 0 || (bool)(Object)effectToApply && effectToApply.offensive))
-            {
-                hit.FlagAsOffensive();
-            }
 
-            storedHit.Add(hit);
+                storedHit.Add(hit);
+            }
+            return false;
         }
-        return false;
-    }
 
-    public override bool RunPostHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
+        public override bool RunPostHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
 
-    public override bool RunHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
+        public override bool RunHitEvent(Hit hit) => storedHit.Contains(hit) && hit.Offensive;
 
-    public IEnumerator CheckHit(Hit hit)
-    {
-        if ((bool)(Object)effectToApply)
+        public IEnumerator CheckHit(Hit hit)
         {
-            yield return Run(GetTargets(hit), hit.damage + hit.damageBlocked);
-        }
+            if ((bool)(Object)effectToApply)
+            {
+                yield return Run(GetTargets(hit), hit.damage + hit.damageBlocked);
+            }
 
-        storedHit.Remove(hit);
+            storedHit.Remove(hit);
+        }
     }
 }

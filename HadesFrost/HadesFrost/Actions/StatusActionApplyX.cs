@@ -5,7 +5,7 @@ using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
 using UnityEngine;
 
-namespace HadesFrost.ButtonStatuses
+namespace HadesFrost.Actions
 {
     public class StatusActionApplyX : StatusEffectApplyX, IStatusAction
     {

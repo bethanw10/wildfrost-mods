@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Deadpan.Enums.Engine.Components.Modding;
-using HadesFrost.CampaignNodeTypes;
+using HadesFrost.Mechanics;
 using HadesFrost.Utils;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Localization.Components;
 using UnityEngine.SceneManagement;
 
-namespace HadesFrost.Setup
+namespace HadesFrost.Nodes
 {
-    public static class GiftsOfOlympus
+    public static class GiftsOfTheMoon
     {
         private static GameObject PrefabHolder;
 
-        private const string CallEventLetter = "ç";
+        private const string SeleneEventLetter = "É";
 
         public static void Setup(HadesFrost mod)
         {
@@ -29,7 +29,7 @@ namespace HadesFrost.Setup
                 .WithInteractable(true)
                 .WithCanSkip(true)
                 .WithCanLink(true) 
-                .WithLetter(CallEventLetter)
+                .WithLetter(SeleneEventLetter)
                 .SubscribeToAfterAllBuildEvent(
                     (data) =>
                     {
@@ -39,9 +39,15 @@ namespace HadesFrost.Setup
 
                         castData.Pool = new List<CardData>
                         {
-                            mod.TryGet<CardData>("AphroditesCall"),
-                            mod.TryGet<CardData>("AresCall"),
-                            mod.TryGet<CardData>("AthenasCall")
+                            mod.TryGet<CardData>("LunarRay"),
+                            mod.TryGet<CardData>("PhaseShift"),
+                            mod.TryGet<CardData>("MoonWater"),
+                            mod.TryGet<CardData>("WolfHowl"),
+                            mod.TryGet<CardData>("DarkSide"),
+                            mod.TryGet<CardData>("TwilightCurse"),
+                            mod.TryGet<CardData>("NightBloom"),
+                            mod.TryGet<CardData>("TotalEclipse"),
+                            mod.TryGet<CardData>("SkyFall"),
                         };
 
                         var mapNode = mod.TryGet<CampaignNodeType>("CampaignNodeGold").mapNodePrefab.InstantiateKeepName();
@@ -50,7 +56,7 @@ namespace HadesFrost.Setup
 
                         var uiText = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
                         var key = mapNode.name + "Ribbon";
-                        uiText.SetString(key, "Olympian's Aid");
+                        uiText.SetString(key, "Gifts of the Moon");    //Define the Localized string for our ribbon title.
                         mapNode.label.GetComponentInChildren<LocalizeStringEvent>().StringReference = uiText.GetString(key);
                         //Find the LocalizeStringEvent and set it to our own.
 
@@ -73,7 +79,7 @@ namespace HadesFrost.Setup
         public static void InsertViaPreset(HadesFrost mod, ref string[] preset)
         {
             if (References.PlayerData?.classData?.ModAdded?.GUID != mod.GUID ||
-                References.PlayerData?.classData?.name != Extensions.PrefixGUID(Tribes.ZAGREUS_TRIBE, mod))
+                References.PlayerData?.classData?.name != Extensions.PrefixGUID(Tribes.MELINOE_TRIBE, mod))
             {
                 return;
             }
@@ -87,20 +93,18 @@ namespace HadesFrost.Setup
 
             for (var i = 0; i < preset[0].Length; i++)
             {
-                if (preset[0][i] != letter)
+                if (preset[0][i] == letter)
                 {
-                    continue;
-                }
-
-                targetAmount--;
-                if (targetAmount == 0)
-                {
-                    preset[0] = preset[0].Insert(i + 1, CallEventLetter);
-                    for (var j = 1; j < preset.Length; j++)
+                    targetAmount--;
+                    if (targetAmount == 0)
                     {
-                        preset[j] = preset[j].Insert(i + 1, preset[j][i].ToString());
+                        preset[0] = preset[0].Insert(i + 1, SeleneEventLetter);
+                        for (var j = 1; j < preset.Length; j++)
+                        {
+                            preset[j] = preset[j].Insert(i + 1, preset[j][i].ToString());
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
